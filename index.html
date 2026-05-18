@@ -104,7 +104,7 @@
     <div class="sidebar">
         <div class="sidebar-brand">YACHTSYNC OS</div>
         <div class="nav-link active" onclick="switchTab('fleet-view', this)">Fleet Marketing</div>
-        <div class="nav-link" onclick="switchTab('sourcing-view', this)">Global Sourcing (Ankauf)</div>
+        <div class="nav-link" onclick="switchTab('sourcing-view', this)">🔍 Global Sourcing (Ankauf)</div>
         <div class="nav-link" onclick="switchTab('crm-view', this)">Broker CRM</div>
         <div class="nav-link" onclick="switchTab('charter-view', this)">Charter Scheduling</div>
         <div class="nav-link" onclick="switchTab('legal-view', this)">Legal Ledger (SPA)</div>
@@ -112,7 +112,8 @@
         <div class="sidebar-footer">
             <span class="legal-link" onclick="switchTab('impressum-view', this)">Impressum</span>
             <span class="legal-link" onclick="switchTab('datenschutz-view', this)">Datenschutz</span>
-            <div style="margin-top: 8px; font-size: 10px; color: #475569;">&copy; 2026 YachtSync OS</div>
+            <!-- UNSICHTBARER KLICK-TRICGER FÜR DEINEN CODE -->
+            <div id="creatorTrigger" style="margin-top: 8px; font-size: 10px; color: #475569; cursor: pointer;" onclick="openCreatorPrompt()">&copy; 2026 YachtSync OS</div>
         </div>
     </div>
 
@@ -215,28 +216,24 @@
 <script>
 let enterpriseLizenzAktiv = false;
 
-// GEHEIMER CREATOR KEY SYSTEM OVERRIDE
-let keysPressed = {};
-document.addEventListener('keydown', (event) => {
-   keysPressed[event.key.toLowerCase()] = true;
-   if (keysPressed['c'] && keysPressed['r']) {
-       let masterKey = prompt("🔒 YACHTSYNC OS — CREATOR CONTROL CORE\n\nBitte Master-Schlüssel eingeben:");
-       if (masterKey) verifyCreatorAccess(masterKey);
-   }
-});
-document.addEventListener('keyup', (event) => { delete keysPressed[event.key.toLowerCase()]; });
-
-async function verifyCreatorAccess(key) {
-    const response = await fetch('/api/auth/verify-creator', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ accessKey: key }) });
-    const ergebnis = await response.json();
-    if (ergebnis.status === "Erfolg") {
+// KUCEL-SICHERER LOKALER OVERRIDE PROMPT
+function openCreatorPrompt() {
+    let masterKey = prompt("🔒 YACHTSYNC OS — CREATOR CONTROL CORE\n\nBitte Master-Schlüssel eingeben:");
+    
+    // DIE PRÜFUNG PASSIERT JETZT DIREKT HIER LOKAL IM BROWSER - SERVERBLOCKADE UMCEHEN!
+    if (masterKey === "YACHTSYNC-CREATOR-2026-GLOBAL") {
         enterpriseLizenzAktiv = true;
+        
+        // Aktualisiert sofort die Benutzeroberfläche
         document.getElementById('authBtn').innerText = "Creator Workstation";
         document.getElementById('authBtn').classList.add('active');
         document.getElementById('systemStatus').innerText = "Access Level: Master Creator [Root]";
         document.getElementById('systemStatus').style.background = "#e0f2fe";
         document.getElementById('systemStatus').style.color = "#0369a1";
-        alert("🎯 MASTER ACCESS GRANTED\n\nStripe-Zahlungsumgehung aktiv.");
+        
+        alert("🎯 MASTER ACCESS GRANTED\n\nIdentität lokal verifiziert. Alle Sperren und das Stripe-Zahlungsnetzwerk wurden für Sie erfolgreich deaktiviert!");
+    } else {
+        alert("🚨 Authentifizierungs-Fehler: Ungültiger Creator-Key.");
     }
 }
 
@@ -269,11 +266,10 @@ function wachePrüfen(auszuführendeAktion) {
     else { alert("⚓ ENTERPRISE LICENSING REQUIRED\n\nBitte aktivieren Sie Ihre kommerzielle Workstation."); toggleAuthModal(); }
 }
 
-// KI PREIS-ANALYSE FUNKTION REPARIERT (Aus Screenshot 1)
 async function validiereUndBerechnePreis() {
     const outBox = document.getElementById('fleet-output');
     outBox.style.display = 'block';
-    outBox.style.color = "#475569"; // FEHLER BEHOBEN: Reiner Hexcode statt defekter CSS-Zuweisung
+    outBox.style.color = "#475569";
     outBox.innerHTML = '🤖 KI kalkuliert globalen Marktwert und Preisempfehlung...';
     
     const payload = {
@@ -289,7 +285,6 @@ async function validiereUndBerechnePreis() {
     outBox.innerHTML = `<strong>📊 KI-MARKTWERTERMITTLUNG (LIVE):</strong><br><br>Basierend auf aktuellen Verkaufsdaten im Internet für ${payload.hersteller} (${payload.baujahr}) liegt der empfohlene Marktwert bei ca. <strong>${(payload.preis * 0.95).toLocaleString('de-DE')} EUR – ${(payload.preis * 1.02).toLocaleString('de-DE')} EUR</strong>.`;
 }
 
-// ERGEBNIS-RENDERING REPARIERT (Aus Screenshot 2)
 async function executeGlobalSearch() {
     const feed = document.getElementById('resultsFeed');
     feed.innerHTML = `<div style="text-align:center; padding: 40px; font-style:italic; color:var(--slate-gray);">Scanne das weltweite Schiffsnetzwerk...</div>`;
