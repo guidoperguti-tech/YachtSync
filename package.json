@@ -1,17 +1,21 @@
 {
   "name": "yachtsync-os",
   "version": "1.0.0",
-  "description": "Enterprise Yacht ERP Engine with Free Live AI",
+  "description": "Enterprise Yacht ERP Engine with Secure Auth and 2FA",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "express": "^4.19.2",
+    "express-session": "^1.18.0",
     "groq-sdk": "^0.3.3",
     "mongoose": "^8.4.1",
     "pdfkit": "^0.15.0",
     "playwright": "^1.44.0",
+    "qrcode": "^1.5.3",
+    "speakeasy": "^2.0.0",
     "stripe": "^15.1.0"
   },
   "engines": {

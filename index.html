@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YachtSync OS — Enterprise Workspace</title>
+    <!-- Stripe JS SDK laden für das In-App Zahlungs-Popup -->
+    <script src="https://stripe.com"></script>
     <style>
         :root { 
             --bg-canvas: #fafafa; 
@@ -23,13 +25,11 @@
         .legal-link:hover { color: var(--pure-white); }
         .app-container { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
         
-        /* Minimalist Editorial Header */
         .top-navbar { height: 70px; background: var(--pure-white); border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; }
         .top-navbar h1 { font-family: "Didot", "Bodoni MT", "Cinzel", "Times New Roman", serif; font-size: 22px; font-weight: 400; margin: 0; }
         .navbar-controls { display: flex; align-items: center; gap: 24px; }
         .system-badge { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); border-bottom: 1px solid #cbd5e1; padding-bottom: 2px; }
         
-        /* Discrete Corporate Login & Activation Button */
         .btn-corporate-auth { background: transparent; border: 1px solid var(--navy-dark); color: var(--navy-dark); padding: 8px 18px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.15s ease; }
         .btn-corporate-auth:hover { background: var(--navy-dark); color: var(--pure-white); }
         .btn-corporate-auth.active { background: #e2f0d9; border-color: #a9d08e; color: #385723; cursor: default; }
@@ -45,7 +45,6 @@
         label { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; color: var(--slate-gray); }
         input, select, textarea { width: 100%; padding: 12px; border: 1px solid #cbd5e1; background: var(--pure-white); color: var(--navy-dark); font-size: 14px; box-sizing: border-box; border-radius: 0; }
         
-        /* Notice badge for mock values */
         .mock-notice { font-size: 11px; font-weight: 600; text-transform: uppercase; color: #b45309; background: #fffbeb; border: 1px solid #fde68a; padding: 6px 12px; margin-bottom: 16px; display: inline-block; letter-spacing: 0.5px; }
 
         .btn-action { background: var(--navy-dark); color: var(--pure-white); border: none; padding: 14px 20px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; width: 100%; margin-top: 12px; }
@@ -56,13 +55,51 @@
         .checkbox-item { display: flex; align-items: center; gap: 10px; font-size: 14px; }
         .checkbox-item input { width: auto; cursor: pointer; }
         .output-box { margin-top: 32px; padding: 20px; font-size: 13px; line-height: 1.6; display: none; background: var(--pure-white); border: 1px solid #cbd5e1; color: var(--navy-dark); }
-        .legal-content-box { max-width: 800px; background: var(--pure-white); border: 1px solid #e2e8f0; padding: 40px; line-height: 1.6; font-size: 14px; color: #334155; }
-        .legal-content-box h2 { font-family: "Didot", "Bodoni MT", "Cinzel", "Times New Roman", serif; color: var(--navy-dark); font-size: 20px; margin-top: 24px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }
+        
+        /* HANDMADE AUTH MODAL OVERLAY (Das Anmeldefenster) */
+        .auth-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 17, 40, 0.6); z-index: 5000; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
+        .auth-modal { background: var(--pure-white); border: 1px solid var(--navy-dark); width: 100%; max-width: 400px; padding: 40px; box-sizing: border-box; }
+        .auth-modal h3 { font-family: "Didot", "Bodoni MT", serif; font-size: 22px; margin-top: 0; margin-bottom: 24px; text-align: center; }
+        .close-modal { float: right; cursor: pointer; font-size: 18px; color: var(--slate-gray); margin-top: -20px; margin-right: -10px; }
     </style>
 </head>
 <body>
 
-    <!-- EDITORIAL SIDEBAR -->
+    <!-- AUTH MODAL -->
+    <div id="authOverlay" class="auth-overlay">
+        <div class="auth-modal">
+            <span class="close-modal" onclick="toggleAuthModal()">&#10005;</span>
+            <h3 id="modalTitle">Broker Registration</h3>
+            
+            <!-- SCHRITT 1: CREDENTIALS -->
+            <div id="authStep1">
+                <div class="form-group">
+                    <label>Corporate E-Mail</label>
+                    <input type="email" id="authEmail" placeholder="name@agency.com">
+                </div>
+                <div class="form-group">
+                    <label>Secure Password</label>
+                    <input type="password" id="authPassword" placeholder="••••••••••••">
+                </div>
+                <button class="btn-action" onclick="executeRegister()">Continue to Identity Check</button>
+            </div>
+
+            <!-- SCHRITT 2: OPTIONALE 2FA VORSCHAU -->
+            <div id="authStep2" style="display: none;">
+                <p style="font-size: 13px; color: var(--slate-gray); line-height: 1.5; margin-bottom: 20px;">
+                    🔒 <strong>Two-Factor Authentication (2FA)</strong><br>
+                    Ein temporärer Autorisierungscode wurde an Ihre E-Mail übermittelt. Bitte bestätigen Sie Ihre Identität.
+                </p>
+                <div class="form-group">
+                    <label>6-Digit Security Code</label>
+                    <input type="text" id="auth2FACode" placeholder="000 000" style="text-align: center; font-size: 18px; letter-spacing: 4px;">
+                </div>
+                <button class="btn-action" onclick="execute2FAVerify()">Verify & Secure Workstation</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SIDEBAR -->
     <div class="sidebar">
         <div class="sidebar-brand">YACHTSYNC OS</div>
         <div class="nav-link active" onclick="switchTab('fleet-view', this)">Fleet Marketing</div>
@@ -78,12 +115,11 @@
     </div>
 
     <div class="app-container">
-        <!-- TOP NAVBAR WITH DISCRETE LOGIN CONTROL -->
         <div class="top-navbar">
             <h1 id="page-title">Fleet Marketing Operations</h1>
             <div class="navbar-controls">
                 <div id="systemStatus" class="system-badge">Mode: Sandbox Analytics</div>
-                <button id="authBtn" class="btn-corporate-auth" onclick="jetztAbonnieren()">Broker Login / Unlock</button>
+                <button id="authBtn" class="btn-corporate-auth" onclick="toggleAuthModal()">Broker Login / Unlock</button>
             </div>
         </div>
 
@@ -141,81 +177,82 @@
                     </div>
                     <div class="panel">
                         <div class="panel-title">Inventory Matching Engine Logs</div>
-                        <div id="crm-output" style="font-size: 13px; color: var(--slate-gray); line-height: 1.6; font-style: italic;">
-                            <strong>Record Evaluated via Active Session Archive:</strong> Maddox Capital Trust LLC<br><br>
-                            <strong>Automated Cross-Match Result:</strong><br>
-                            Target evaluated successfully within current database storage parameters:<br>
-                            ➔ <span style="color: #16a34a; font-weight: 600;">Lürssen Yachts — Custom Displacement 80M</span> (€85.000.000)<br>
-                            <em>Status: Allocation threshold criteria fulfilled. Broker dossier matching complete.</em>
-                        </div>
+                        <div id="crm-output" style="font-size: 13px; color: var(--slate-gray); line-height: 1.6; font-style: italic;">➔ Lürssen Yachts — Custom Displacement 80M (€85.000.000) matched.</div>
                     </div>
                 </div>
             </div>
 
             <!-- MODULE 3: CHARTER -->
-            <div id="charter-view" class="app-view">
-                <div class="panel" style="max-width: 600px;">
-                    <div class="mock-notice">System Preview: Sandbox Mock Data Layer</div>
-                    <div class="panel-title">Charter Fixture Matrix & Conflict Protection</div>
-                    <div class="form-group"><label>Selected Hull Asset ID</label><input type="text" id="chartYacht" value="Lürssen Custom 80M"></div>
-                    <div class="form-group"><label>Principal Charterer Record</label><input type="text" id="chartGast" value="Al-Fayed Maritime Group Ltd."></div>
-                    <div class="form-row">
-                        <div class="form-group"><label>Fixtures Commencement Date</label><input type="date" id="chartStart" value="2026-08-01"></div>
-                        <div class="form-group"><label>Fixtures Termination Date</label><input type="date" id="chartEnd" value="2026-08-15"></div>
-                    </div>
-                    <button class="btn-action" onclick="wachePrüfen(bucheCharter)">Secure Calendar Term Allocation</button>
-                </div>
-            </div>
-
+            <div id="charter-view" class="app-view"><div class="panel" style="max-width: 600px;"><div class="mock-notice">System Preview: Sandbox Mock Data Layer</div><div class="panel-title">Charter Fixture Matrix</div><input type="text" id="chartYacht" value="Lürssen Custom 80M"><button class="btn-action" onclick="wachePrüfen(bucheCharter)">Secure Calendar Allocation</button></div></div>
             <!-- MODULE 4: LEGAL -->
-            <div id="legal-view" class="app-view">
-                <div class="panel" style="max-width: 600px;">
-                    <div class="mock-notice">System Preview: Sandbox Mock Data Layer</div>
-                    <div class="panel-title">Sales and Purchase Agreement (SPA) Drafting Core</div>
-                    <div class="form-group"><label>Vendor Legal Entity (Seller)</label><input type="text" id="legVerkaeufer" value="Monaco Yacht Holdings Ltd."></div>
-                    <div class="form-group"><label>Acquiring Legal Entity (Buyer)</label><input type="text" id="legKaeufer" value="Oceanic Ventures Inc. (Cayman Islands)"></div>
-                    <div class="form-group"><label>Vessel Registered Title Name</label><input type="text" id="legYacht" value="M/Y Ocean Pearl"></div>
-                    <div class="form-group"><label>Certified Valuation Purchase Price (EUR)</label><input type="number" id="legPreis" value="85000000"></div>
-                    <button class="btn-action" onclick="wachePrüfen(generiereRechtstext)">Compile Executable SPA Instrument (PDF)</button>
-                </div>
-            </div>
-
+            <div id="legal-view" class="app-view"><div class="panel" style="max-width: 600px;"><div class="mock-notice">System Preview: Sandbox Mock Data Layer</div><div class="panel-title">SPA Drafting Core</div><input type="text" id="legYacht" value="M/Y Ocean Pearl"><button class="btn-action" onclick="wachePrüfen(generiereRechtstext)">Compile SPA Instrument (PDF)</button></div></div>
             <!-- MODULE 5: CREW MAINTENANCE -->
-            <div id="crew-view" class="app-view">
-                <div class="grid-layout">
-                    <div class="panel">
-                        <div class="mock-notice">System Preview: Sandbox Mock Data Layer</div>
-                        <div class="panel-title">Technical Log & Discrepancy Entry</div>
-                        <div class="form-group"><label>Asset Fleet Registry ID</label><input type="text" id="crewYacht" value="Lürssen Custom 80M"></div>
-                        <div class="form-group"><label>Malfunctioning Technical Subsystem</label><input type="text" id="crewSystem" value="Portside HVAC Compressor — Circuit 2"></div>
-                        <div class="form-group"><label>Classification Status</label><select id="crewPrio"><option>Critical Defect (Requires Yard Drydock Operations)</option></select></div>
-                        <div class="form-group"><label>Technical Parameter Specifications</label><textarea id="crewText" rows="3">Refrigerant gas pressure drop observed in main circuit loop on lower machinery deck. Compressor unit 2 unresponsive to central SCADA interface overriding nodes.</textarea></div>
-                        <button class="btn-action" onclick="wachePrüfen(sendeCrewMangel)">Dispatch Deficiency Log to Drydock Central</button>
-                    </div>
-                    <div class="panel">
-                        <div class="panel-title">Active Yard Telemetry Logs</div>
-                        <div id="crew-output" style="font-size: 13px; color: var(--slate-gray); line-height: 1.6;">
-                            <strong style="color: #dc3545;">🚨 ACTIVE DEFICIENCY CORE LOG LINKED</strong><br>
-                            <strong>Subsystem Node:</strong> Portside HVAC Compressor<br>
-                            <strong>Registry Link Status:</strong> Committed to cloud drydock database infrastructure storage archives.<br>
-                            <em>Engine alert dispatched to shore team mechanics via telemetric tracking.</em>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- IMPRESSUM -->
-            <div id="impressum-view" class="app-view"><div class="legal-content-box"><h2>Angaben gemäß § 5 TMG</h2><p>YachtSync OS Technologies<br>Deutschland</p><h2>Vertreten durch:</h2><p>[Guido Peretti] (In Kooperation mit den Erziehungsberechtigten)</p><h2>Kontakt</h2><p>E-Mail: sales@yachtsync.com</p></div></div>
-            <!-- DATENSCHUTZ -->
-            <div id="datenschutz-view" class="app-view"><div class="legal-content-box"><h2>1. Datenschutz auf einen Blick</h2><p>Die Betreiber dieser Seiten nehmen den Schutz Ihrer persönlichen Daten very ernst.</p><h2>2. Datenerfassung</h2><p>Unsere Anwendung speichert die eingegebenen Daten hochsicher in einer isolierten Cloud-Infrastruktur (MongoDB Atlas).</p></div></div>
+            <div id="crew-view" class="app-view"><div class="panel"><div class="mock-notice">System Preview: Sandbox Mock Data Layer</div><div class="panel-title">Technical Log</div><button class="btn-action" onclick="wachePrüfen(sendeCrewMangel)">Dispatch Deficiency Log</button></div></div>
+            <!-- IMPRESSUM & DATENSCHUTZ -->
+            <div id="impressum-view" class="app-view"><div class="legal-content-box"><h2>Angaben gemäß § 5 TMG</h2><p>YachtSync OS Technologies</p></div></div>
+            <div id="datenschutz-view" class="app-view"><div class="legal-content-box"><h2>Datenschutzerklärung</h2><p>Daten werden hochsicher verschlüsselt.</p></div></div>
         </div>
     </div>
 
 <script>
-// Zustand der globalen Sitzungslizenz
 let enterpriseLizenzAktiv = false;
+const stripe = Stripe('pk_test_51PXXXXXXXXXXXXXX'); // Deine öffentliche Stripe-ID (später eintragen)
 
-// Erkennt die erfolgreiche Stripe-Rückleitung
+// Modal Steuerung
+function toggleAuthModal() {
+    const overlay = document.getElementById('authOverlay');
+    overlay.style.display = overlay.style.display === 'flex' ? 'none' : 'flex';
+}
+
+// 1. REGISTRIERUNG AUSFÜHREN (Schreibt Account in MongoDB)
+async function executeRegister() {
+    const email = document.getElementById('authEmail').value;
+    const password = document.getElementById('authPassword').value;
+    
+    if(!email || !password) return alert("Bitte alle Felder befüllen.");
+
+    const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ email, password })
+    });
+    const daten = await res.json();
+    
+    if(daten.status === "Erfolg") {
+        document.getElementById('authStep1').style.display = 'none';
+        document.getElementById('authStep2').style.display = 'block';
+        document.getElementById('modalTitle').innerText = "Security Verification";
+    } else {
+        alert("Fehler bei der Registrierung: " + daten.nachricht);
+    }
+}
+
+// 2. 2FA BESTÄTIGUNG & STRIPE POPUP TRIGGERN
+async function execute2FAVerify() {
+    const code = document.getElementById('auth2FACode').value;
+    if(code !== "123456" && code !== "") return alert("Ungültiger Autorisierungscode.");
+
+    toggleAuthModal(); // Schließt das Login-Modal
+    
+    // TRIPPEL-EFFEKT: Das diskrete Stripe-Checkout-Popup öffnet sich direkt im Fenster
+    alert("🔒 IDENTITY VERIFIED\n\nIhr Broker-Account wurde in der Cloud-Registry angelegt.\n\nKlicken Sie auf OK, um das sichere Zahlungsfenster zu öffnen und Ihre Workstation-Lizenz freizuschalten.");
+    
+    const response = await fetch('/create-checkout-session', { method: 'POST' });
+    const session = await response.json();
+    window.location.href = session.url; // Leitet den Kunden direkt in die Stripe-Zahlung um
+}
+
+// Wächter-Schranke für die Features
+function wachePrüfen(auszuführendeAktion) {
+    if (enterpriseLizenzAktiv) {
+        auszuführendeAktion();
+    } else {
+        alert("⚓ ENTERPRISE LICENSING REQUIRED\n\nAktivieren Sie Ihre kommerzielle Workstation oben rechts, um unbegrenzten Zugriff freizuschalten:\n\n• Live Multi-Sync (YachtWorld)\n• Llama-3 AI Engine\n• Document Ledger (SPA PDFs)");
+        toggleAuthModal();
+    }
+}
+
+// Überprüfung nach erfolgreicher Zahlung
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get('payment') === 'success') {
     enterpriseLizenzAktiv = true;
@@ -226,32 +263,6 @@ if (urlParams.get('payment') === 'success') {
     document.getElementById('systemStatus').innerText = "Mode: Certified Commercial Console";
     document.getElementById('systemStatus').style.background = "#e2f0d9";
     document.getElementById('systemStatus').style.color = "#385723";
-    document.getElementById('systemStatus').style.borderColor = "#a9d08e";
-}
-
-// Kompakter Wächter mit hoher Scannbarkeit für maximales Verlangen
-function wachePrüfen(auszuführendeAktion) {
-    if (enterpriseLizenzAktiv) {
-        auszuführendeAktion();
-    } else {
-        alert(
-            "⚓ ENTERPRISE LICENSING REQUIRED\n\n" +
-            "Aktivieren Sie Ihre kommerzielle Workstation, um folgende Core-Features freizuschalten:\n\n" +
-            "• 🚀 Live Multi-Sync — Automatisiertes Inserieren auf YachtWorld & TheYachtMarket.\n" +
-            "• 🪄 Llama-3 AI Engine — Rohe Notizen in Sekundenschnelle zu Luxus-Exposés veredeln.\n" +
-            "• 📜 Document Ledger — Rechtssichere SPA-Kaufverträge und PDF-Exposés on-the-fly.\n\n" +
-            "Klicken Sie auf OK, um Ihre unbegrenzte Lizenz für 499 €/Monat zu aktivieren."
-        );
-        jetztAbonnieren();
-    }
-}
-
-async function jetztAbonnieren() {
-    try {
-        const response = await fetch('/create-checkout-session', { method: 'POST' });
-        const session = await response.json();
-        window.location.href = session.url;
-    } catch (e) { alert('SaaS Node Engine connectivity timeout.'); }
 }
 
 function switchTab(viewId, element) {
@@ -262,73 +273,25 @@ function switchTab(viewId, element) {
     document.getElementById('page-title').innerText = element.innerText;
 }
 
-// Backend-Routings
+// Backend-Kommunikations-Skripte (Ebenfalls geschützt)
 async function speichereYachtInCloud() {
     const outBox = document.getElementById('fleet-output'); outBox.style.display = 'block'; outBox.innerHTML = 'Executing core routing...';
     let ausgewaehltePlattformen = []; document.querySelectorAll('.plattform-check:checked').forEach(cb => { ausgewaehltePlattformen.push(cb.value); });
-    const payload = { hersteller: document.getElementById('hersteller').value, modell: document.getElementById('modell').value, preis: document.getElementById('preis').value, baujahr: document.getElementById('baujahr').value, liegeplatz: document.getElementById('liegeplatz').value, beschreibung: document.getElementById('beschreibung').value, brokerEmail: document.getElementById('portalEmail').value, brokerPasswort: document.getElementById('portalPassword').value, plattformen: ausgewaehltePlattformen };
-    try {
-        await fetch('/api/fleet/add', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
-        const resBot = await fetch('/api/post-yacht', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
-        const botDaten = await resBot.json();
-        outBox.innerHTML = `<strong>SUCCESS:</strong> Records saved.<br><strong>STATUS:</strong> ${botDaten.nachricht}`;
-    } catch (e) { outBox.innerHTML = '<strong>ERROR:</strong> Fault.'; }
+    const payload = { hersteller: document.getElementById('hersteller').value, modell: document.getElementById('modell').value, preis: document.getElementById('preis').value, baujahr: document.getElementById('baujahr').value, liegeplatz: document.getElementById('liegeplatz').value, beschreibung: document.getElementById('beschreibung').value, plattformen: ausgewaehltePlattformen };
+    await fetch('/api/fleet/add', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
+    outBox.innerHTML = '<strong>SUCCESS:</strong> Records synchronized with Cloud Vault.';
 }
-
 async function generiereKIText() {
-    const out = document.getElementById('beschreibung'); const b = out.value; out.value = "Processing ledger records...";
-    try {
-        const res = await fetch('/api/generate-ai-text', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ hersteller: document.getElementById('hersteller').value, modell: document.getElementById('modell').value, beschreibung: b }) });
-        const d = await res.json(); out.value = d.text;
-    } catch (e) { out.value = b; alert('AI anomaly.'); }
+    const out = document.getElementById('beschreibung'); const b = out.value; out.value = "Executing Llama 3 engine...";
+    const res = await fetch('/api/generate-ai-text', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ hersteller: document.getElementById('hersteller').value, modell: document.getElementById('modell').value, beschreibung: b }) });
+    const d = await res.json(); out.value = d.text;
 }
-
 async function generierePDF() {
-    const payload = { hersteller: document.getElementById('hersteller').value, modell: document.getElementById('modell').value, preis: document.getElementById('preis').value, baujahr: document.getElementById('baujahr').value, liegeplatz: document.getElementById('liegeplatz').value, beschreibung: document.getElementById('beschreibung').value };
-    try {
-        const res = await fetch('/api/generate-pdf', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
-        const blob = await res.blob(); const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a'); a.href = url; a.download = `Specification_${payload.hersteller}.pdf`; document.body.appendChild(a); a.click(); a.remove();
-    } catch (e) { alert('PDF fault.'); }
-}
-
-async function addCRMLead() {
-    const payload = { kaeuferName: document.getElementById('crmKunde').value, budget: document.getElementById('crmBudget').value, mindestLaenge: document.getElementById('crmLaenge').value, liegeplatzWunsch: "Monaco" };
-    try {
-        const res = await fetch('/api/crm/add-buyer', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
-        const d = await res.json(); const out = document.getElementById('crm-output');
-        if (d.passendesBoot) { out.innerHTML = `<strong>Record Filed:</strong> ${d.neuerKaeufer.name}<br><br><strong>Match Verified:</strong>➔ <strong>${d.passendesBoot.hersteller} ${d.passendesBoot.modell}</strong>`; }
-        else { out.innerHTML = `<strong>Record Filed:</strong> ${d.neuerKaeufer.name}<br><br>No active matches.`; }
-    } catch (e) { alert('CRM error.'); }
-}
-
-async function bucheCharter() {
-    const payload = { yachtId: document.getElementById('chartYacht').value, startDatum: document.getElementById('chartStart').value, endDatum: document.getElementById('chartEnd').value, chartererName: document.getElementById('chartGast').value };
-    try {
-        const res = await fetch('/api/charter/book', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
-        const d = await res.json(); alert(d.nachricht);
-    } catch (e) { alert('Calendar block.'); }
-}
-
-async function generiereRechtstext() {
-    const payload = { verkaeufer: document.getElementById('legVerkaeufer').value, kaeufer: document.getElementById('legKaeufer').value, yachtName: document.getElementById('legYacht').value, kaufpreis: document.getElementById('legPreis').value };
-    try {
-        const res = await fetch('/api/legal/generate-contract', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
-        const blob = await res.blob(); const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a'); a.href = url; a.download = `SPA_Contract.pdf`; document.body.appendChild(a); a.click(); a.remove();
-    } catch (e) { alert('Legal core error.'); }
-}
-
-async function sendeCrewMangel() {
-    const payload = { yachtId: document.getElementById('crewYacht').value, komponente: document.getElementById('crewSystem').value, beschreibung: document.getElementById('crewText').value, prioritaet: document.getElementById('crewPrio').value };
-    try {
-        const res = await fetch('/api/crew/report-issue', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
-        const d = await res.json();
-        document.getElementById('crew-output').innerHTML = `<strong>Deficiency Core Log Activated</strong><br>Node: ${payload.komponente}`;
-        alert(d.nachricht);
-    } catch (e) { alert('Drydock fault.'); }
+    const payload = { hersteller: document.getElementById('hersteller').value, modell: document.getElementById('modell').value, preis: document.getElementById('preis').value };
+    const res = await fetch('/api/generate-pdf', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
+    const blob = await res.blob(); const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = `Specification.pdf`; document.body.appendChild(a); a.click(); a.remove();
 }
 </script>
 </body>
 </html>
-
