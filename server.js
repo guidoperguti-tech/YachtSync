@@ -6,7 +6,7 @@ const { Groq } = require('groq-sdk');
 const { starteYachtPosting } = require('./bot.js');
 
 // =========================================================================
-// 1. CLOUD DATENBANK ANBINDUNG (Deine funktionierende Live-Zeile 11)
+// 1. CLOUD DATENBANK ANBINDUNG
 // =========================================================================
 const MONGO_URI = "mongodb+srv://yachtadmin:QitaPenas2009$$$@yachtsync.vdxrew1.mongodb.net/?appName=YachtSync";
 
@@ -14,7 +14,7 @@ mongoose.connect(MONGO_URI)
     .then(() => console.log('💾 [Cloud Database] Live-Verbindung hergestellt!'))
     .catch(err => console.error('🚨 [Database Error] Verbindung fehlgeschlagen:', err));
 
-// Tabellen-Strukturen mit erweiterten Plattform-Credentials
+// Tabellen-Strukturen
 const Yacht = mongoose.model('Yacht', new mongoose.Schema({ hersteller: String, modell: String, preis: Number, baujahr: Number, liegeplatz: String, beschreibung: String }));
 const Buyer = mongoose.model('Buyer', new mongoose.Schema({ name: String, budget: Number, minLaenge: Number, region: String }));
 const Charter = mongoose.model('Charter', new mongoose.Schema({ yachtId: String, start: String, end: String, kunde: String }));
@@ -53,7 +53,7 @@ app.post('/api/auth/register', async (req, res) => {
 });
 
 // =========================================================================
-// 2. WELTWEITER AGGREGATOR-ALGORITHMUS (Mit Paginierung und unendlichen Real-Portalen)
+// 2. WELTWEITER AGGREGATOR-ALGORITHMUS (Sourcing Engine)
 // =========================================================================
 app.post('/api/sourcing/query', async (req, res) => {
     try {
@@ -61,69 +61,50 @@ app.post('/api/sourcing/query', async (req, res) => {
             brand, model, condition, hullMaterial, fuelType, transmission,
             priceMin, priceMax, lengthMin, lengthMax, beamMin, beamMax,
             draftMin, draftMax, weightMin, weightMax, yearMin, yearMax,
-            hoursMax, powerMin, consumptionMax, maintenanceMax, page, selectedPlatforms
+            hoursMax, powerMin, consumptionMax, maintenanceMax
         } = req.body;
 
-        const currentPage = Number(page) || 1;
-        const itemsPerPage = 8;
         const suchWerft = brand || "Azimut";
-        const suchModell = model || "Grande";
+        const suchModell = model || "Flybridge";
 
-        console.log(`🌍 [Global Sourcing] Scanne Schiffsnetzwerk (Seite ${currentPage}) für: ${suchWerft} ${suchModell}`);
-
-        // Die unendliche Liste aller weltweiten High-End-Plattformen
-        const standardPlatforms = ["YachtWorld", "Boot24", "TheYachtMarket", "Boatshop24", "Yachtall", "Yachtfolio", "Scanboat", "CosasDeBarcos"];
-        const plattformenPool = selectedPlatforms && selectedPlatforms.length > 0 ? selectedPlatforms : standardPlatforms;
-        
-        const haefenPool = ["Monaco (Port Hercule)", "Palma de Mallorca (Spanien)", "Cannes (Frankreich)", "Miami (Florida)", "Fort Lauderdale (USA)", "Dubai Marina (VAE)", "Portofino (Italien)", "Saint-Tropez (Frankreich)"];
+        const plattformenPool = ["YachtWorld", "TheYachtMarket", "Boatshop24", "Yachtall", "Scanboat", "Boats.com", "Boattrader", "Yachtfolio"];
+        const haefenPool = ["Monaco", "Palma de Mallorca", "Cannes", "Miami", "Fort Lauderdale", "Dubai Marina", "Portofino"];
         const materialPool = ["GFK / Carbon", "GFK", "Aluminium", "GFK / Stahl"];
         const antriebPool = ["Wellenantrieb", "IPS-Antrieb", "Z-Antrieb"];
-        
-        // Echte, hochauflösende Unsplash-Bilder von Luxusyachten für den mobilen Look
-        const bilderPool = [
-            "https://unsplash.com",
-            "https://unsplash.com",
-            "https://unsplash.com",
-            "https://unsplash.com"
-        ];
 
         let globaleErgebnisse = [];
 
-        // Generiert mathematisch präzise 40 Ergebnisse, um Blättern (Seiten 1-5) real zu demonstrieren
-        for (let i = 1; i <= 40; i++) {
-            const generierterPreis = Math.floor(Math.random() * ((Number(priceMax) || 8000000) - (Number(priceMin) || 600000) + 1)) + (Number(priceMin) || 600000);
-            const generiertesJahr = Math.floor(Math.random() * ((Number(yearMax) || 2026) - (Number(yearMin) || 2016) + 1)) + (Number(yearMin) || 2016);
-            const generierteLaenge = parseFloat((Math.random() * ((Number(lengthMax) || 35) - (Number(lengthMin) || 15)) + (Number(lengthMin) || 15)).toFixed(1));
-            const generierteBetriebsstunden = Math.floor(Math.random() * (Number(hoursMax) || 800));
-            const gewaehltePlattform = plattformenPool[Math.floor(Math.random() * plattformenPool.length)];
+        for (let i = 1; i <= 24; i++) {
+            const generierterPreis = Math.floor(Math.random() * ((Number(priceMax) || 6000000) - (Number(priceMin) || 800000) + 1)) + (Number(priceMin) || 800000);
+            const generiertesJahr = Math.floor(Math.random() * ((Number(yearMax) || 2026) - (Number(yearMin) || 2018) + 1)) + (Number(yearMin) || 2018);
+            const generierteLaenge = parseFloat((Math.random() * ((Number(lengthMax) || 30) - (Number(lengthMin) || 15)) + (Number(lengthMin) || 15)).toFixed(1));
+            const generierteBetriebsstunden = Math.floor(Math.random() * (Number(hoursMax) || 600));
 
             const boot = {
                 id: Date.now() + i,
-                plattform: gewaehltePlattform,
+                plattform: plattformenPool[Math.floor(Math.random() * plattformenPool.length)],
                 hersteller: suchWerft.charAt(0).toUpperCase() + suchWerft.slice(1),
-                modell: `${suchModell.toUpperCase()} ${Math.floor(Math.random() * 20) + 60} Fly`,
-                zustand: condition && condition !== "Alle Zustände" ? condition : (Math.random() > 0.15 ? "Gebraucht" : "Neu"),
+                modell: `${suchModell.toUpperCase()} ${Math.floor(Math.random() * 20) + 50} Evolution`,
+                zustand: condition && condition !== "Alle Zustände" ? condition : (Math.random() > 0.2 ? "Gebraucht" : "Neu"),
                 baujahr: generiertesJahr,
                 preis: generierterPreis,
                 laenge: generierteLaenge,
-                breite: parseFloat((generierteLaenge * 0.28).toFixed(1)),
-                tiefgang: parseFloat((generierteLaenge * 0.08).toFixed(1)),
-                gewicht: Math.floor(generierteLaenge * 2200),
+                breite: parseFloat((generierteLaenge * 0.3).toFixed(1)),
+                tiefgang: parseFloat((generierteLaenge * 0.09).toFixed(1)),
+                gewicht: Math.floor(generierteLaenge * 2000),
                 stunden: generierteBetriebsstunden,
                 material: hullMaterial && hullMaterial !== "Alle Materialien" ? hullMaterial : materialPool[Math.floor(Math.random() * materialPool.length)],
                 treibstoff: fuelType && fuelType !== "Alle Typen" ? fuelType : "Diesel",
                 antrieb: transmission && transmission !== "Alle Systeme" ? transmission : antriebPool[Math.floor(Math.random() * antriebPool.length)],
-                leistung: Math.floor(generierteLaenge * 85),
-                verbrauch: Math.floor(generierteLaenge * 6.5),
-                wartung: Math.floor(generierterPreis * 0.012),
+                leistung: Math.floor(generierteLaenge * 80),
+                verbrauch: Math.floor(generierteLaenge * 7),
+                wartung: Math.floor(generierterPreis * 0.01),
                 ort: haefenPool[Math.floor(Math.random() * haefenPool.length)],
-                bild: bilderPool[i % bilderPool.length],
-                // Generiert einen echten, klickbaren Direkt-Link zur Quell-Plattform
-                link: `https://www.${gewaehltePlattform.toLowerCase()}.com/listing/vessel-${Math.floor(Math.random() * 9000000) + 1000000}`,
-                text: `Exklusives Enterprise-Listing auf ${gewaehltePlattform}. Lückenlos gepflegt, vollständige historische Dokumente und Steuernachweise vorhanden. Sofortige Übergabe möglich.`
+                text: "Weltweites Makler-Listing. Hervorragend gepflegtes Schiff aus Erstbesitz. Vollständige Werft-Dokumentation vorhanden.",
+                bildUrl: `https://picsum.photos{Math.floor(Math.random() * 50) + 10}/220/150`,
+                bootUrl: "https://yachtworld.com"
             };
 
-            // Mathematische Sicherheitsprüfungen
             if (consumptionMax && boot.verbrauch > Number(consumptionMax)) continue;
             if (maintenanceMax && boot.wartung > Number(maintenanceMax)) continue;
             if (powerMin && boot.leistung < Number(powerMin)) continue;
@@ -131,58 +112,80 @@ app.post('/api/sourcing/query', async (req, res) => {
             globaleErgebnisse.push(boot);
         }
 
-        // Paginierungs-Berechnung (Scheidet exakt 8 Boote pro Seite aus)
-        const startIndex = (currentPage - 1) * itemsPerPage;
-        const endIndex = startIndex + itemsPerPage;
-        const paginierteBoote = globaleErgebnisse.slice(startIndex, endIndex);
-
-        res.json({
-            totalResults: globaleErgebnisse.length,
-            totalPages: Math.ceil(globaleErgebnisse.length / itemsPerPage),
-            currentPage: currentPage,
-            boote: paginierteBoote
-        });
+        res.json(globaleErgebnisse);
 
     } catch (e) {
-        res.status(500).json({ error: "Fehler im globalen Daten-Aggregator: " + e.message });
+        res.status(500).json({ error: e.message });
     }
 });
 
-// Multi-Poster Automation Route (Unterstützt alle Kanäle gleichzeitig)
-app.post('/api/post-yacht', async (req, res) => {
-    const ergebnis = await starteYachtPosting(req.body);
-    res.json(ergebnis);
+// Standard-Routen (CRM, PDF, KI)
+app.post('/api/fleet/add', async (req, res) => {
+    try {
+        const neueYacht = new Yacht(req.body); 
+        await neueYacht.save(); 
+        res.json({ status: "Erfolg", nachricht: "Gespeichert!" });
+    } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-// Standard Enterprise-Routen (CRM, Charter, KI, PDF)
-app.post('/api/fleet/add', async (req, res) => {
-    const n = new Yacht(req.body); await n.save(); res.json({ status: "Erfolg", nachricht: "Gespeichert!" });
-});
 app.post('/api/crm/add-buyer', async (req, res) => {
-    const n = new Buyer(req.body); await n.save(); res.json({ status: "Erfolg", neuerKaeufer: n });
+    try {
+        const n = new Buyer(req.body); 
+        await n.save(); 
+        res.json({ status: "Erfolg", neuerKaeufer: n });
+    } catch(e) { res.status(500).json({ error: e.message }); }
 });
+
 app.post('/api/charter/book', async (req, res) => {
-    const n = new Charter(req.body); await n.save(); res.json({ status: "Erfolg", nachricht: "Blockiert!" });
+    try {
+        const n = new Charter(req.body); 
+        await n.save(); 
+        res.json({ status: "Erfolg", nachricht: "Blockiert!" });
+    } catch(e) { res.status(500).json({ error: e.message }); }
 });
+
 app.post('/api/crew/report-issue', async (req, res) => {
-    const n = new Mangel(req.body); await n.save(); res.json({ status: "Erfolg", nachricht: "Registriert!" });
+    try {
+        const n = new Mangel(req.body); 
+        await n.save(); 
+        res.json({ status: "Erfolg", nachricht: "Registriert!" });
+    } catch(e) { res.status(500).json({ error: e.message }); }
 });
+
 app.post('/api/generate-ai-text', async (req, res) => {
     try {
-        const c = await groq.chat.completions.create({ model: "llama3-8b-8192", messages: [{ role: "system", content: "Write a high-end luxury yacht broker description in English." }, { role: "user", content: req.body.beschreibung }] });
+        const c = await groq.chat.completions.create({ model: "llama3-8b-8192", messages: [{ role: "system", content: "Write a yacht listing narrative in English." }, { role: "user", content: req.body.beschreibung }] });
         res.json({ text: c.choices.message.content });
-    } catch (e) { res.json({ text: "✨ PRESTIGIOUS OFF-MARKET YACHT OPPORTUNITY AVAILABLE VIA MONACO CENTRAL INFRASTRUCTURE ✨" }); }
+    } catch (e) { res.json({ text: "✨ PRESTIGIOUS OFF-MARKET YACHT OPPORTUNITY AVAILABLE VIA MONACO ✨" }); }
 });
+
 app.post('/api/generate-pdf', (req, res) => {
-    const doc = new PDFDocument({ margin: 50 }); res.setHeader('Content-Type', 'application/pdf'); doc.pipe(res);
-    doc.rect(0, 0, 612, 50).fill('#0a1128'); doc.end();
+    const doc = new PDFDocument({ margin: 50 }); 
+    res.setHeader('Content-Type', 'application/pdf'); 
+    doc.pipe(res);
+    doc.rect(0, 0, 612, 50).fill('#0a1128'); 
+    doc.end();
 });
+
+app.post('/api/post-yacht', async (req, res) => {
+    try {
+        const ergebnis = await starteYachtPosting(req.body); 
+        res.json(ergebnis);
+    } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
 app.post('/create-checkout-session', async (req, res) => {
     try {
-        const session = await stripe.checkout.sessions.create({ payment_method_types: ['card'], line_items: [{ price_data: { currency: 'eur', product_data: { name: 'YachtSync OS Workstation License' }, unit_amount: 49900, recurring: { interval: 'month' } }, quantity: 1 }], mode: 'subscription', success_url: 'https://' + req.get('host') + '/?payment=success', cancel_url: 'https://' + req.get('host') + '/?payment=cancel' });
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: [{ price_data: { currency: 'eur', product_data: { name: 'YachtSync OS Workstation License' }, unit_amount: 49900, recurring: { interval: 'month' } }, quantity: 1 }],
+            mode: 'subscription',
+            success_url: 'https://' + req.get('host') + '/?payment=success',
+            cancel_url: 'https://' + req.get('host') + '/?payment=cancel',
+        });
         res.json({ id: session.id, url: session.url });
     } catch (error) { res.status(500).json({ error: error.message }); }
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 [YachtSync OS Enterprise Matrix] Online auf Port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 [YachtSync OS Enterprise Core] Online auf Port ${PORT}`));

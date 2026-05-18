@@ -17,89 +17,73 @@
         }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg-canvas); color: var(--navy-dark); margin: 0; display: flex; height: 100vh; overflow: hidden; -webkit-font-smoothing: antialiased; }
         
-        /* Sidebar layout styling */
-        .sidebar { width: 250px; background: var(--navy-dark); padding: 32px 24px; display: flex; flex-direction: column; border-right: 1px solid var(--border-fine); flex-shrink: 0; }
-        .sidebar-brand { font-family: "Didot", "Times New Roman", serif; font-size: 20px; font-weight: 500; color: var(--pure-white); padding-bottom: 24px; border-bottom: 1px solid #1e293b; margin-bottom: 24px; letter-spacing: 0.5px; }
-        .nav-link { display: block; padding: 12px 0; color: #94a3b8; text-decoration: none; font-size: 13px; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; cursor: pointer; transition: all 0.2s ease; }
-        .nav-link:hover, .nav-link.active { color: var(--pure-white); transform: translateX(2px); }
-        .sidebar-footer { margin-top: auto; border-top: 1px solid #1e293b; padding-top: 16px; font-size: 11px; color: #64748b; }
-        .legal-link { color: #94a3b8; text-decoration: none; cursor: pointer; display: inline-block; margin-right: 12px; transition: color 0.15s ease; }
+        /* Layout Sidebar Architecture */
+        .sidebar { width: 250px; background: var(--navy-dark); padding: 32px 24px; display: flex; flex-direction: column; border-right: 1px solid var(--border-fine); transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; z-index: 100; }
+        .sidebar.collapsed { width: 0px; padding: 32px 0; overflow: hidden; border-right: none; }
+        
+        .sidebar-brand { font-family: "Didot", serif; font-size: 20px; font-weight: 500; color: var(--pure-white); padding-bottom: 24px; border-bottom: 1px solid #1e293b; margin-bottom: 24px; letter-spacing: 0.5px; white-space: nowrap; }
+        .nav-link { display: block; padding: 12px 0; color: #94a3b8; text-decoration: none; font-size: 13px; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; cursor: pointer; transition: all 0.2s ease; white-space: nowrap; }
+        .nav-link:hover, .nav-link.active { color: var(--pure-white); padding-left: 4px; }
+        .sidebar-footer { margin-top: auto; border-top: 1px solid #1e293b; padding-top: 16px; font-size: 11px; color: #64748b; white-space: nowrap; }
+        .legal-link { color: #94a3b8; text-decoration: none; cursor: pointer; display: inline-block; margin-right: 12px; }
         .legal-link:hover { color: var(--pure-white); }
         
-        /* Core UI Layout Frame */
+        /* Smooth Panel Toggle Handle Button */
+        .toggle-filter-btn { background: var(--navy-dark); color: var(--pure-white); border: none; padding: 12px 16px; font-size: 12px; cursor: pointer; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; transition: background 0.2s ease; display: flex; align-items: center; justify-content: center; }
+        .toggle-filter-btn:hover { background: var(--action-blue); }
+
         .app-container { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        .top-navbar { height: 70px; background: var(--pure-white); border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; flex-shrink: 0; }
+        .top-navbar { height: 70px; background: var(--pure-white); border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; }
         .top-navbar h1 { font-family: "Didot", serif; font-size: 22px; font-weight: 400; margin: 0; }
         .navbar-controls { display: flex; align-items: center; gap: 24px; }
         .system-badge { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--slate-gray); border-bottom: 1px solid #cbd5e1; padding-bottom: 2px; }
-        .btn-corporate-auth { background: transparent; border: 1px solid var(--navy-dark); color: var(--navy-dark); padding: 8px 18px; font-size: 11px; font-weight: 600; text-transform: uppercase; cursor: pointer; transition: all 0.2s ease; }
-        .btn-corporate-auth:hover { background: var(--navy-dark); color: var(--pure-white); }
-        .btn-corporate-auth.active { background: #e2f0d9; border-color: #a9d08e; color: #385723; cursor: default; }
+        .btn-corporate-auth { background: transparent; border: 1px solid var(--navy-dark); color: var(--navy-dark); padding: 8px 18px; font-size: 11px; font-weight: 600; text-transform: uppercase; cursor: pointer; }
 
         .workspace { flex: 1; padding: 40px; overflow-y: auto; }
         .app-view { display: none; }
         .app-view.active { display: block; }
-        .grid-layout { display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; max-width: 1200px; }
-        .panel { background: var(--pure-white); border: 1px solid #e2e8f0; padding: 32px; margin-bottom: 24px; transition: all 0.2s ease; }
-        .panel:hover { border-color: #cbd5e1; }
-        .panel-title { font-family: "Didot", serif; font-size: 16px; font-weight: 600; margin-top: 0; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; }
         
-        /* Input & Controls Layout */
+        /* Elegant Forms and Layout panels */
+        .grid-layout { display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; max-width: 1200px; }
+        .panel { background: var(--pure-white); border: 1px solid #e2e8f0; padding: 32px; margin-bottom: 24px; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .panel:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(0,0,0,0.03); }
+        .panel-title { font-family: "Didot", serif; font-size: 16px; font-weight: 600; margin-top: 0; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; }
         .form-group { margin-bottom: 20px; }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         label { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; margin-bottom: 8px; color: var(--slate-gray); }
-        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #cbd5e1; background: var(--pure-white); font-size: 14px; box-sizing: border-box; transition: border-color 0.15s ease; }
-        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--navy-dark); }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #cbd5e1; background: var(--pure-white); font-size: 14px; box-sizing: border-box; }
         
-        .mock-notice { font-size: 11px; font-weight: 600; text-transform: uppercase; color: #b45309; background: #fffbeb; border: 1px solid #fde68a; padding: 6px 12px; margin-bottom: 16px; display: inline-block; }
-        .btn-action { background: var(--navy-dark); color: var(--pure-white); border: none; padding: 14px 20px; font-size: 13px; font-weight: 600; text-transform: uppercase; cursor: pointer; width: 100%; margin-top: 12px; transition: opacity 0.15s ease; }
-        .btn-action:hover { opacity: 0.9; }
+        .btn-action { background: var(--navy-dark); color: var(--pure-white); border: none; padding: 14px 20px; font-size: 13px; font-weight: 600; text-transform: uppercase; cursor: pointer; width: 100%; margin-top: 12px; }
         .btn-secondary { background: transparent; border: 1px solid var(--navy-dark); color: var(--navy-dark); margin-bottom: 20px; }
         .btn-secondary:hover { background: var(--navy-dark); color: var(--pure-white); }
-        
-        /* =========================================================================
-           ERWEITERTES MOBILE.DE DESIGN MIT DIE KLAPPBAR-FUNKTION
-           ========================================================================= */
-        .sourcing-view-wrapper { display: flex; flex-direction: column; height: 100%; }
-        .sourcing-action-bar { display: flex; margin-bottom: 24px; }
-        .btn-toggle-filter { background: #cbd5e1; color: var(--navy-dark); border: none; padding: 10px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; cursor: pointer; letter-spacing: 0.5px; transition: background 0.15s ease; }
-        .btn-toggle-filter:hover { background: #94a3b8; }
+        .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .checkbox-item { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 500; }
+        .checkbox-item input { width: auto; }
+        .output-box { margin-top: 32px; padding: 20px; font-size: 13px; display: none; background: var(--pure-white); border: 1px solid #cbd5e1; }
 
-        .sourcing-container { display: flex; gap: 32px; max-width: 1400px; align-items: flex-start; position: relative; }
+        /* Sourcing Engine (mobile.de Architecture) */
+        .sourcing-container { display: grid; grid-template-columns: 300px 1fr; gap: 32px; max-width: 1400px; transition: grid-template-columns 0.3s ease; }
+        .sourcing-container.expanded { grid-template-columns: 0px 1fr; gap: 0; }
+        .search-filter-sidebar { background: var(--pure-white); border: 1px solid #e2e8f0; padding: 24px; box-sizing: border-box; transition: opacity 0.2s ease; transform-origin: left; }
+        .sourcing-container.expanded .search-filter-sidebar { opacity: 0; visibility: hidden; pointer-events: none; }
         
-        /* Die klappbare Suchmaske */
-        .search-filter-sidebar { width: 300px; background: var(--pure-white); border: 1px solid #e2e8f0; padding: 24px; box-sizing: border-box; flex-shrink: 0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; max-height: 1200px; }
-        .search-filter-sidebar.collapsed { width: 0; padding: 0; border: none; opacity: 0; pointer-events: none; margin-right: -32px; }
+        .search-results-feed { display: grid; grid-template-columns: 1fr; gap: 24px; }
+        .boat-result-card { display: flex; background: var(--pure-white); border: 1px solid #e2e8f0; position: relative; transition: all 0.2s ease; }
+        .boat-result-card:hover { border-color: var(--slate-gray); box-shadow: 0 8px 20px rgba(0,0,0,0.04); }
+        .boat-img { width: 240px; height: auto; object-fit: cover; background: #e2e8f0; }
+        .boat-details-pane { flex: 1; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; }
+        .boat-title-line { font-size: 19px; font-weight: 700; margin: 0; color: var(--navy-dark); font-family: "Didot", serif; }
+        .boat-meta-line { font-size: 12px; color: var(--slate-gray); margin-top: 6px; letter-spacing: 0.3px; }
+        .boat-price-tag { font-size: 22px; font-weight: 800; color: var(--mobile-orange); margin: 0; font-family: -apple-system, sans-serif; }
+        .platform-origin-badge { position: absolute; top: 16px; right: 16px; font-size: 10px; font-weight: 700; text-transform: uppercase; background: #f1f5f9; border: 1px solid #cbd5e1; padding: 4px 10px; letter-spacing: 0.5px; }
         
-        .filter-section-title { font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; color: var(--navy-dark); border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; }
-        
-        /* Ergebnisse und Pagination */
-        .search-results-pane-wrapper { flex: 1; display: flex; flex-direction: column; gap: 24px; }
-        .search-results-feed { display: flex; flex-direction: column; gap: 20px; }
-        
-        /* Ergebnis-Karten */
-        .boat-result-card { display: flex; background: var(--pure-white); border: 1px solid #e2e8f0; position: relative; transition: border-color 0.15s ease; }
-        .boat-result-card:hover { border-color: var(--slate-gray); }
-        .boat-image-frame { width: 240px; height: 180px; overflow: hidden; flex-shrink: 0; background: #cbd5e1; }
-        .boat-image-frame img { width: 100%; height: 100%; object-fit: crop; transition: transform 0.3s ease; }
-        .boat-result-card:hover .boat-image-frame img { transform: scale(1.03); }
-        
-        .boat-details-pane { flex: 1; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; }
-        .boat-title-line { font-size: 18px; font-weight: 700; margin: 0; color: var(--navy-dark); }
-        .boat-meta-line { font-size: 12px; color: var(--slate-gray); margin-top: 4px; line-height: 1.4; }
-        .boat-price-tag { font-size: 20px; font-weight: 800; color: var(--mobile-orange); margin: 0; text-align: right; }
-        .platform-origin-badge { position: absolute; top: 12px; right: 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; background: #f1f5f9; border: 1px solid #cbd5e1; padding: 4px 8px; }
+        /* Pagination Framework Look */
+        .pagination-container { display: flex; justify-content: center; gap: 8px; margin-top: 32px; padding: 16px 0; }
+        .page-node { padding: 10px 16px; border: 1px solid #cbd5e1; background: var(--pure-white); color: var(--navy-dark); font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s ease; }
+        .page-node:hover, .page-node.active { background: var(--navy-dark); color: var(--pure-white); border-color: var(--navy-dark); }
 
-        /* Edle Pagination im mobile.de-Stil */
-        .pagination-container { display: flex; justify-content: center; gap: 8px; margin-top: 16px; padding: 20px 0; }
-        .pagination-btn { background: var(--pure-white); border: 1px solid #cbd5e1; color: var(--navy-dark); padding: 8px 14px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s ease; }
-        .pagination-btn:hover, .pagination-btn.active { border-color: var(--navy-dark); background: var(--navy-dark); color: var(--pure-white); }
-
-        /* Auth Frame Elements */
         .auth-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 17, 40, 0.4); z-index: 5000; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
         .auth-modal { background: var(--pure-white); border: 1px solid var(--navy-dark); width: 100%; max-width: 400px; padding: 40px; box-sizing: border-box; }
-        .auth-modal h3 { font-family: "Didot", serif; font-size: 22px; margin-top: 0; margin-bottom: 24px; text-align: center; }
-        .close-modal { float: right; cursor: pointer; font-size: 18px; color: var(--slate-gray); margin-top: -20px; margin-right: -10px; }
         .legal-content-box { max-width: 800px; background: var(--pure-white); border: 1px solid #e2e8f0; padding: 40px; line-height: 1.6; font-size: 14px; color: #334155; }
         .legal-content-box h2 { font-family: "Didot", serif; color: var(--navy-dark); font-size: 20px; margin-top: 24px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }
     </style>
@@ -109,8 +93,8 @@
     <!-- ANMELDE MODAL OVERLAY -->
     <div id="authOverlay" class="auth-overlay">
         <div class="auth-modal">
-            <span class="close-modal" onclick="toggleAuthModal()">&#10005;</span>
-            <h3 id="modalTitle">Broker Registration</h3>
+            <span style="float:right; cursor:pointer;" onclick="toggleAuthModal()">&#10005;</span>
+            <h3 style="font-family:'Didot',serif; text-align:center; margin-bottom:24px;">Broker Registration</h3>
             <div id="authStep1">
                 <div class="form-group"><label>Corporate E-Mail</label><input type="email" id="authEmail" placeholder="name@agency.com"></div>
                 <div class="form-group"><label>Secure Password</label><input type="password" id="authPassword" placeholder="••••••••••••"></div>
@@ -124,8 +108,8 @@
         </div>
     </div>
 
-    <!-- SIDEBAR CONTROL PANEL -->
-    <div class="sidebar">
+    <!-- SIDEBAR CONTROL MATRIX -->
+    <div id="sidebarMenu" class="sidebar">
         <div class="sidebar-brand">YACHTSYNC OS</div>
         <div class="nav-link active" onclick="switchTab('fleet-view', this)">Fleet Marketing</div>
         <div class="nav-link" onclick="switchTab('sourcing-view', this)">Global Sourcing (Ankauf)</div>
@@ -133,18 +117,21 @@
         <div class="nav-link" onclick="switchTab('charter-view', this)">Charter Scheduling</div>
         <div class="nav-link" onclick="switchTab('legal-view', this)">Legal Ledger (SPA)</div>
         <div class="nav-link" onclick="switchTab('crew-view', this)">Crew Registry</div>
-        
-        <!-- SIDEBAR FOOTER (BILD 2 FEHLER REPARIERT) -->
         <div class="sidebar-footer">
+            <!-- REPARIERT: Beide Links rufen fehlerfrei die Tabs auf -->
             <span class="legal-link" onclick="switchTab('impressum-view', this)">Impressum</span>
             <span class="legal-link" onclick="switchTab('datenschutz-view', this)">Datenschutz</span>
             <div id="creatorTrigger" style="margin-top: 8px; font-size: 10px; color: #475569; cursor: pointer;" onclick="openCreatorPrompt()">&copy; 2026 YachtSync OS</div>
         </div>
     </div>
 
+    <!-- APPLICATION WRAPPER -->
     <div class="app-container">
         <div class="top-navbar">
-            <h1 id="page-title">Fleet Marketing Operations</h1>
+            <div style="display:flex; align-items:center; gap:20px;">
+                <button class="toggle-filter-btn" onclick="toggleSidebarLayout()">☰ Sidebar</button>
+                <h1 id="page-title">Fleet Marketing Operations</h1>
+            </div>
             <div class="navbar-controls">
                 <div id="systemStatus" class="system-badge">Mode: Sandbox Analytics</div>
                 <button id="authBtn" class="btn-corporate-auth" onclick="toggleAuthModal()">Broker Login / Unlock</button>
@@ -153,7 +140,7 @@
 
         <div class="workspace">
 
-            <!-- TAB 1: FLEET MARKETING -->
+            <!-- TAB 1: MARKETING (ALLE 8 PLATTFORMEN HIER HINTERLEGT) -->
             <div id="fleet-view" class="app-view active">
                 <div class="grid-layout">
                     <div class="panel">
@@ -167,22 +154,36 @@
                         </div>
                         <div class="form-group"><label>Current Port of Registry</label><input type="text" id="liegeplatz" value="Port Hercule, Monaco"></div>
                         
-                        <!-- PORTAL CREDENTIALS FÜR ALLE NEUEN PLATTFORMEN -->
-                        <div class="panel-title" style="margin-top: 32px; border: none; padding: 0;">Multi-Portal Credentials Mapping</div>
-                        <div class="form-row">
-                            <div class="form-group"><label>Global Target Username</label><input type="email" id="portalEmail" value="operations@brokerage.mc"></div>
-                            <div class="form-group"><label>Global Target Password</label><input type="password" id="portalPassword" value="••••••••••••"></div>
+                        <div class="panel-title" style="margin-top: 32px; border:none; padding:0;">distribution network access</div>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item"><input type="checkbox" class="plattform-check" value="YachtWorld" checked> YachtWorld Gateway</div>
+                            <div class="checkbox-item"><input type="checkbox" class="plattform-check" value="TheYachtMarket" checked> TheYachtMarket Core</div>
+                            <div class="checkbox-item"><input type="checkbox" class="plattform-check" value="Boatshop24"> Boatshop24 Ledger</div>
+                            <div class="checkbox-item"><input type="checkbox" class="plattform-check" value="Yachtall"> Yachtall Index</div>
+                            <div class="checkbox-item"><input type="checkbox" class="plattform-check" value="Scanboat"> Scanboat Portal</div>
+                            <div class="checkbox-item"><input type="checkbox" class="plattform-check" value="Boats.com"> Boats.com Global</div>
+                            <div class="checkbox-item"><input type="checkbox" class="plattform-check" value="Boattrader"> Boattrader USA</div>
+                            <div class="checkbox-item"><input type="checkbox" class="plattform-check" value="Yachtfolio"> Yachtfolio B2B Index</div>
                         </div>
                     </div>
                     <div class="panel">
                         <div class="panel-title">Marketing Dossier Engine</div>
+                        <div class="form-group"><label>Dossier Narrative</label><textarea id="beschreibung" rows="4">Pristine condition. One owner. Helipad. Pool.</textarea></div>
+                        <button class="btn-action btn-secondary" onclick="wachePrüfen(validiereUndBerechnePreis)">📊 KI-Preisindikation & Marktwert berechnen</button>
+                        <button class="btn-action btn-secondary" onclick="wachePrüfen(generiereKIText)">🪄 Veredel Narrative with Broker Text Engine</button>
+                        <button class="btn-action" onclick="wachePrüfen(speichereYachtInCloud)">Commit Records & Execute Live Sync</button>
+                        <button class="btn-action btn-secondary" onclick="wachePrüfen(generierePDF)" style="margin-top: 20px;">Generate Print Specification Document</button>
+                    </div>
+                </div>
+                <div id="fleet-output" class="output-box"></div>
+            </div>
+
+            <!-- TAB 2: GLOBAL SOURCING (MOBILE.DE Look mit klappbarer Leiste) -->
+            <div id="sourcing-view" class="app-view">
+                <div style="margin-bottom: 24px; display:flex; gap:16px;">
+                    <button class="toggle-filter-btn" onclick="toggleFilterSidebar()" style="background:#ee5c00;">⚙️ Filter ein-/ausblenden</button>
+                </div>
+                <div class="sourcing-container" id="sourcingContainer">
+                    <div class="search-filter-sidebar">
+                        <div class="filter-section-title">Kern-Spezifikationen</div>
                         
-                        <!-- ALLE NEUEN PLATTFORMEN HIER INTEGRIRT -->
-                        <div class="checkbox-group" style="margin-bottom: 24px;">
-                            <label style="margin-bottom: 12px; display:block;">Active Distribution Matrix</label>
-                            <div class="form-row" style="grid-template-columns: 1fr 1fr; gap: 8px;">
-                                <div class="checkbox-item"><input type="checkbox" class="plattform-check" value="YachtWorld" checked> YachtWorld</div>
-                                <div class="checkbox-item"><input type="checkbox" class="plattform-check" value="TheYachtMarket" checked> TheYachtMarket</div>
-                                <div class="checkbox-item"><input type="checkbox" class="plattform-check" value="Boot24"> Boot24</div>
-                                <div class="checkbox-item"><input type="checkbox" class="plattform-check" value="Boatshop24"> Boatshop24</div>
-                                <div class="checkbox-item"><
