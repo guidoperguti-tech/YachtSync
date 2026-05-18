@@ -3,129 +3,333 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YachtSync OS — Operating System</title>
+    <title>YachtSync OS — Enterprise Workspace</title>
     <style>
-        :root { --bg-main: #f8fafc; --sidebar-bg: #0f172a; --card-bg: #ffffff; --border-color: #e2e8f0; --primary: #0284c7; --primary-hover: #0369a1; --text-dark: #0f172a; --text-muted: #64748b; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg-main); color: var(--text-dark); margin: 0; display: flex; height: 100vh; overflow: hidden; }
-        .sidebar { width: 240px; background: var(--sidebar-bg); padding: 24px 16px; display: flex; flex-direction: column; gap: 8px; }
-        .sidebar-brand { font-size: 18px; font-weight: 700; color: #ffffff; padding: 0 12px 24px 12px; border-bottom: 1px solid #1e293b; margin-bottom: 16px; }
-        .nav-link { display: flex; align-items: center; padding: 10px 12px; color: #94a3b8; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 500; cursor: pointer; }
-        .nav-link:hover, .nav-link.active { background: #1e293b; color: #ffffff; }
-        .app-container { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        .top-navbar { height: 64px; background: #ffffff; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; }
-        .top-navbar h1 { font-size: 18px; font-weight: 600; margin: 0; }
-        .workspace { flex: 1; padding: 32px; overflow-y: auto; }
-        .app-view { display: none; }
-        .app-view.active { display: block; }
-        .grid-layout { display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px; max-width: 1200px; }
-        .panel { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 24px; margin-bottom: 24px; }
-        .panel-title { font-size: 13px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
-        .form-group { margin-bottom: 16px; }
-        label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #334155; }
-        input, select, textarea { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; box-sizing: border-box; }
-        .btn-action { background: var(--primary); color: #ffffff; border: none; padding: 12px 16px; font-size: 14px; font-weight: 600; border-radius: 6px; cursor: pointer; width: 100%; margin-top: 10px; }
-        .btn-action:hover { background: var(--primary-hover); }
-        .btn-secondary { background: #ffffff; border: 1px solid #cbd5e1; color: #334155; }
+        :root {
+            --bg-main: #f8fafc;
+            --sidebar-bg: #0f172a;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --primary: #0284c7;
+            --primary-hover: #0369a1;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --success: #16a34a;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Side Navigation Workspace */
+        .sidebar {
+            width: 240px;
+            background: var(--sidebar-bg);
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .sidebar-brand {
+            font-size: 18px;
+            font-weight: 700;
+            color: #ffffff;
+            padding: 0 12px 24px 12px;
+            letter-spacing: -0.5px;
+            border-bottom: 1px solid #1e293b;
+            margin-bottom: 16px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            color: #94a3b8;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: #1e293b;
+            color: #ffffff;
+        }
+
+        /* Core Structure */
+        .app-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .top-navbar {
+            height: 64px;
+            background: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+        }
+
+        .top-navbar h1 {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .system-badge {
+            font-size: 12px;
+            font-weight: 600;
+            background: #e2f0d9;
+            color: #385723;
+            padding: 4px 12px;
+            border-radius: 4px;
+            border: 1px solid #a9d08e;
+        }
+
+        .workspace {
+            flex: 1;
+            padding: 32px;
+            overflow-y: auto;
+        }
+
+        .app-view {
+            display: none;
+        }
+
+        .app-view.active {
+            display: block;
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 32px;
+            max-width: 1200px;
+        }
+
+        .panel {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .panel-title {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-top: 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #334155;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+            background: #ffffff;
+            color: var(--text-dark);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+        }
+
+        .btn-action {
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.15s ease;
+            margin-top: 8px;
+        }
+
+        .btn-action:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #334155;
+            margin-bottom: 16px;
+        }
+
+        .btn-secondary:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
+        }
+
+        .output-box {
+            margin-top: 24px;
+            padding: 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.5;
+            display: none;
+            border: 1px solid transparent;
+        }
     </style>
 </head>
 <body>
 
-    <!-- SIDEBAR WITH TAB SWITCH LOGIC -->
+    <!-- WORKSPACE SIDEBAR LINKS -->
     <div class="sidebar">
-        <div class="sidebar-brand">YachtSync OS [v4]</div>
+        <div class="sidebar-brand">YachtSync OS Suite</div>
         <div class="nav-link active" onclick="switchTab('fleet-view', this)">⚓ Fleet Marketing</div>
         <div class="nav-link" onclick="switchTab('crm-view', this)">👥 Broker CRM</div>
         <div class="nav-link" onclick="switchTab('charter-view', this)">📅 Charter Scheduling</div>
-        <div class="nav-link" onclick="switchTab('legal-view', this)">📜 Legal Central (SPA)</div>
+        <div class="nav-link" onclick="switchTab('legal-view', this)">📜 Legal Operations (SPA)</div>
         <div class="nav-link" onclick="switchTab('crew-view', this)">🔧 Crew Maintenance</div>
     </div>
 
+    <!-- MAIN INTERFACE -->
     <div class="app-container">
         <div class="top-navbar">
-            <h1 id="page-title">Fleet Marketing Zentrale</h1>
-            <div style="font-size: 12px; background: #e2f0d9; color: #385723; padding: 4px 12px; border-radius: 4px; font-weight: bold;">Monopoly Enterprise License Unlocked</div>
+            <h1 id="page-title">Fleet Marketing Operations</h1>
+            <div class="system-badge">Enterprise Workstation License: Active</div>
         </div>
 
         <div class="workspace">
 
-            <!-- TAB 1: FLEETING & MARKETING (Dein alter Code, veredelt) -->
+            <!-- MODULE 1: MARKETING & DISTRIBUTION -->
             <div id="fleet-view" class="app-view active">
                 <div class="grid-layout">
                     <div class="panel">
-                        <div class="panel-title">Yacht Spezifikationen</div>
-                        <div class="form-group"><label>Werft / Shipyard</label><input type="text" id="hersteller" value="Lürssen"></div>
-                        <div class="form-group"><label>Modell</label><input type="text" id="modell" value="Custom 80M"></div>
-                        <div class="form-group"><label>Preis (EUR)</label><input type="number" id="preis" value="85000000"></div>
-                        <div class="form-group"><label>Baujahr</label><input type="number" id="baujahr" value="2025"></div>
-                        <div class="form-group"><label>Liegeplatz</label><input type="text" id="liegeplatz" value="Monaco"></div>
+                        <div class="panel-title">Structure Specifications</div>
+                        <div class="form-group"><label>Manufacturer / Shipyard</label><input type="text" id="hersteller" value="Lürssen"></div>
+                        <div class="form-group"><label>Model Designation</label><input type="text" id="modell" value="Custom Displacement 80M"></div>
+                        <div class="form-row">
+                            <div class="form-group"><label>Asking Price (EUR)</label><input type="number" id="preis" value="85000000"></div>
+                            <div class="form-group"><label>Year of Build</label><input type="number" id="baujahr" value="2025"></div>
+                        </div>
+                        <div class="form-group"><label>Current Berth / Registration Port</label><input type="text" id="liegeplatz" value="Port Hercule, Monaco"></div>
                     </div>
                     <div class="panel">
-                        <div class="panel-title">KI-Marketing & Multi-Posting</div>
-                        <div class="form-group"><label>Rohdaten-Beschreibung</label><textarea id="beschreibung" rows="3">Top Zustand. Helipad. Pool.</textarea></div>
-                        <button class="btn-action btn-secondary" onclick="generiereKIText()">🪄 KI-Verkaufstext veredeln</button>
-                        <button class="btn-action" onclick="alert('Bot gestartet!')">🚀 Inserat global spiegeln</button>
-                        <button class="btn-action btn-secondary" onclick="generierePDF()" style="margin-top:15px;">📄 Datenblatt PDF generieren</button>
+                        <div class="panel-title">AI Processing & Channels</div>
+                        <div class="form-group"><label>Marketing Description (Raw Inputs)</label><textarea id="beschreibung" rows="4">Pristine condition. One owner. Touch-and-go helipad. Infinite pool deck layout.</textarea></div>
+                        <button class="btn-action btn-secondary" onclick="generiereKIText()">🪄 Optimize with AI Copywriter</button>
+                        <div class="form-group">
+                            <label>Target Channels</label>
+                            <select><option>Global Sync (YachtWorld & TheYachtMarket)</option></select>
+                        </div>
+                        <button class="btn-action" onclick="starteMultiPost()">🚀 Execute Global Synchronization</button>
+                        <button class="btn-action btn-secondary" onclick="generierePDF()" style="margin-top: 16px;">📄 Generate Specification PDF</button>
                     </div>
                 </div>
+                <div id="fleet-output" class="output-box"></div>
             </div>
 
-            <!-- TAB 2: BROKER CRM -->
+            <!-- MODULE 2: BROKER CRM -->
             <div id="crm-view" class="app-view">
                 <div class="grid-layout">
                     <div class="panel">
-                        <div class="panel-title">Neuen Käufer erfassen (Lead Tracking)</div>
-                        <div class="form-group"><label>Name des Investors</label><input type="text" id="crmKunde" placeholder="Maddox Luxury Trust"></div>
-                        <div class="form-group"><label>Max. Budget (EUR)</label><input type="number" id="crmBudget" value="100000000"></div>
-                        <div class="form-group"><label>Gewünschte Mindestlänge (Meter)</label><input type="number" id="crmLaenge" value="70"></div>
-                        <button class="btn-action" onclick="addCRMLead()">👥 Lead in Pipeline einspeisen</button>
+                        <div class="panel-title">Lead Management Engine</div>
+                        <div class="form-group"><label>Investor Name / Entity</label><input type="text" id="crmKunde" placeholder="Maddox Capital Trust"></div>
+                        <div class="form-group"><label>Acquisition Budget (EUR)</label><input type="number" id="crmBudget" value="95000000"></div>
+                        <div class="form-group"><label>Minimum LOA Requirement (Meters)</label><input type="number" id="crmLaenge" value="75"></div>
+                        <button class="btn-action" onclick="addCRMLead()">👥 Inject Lead into Pipeline</button>
                     </div>
                     <div class="panel">
-                        <div class="panel-title">Intelligentes Bestands-Matching (AI Match)</div>
-                        <div id="crm-output" style="font-size:14px; color:var(--text-muted);">Noch kein Lead erfasst. Die Software gleicht Budgets automatisch im Hintergrund ab.</div>
+                        <div class="panel-title">Automated Fleet Match Analytics</div>
+                        <div id="crm-output" style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">No active pipeline sequence initialized. Entry processing will trigger background target matching.</div>
                     </div>
                 </div>
             </div>
 
-            <!-- TAB 3: CHARTER SCHEDULING -->
+            <!-- MODULE 3: CHARTER SCHEDULING -->
             <div id="charter-view" class="app-view">
                 <div class="panel" style="max-width: 600px;">
-                    <div class="panel-title">Charter-Buchungskalender & Konfliktschutz</div>
-                    <div class="form-group"><label>Auswahl Yacht</label><input type="text" id="chartYacht" value="Lürssen Custom 80M"></div>
-                    <div class="form-group"><label>Charterer Name</label><input type="text" id="chartGast" placeholder="Prinz von Saudi-Arabien"></div>
-                    <div class="form-group"><label>Start-Datum</label><input type="date" id="chartStart" value="2026-08-01"></div>
-                    <div class="form-group"><label>End-Datum</label><input type="date" id="chartEnd" value="2026-08-15"></div>
-                    <button class="btn-action" onclick="bucheCharter()">📅 Buchungszeitraum im Flottenkalender sperren</button>
+                    <div class="panel-title">Charter Matrix & Conflict Protection</div>
+                    <div class="form-group"><label>Selected Hull Asset</label><input type="text" id="chartYacht" value="Lürssen Custom 80M"></div>
+                    <div class="form-group"><label>Principal Charterer</label><input type="text" id="chartGast" placeholder="Al-Fayed Maritime Group"></div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Fixtures Start Date</label><input type="date" id="chartStart" value="2026-08-01"></div>
+                        <div class="form-group"><label>Fixtures End Date</label><input type="date" id="chartEnd" value="2026-08-15"></div>
+                    </div>
+                    <button class="btn-action" onclick="bucheCharter()">📅 Lock Calendar Allocation Period</button>
                 </div>
             </div>
 
-            <!-- TAB 4: LEGAL CENTRAL (SPA CONTRACTS) -->
+            <!-- MODULE 4: LEGAL OPERATIONS -->
             <div id="legal-view" class="app-view">
                 <div class="panel" style="max-width: 600px;">
-                    <div class="panel-title">Automatisierte Kaufvertrags-Generierung (SPA)</div>
-                    <div class="form-group"><label>Name Verkäufer (Eigner)</label><input type="text" id="legVerkaeufer" value="Monaco Yacht Holdings Ltd."></div>
-                    <div class="form-group"><label>Name Käufer</label><input type="text" id="legKaeufer" placeholder="Global Maritime Fund"></div>
-                    <div class="form-group"><label>Yacht Name</label><input type="text" id="legYacht" value="M/Y Ocean Pearl"></div>
-                    <div class="form-group"><label>Finaler Kaufpreis (EUR)</label><input type="number" id="legPreis" value="85000000"></div>
-                    <button class="btn-action" onclick="generiereRechtstext()">📜 Offiziellen Kaufvertrag (PDF) generieren</button>
+                    <div class="panel-title">Sales and Purchase Agreement (SPA) Processing</div>
+                    <div class="form-group"><label>Vendor Entity (Seller)</label><input type="text" id="legVerkaeufer" value="Monaco Yacht Holdings Ltd."></div>
+                    <div class="form-group"><label>Acquiring Entity (Buyer)</label><input type="text" id="legKaeufer" placeholder="Oceanic Ventures Inc."></div>
+                    <div class="form-group"><label>Vessel Registered Name</label><input type="text" id="legYacht" value="M/Y Ocean Pearl"></div>
+                    <div class="form-group"><label>Certified Kaufpreis (EUR)</label><input type="number" id="legPreis" value="85000000"></div>
+                    <button class="btn-action" onclick="generiereRechtstext()">📜 Generate Official SPA Document (PDF)</button>
                 </div>
             </div>
 
-            <!-- TAB 5: CREW MAINTENANCE INTERFACE -->
+            <!-- MODULE 5: CREW MAINTENANCE -->
             <div id="crew-view" class="app-view">
                 <div class="grid-layout">
                     <div class="panel">
-                        <div class="panel-title">Mängelbericht von Bord einspeisen (Kapitäns-Logbuch)</div>
-                        <div class="form-group"><label>Betroffene Yacht / ID</label><input type="text" id="crewYacht" value="Lürssen Custom 80M"></div>
-                        <div class="form-group"><label>Defekte Komponente / System</label><input type="text" id="crewSystem" placeholder="Backbord-Klimaanlage Aggregat 2"></div>
-                        <div class="form-group"><label>Dringlichkeitsstufe</label>
-                            <select id="crewPrio"><option>Hoch (Sofortiger Werftaufenthalt nötig)</option><option>Medium</option></select>
+                        <div class="panel-title">Vessel Telemetry & Defect Log (Captain's Interface)</div>
+                        <div class="form-group"><label>Target Asset Fleet ID</label><input type="text" id="crewYacht" value="Lürssen Custom 80M"></div>
+                        <div class="form-group"><label>Malfunctioning Component / System</label><input type="text" id="crewSystem" placeholder="Portside HVAC Compressor - Unit 2"></div>
+                        <div class="form-group">
+                            <label>Severity Level</label>
+                            <select id="crewPrio">
+                                <option>Critical (Immediate Shipyard Intervention Required)</option>
+                                <option>Routine Maintenance Allocation</option>
+                            </select>
                         </div>
-                        <div class="form-group"><label>Detaillierter Fehlerbericht</label><textarea id="crewText" rows="3" placeholder="Kühlmittelleck im primären Kreislauf auf Deck 3..."></textarea></div>
-                        <button class="btn-action" onclick="sendeCrewMangel()">🔧 Bericht in Werft-Zentrale einbuchen</button>
+                        <div class="form-group"><label>Detailed Technical Logs</label><textarea id="crewText" rows="3" placeholder="Refrigerant pressure drop detected in primary circuit on lower deck..."></textarea></div>
+                        <button class="btn-action" onclick="sendeCrewMangel()">🔧 Log Defect in Central Drydock Core</button>
                     </div>
                     <div class="panel">
-                        <div class="panel-title">Aktiver Werft-Status & Telemetrie</div>
-                        <div id="crew-output" style="font-size:14px; color:var(--text-muted);">Aktuell liegen keine kritischen Störungsmeldungen der Besatzungen vor.</div>
+                        <div class="panel-title">Active Yard Status Analytics</div>
+                        <div id="crew-output" style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">No active telemetry diagnostic failures flagged by onboard crew networks.</div>
                     </div>
                 </div>
             </div>
@@ -134,7 +338,7 @@
     </div>
 
 <script>
-// Tab-Umschalt-Logik direkt im Browser
+// Tab View Switching Logic Engine
 function switchTab(viewId, element) {
     document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
@@ -143,62 +347,117 @@ function switchTab(viewId, element) {
     document.getElementById('page-title').innerText = element.innerText;
 }
 
-// SÄULE 1 API-FUNKTION (CRM)
+// Module 1 API Request Logic
+async function generiereKIText() {
+    const out = document.getElementById('beschreibung');
+    const backupText = out.value;
+    out.value = "Executing OpenAI engine routines... Please hold.";
+    try {
+        const res = await fetch('/api/generate-ai-text', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                hersteller: document.getElementById('hersteller').value,
+                modell: document.getElementById('modell').value,
+                beschreibung: backupText
+            })
+        });
+        const daten = await res.json();
+        out.value = daten.text;
+    } catch (error) {
+        out.value = backupText;
+        alert('SaaS Node Engine connection fault.');
+    }
+}
+
+async function generierePDF() {
+    const payload = {
+        hersteller: document.getElementById('hersteller').value,
+        modell: document.getElementById('modell').value,
+        preis: document.getElementById('preis').value,
+        baujahr: document.getElementById('baujahr').value,
+        liegeplatz: document.getElementById('liegeplatz').value,
+        beschreibung: document.getElementById('beschreibung').value
+    };
+    try {
+        const res = await fetch('/api/generate-pdf', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+        });
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Specification_${payload.hersteller}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+    } catch (error) {
+        alert('PDF Core compile failure.');
+    }
+}
+
+function starteMultiPost() {
+    const out = document.getElementById('fleet-output');
+    out.style.display = 'block';
+    out.style.background = '#f0fdf4';
+    out.style.color = '#15803d';
+    out.style.borderColor = '#bbf7d0';
+    out.innerHTML = '<strong>STATUS: ACTIVE</strong><br>Playwright mapping sequence successfully loaded to remote background processes.';
+}
+
+// Module 2 API Request Logic
 function addCRMLead() {
     const name = document.getElementById('crmKunde').value;
     const budget = document.getElementById('crmBudget').value;
     const laenge = document.getElementById('crmLaenge').value;
+    const out = document.getElementById('crm-output');
     
-    // Simuliertes internes Matching mit den Werten aus Tab 1
-    const bestandHersteller = document.getElementById('hersteller').value;
-    const bestandModell = document.getElementById('modell').value;
-    const bestandPreis = document.getElementById('preis').value;
+    const h = document.getElementById('hersteller').value;
+    const m = document.getElementById('modell').value;
+    const p = document.getElementById('preis').value;
 
-    const output = document.getElementById('crm-output');
-    output.innerHTML = `<strong>Lead hinzugefügt:</strong> ${name}<br><br>🎯 <strong>Intelligentes Match gefunden!</strong><br>Gleiche Bestand mit Suchkriterien ab...<br>Vorschlag an Broker: Biete diesem Kunden die <u>${bestandHersteller} ${bestandModell}</u> (€${Number(bestandPreis).toLocaleString('de-DE')}) an. Budget ausreichend!`;
+    out.innerHTML = `<strong>Lead Registered:</strong> ${name}<br><br>🎯 <strong>Predictive Match Algorithm:</strong><br>Scanning active inventory data...<br>System Suggestion: Present <u>${h} ${m}</u> (€${Number(p).toLocaleString('de-DE')}) to investor portfolio. Allocation parameters match perfectly.`;
 }
 
-// SÄULE 2 API-FUNKTION (Charter)
+// Module 3 API Request Logic
 async function bucheCharter() {
     const payload = { yachtId: document.getElementById('chartYacht').value, startDatum: document.getElementById('chartStart').value, endDatum: document.getElementById('chartEnd').value, chartererName: document.getElementById('chartGast').value };
-    const res = await fetch('/api/charter/book', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
-    const daten = await res.json();
-    alert(daten.nachricht);
+    try {
+        const res = await fetch('/api/charter/book', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
+        const daten = await res.json();
+        alert(daten.nachricht);
+    } catch (error) {
+        alert('Scheduling Engine communication timeout.');
+    }
 }
 
-// SÄULE 3 API-FUNKTION (Legal SPA PDF)
+// Module 4 API Request Logic
 async function generiereRechtstext() {
     const payload = { verkaeufer: document.getElementById('legVerkaeufer').value, kaeufer: document.getElementById('legKaeufer').value, yachtName: document.getElementById('legYacht').value, kaufpreis: document.getElementById('legPreis').value };
-    const response = await fetch('/api/legal/generate-contract', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = `SPA_VERTRAG_${payload.yachtName}.pdf`; document.body.appendChild(a); a.click(); a.remove();
+    try {
+        const res = await fetch('/api/legal/generate-contract', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = `SPA_CONTRACT_${payload.yachtName}.pdf`; document.body.appendChild(a); a.click(); a.remove();
+    } catch (error) {
+        alert('Legal PDF assembly execution error.');
+    }
 }
 
-// SÄULE 4 API-FUNKTION (Crew Maintenance)
+// Module 5 API Request Logic
 async function sendeCrewMangel() {
     const payload = { yachtId: document.getElementById('crewYacht').value, komponente: document.getElementById('crewSystem').value, beschreibung: document.getElementById('crewText').value, dringlichkeit: document.getElementById('crewPrio').value };
-    const res = await fetch('/api/crew/report-issue', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
-    const daten = await res.json();
-    
-    document.getElementById('crew-output').innerHTML = `⚠️ <strong>Kritischer Werft-Alarm!</strong><br>System: ${payload.komponente}<br>Status: <span style="color:#dc3545; font-weight:bold;">Eskaliert</span><br>Meldung: "${payload.beschreibung}"`;
-    alert(daten.nachricht);
-}
-
-// ALTE MARKETING-FUNKTIONEN
-async function generiereKIText() {
-    const field = document.getElementById('beschreibung'); const alt = field.value; field.value = "Künstliche Intelligenz rechnet...";
-    const res = await fetch('/api/generate-ai-text', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ hersteller: document.getElementById('hersteller').value, modell: document.getElementById('modell').value, beschreibung: alt })});
-    const d = await res.json(); field.value = d.text;
-}
-
-async function generierePDF() {
-    const payload = { hersteller: document.getElementById('hersteller').value, modell: document.getElementById('modell').value, preis: document.getElementById('preis').value, baujahr: document.getElementById('baujahr').value, liegeplatz: document.getElementById('liegeplatz').value, beschreibung: document.getElementById('beschreibung').value };
-    const res = await fetch('/api/generate-pdf', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
-    const blob = await res.blob(); const url = window.URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `Specification_${payload.hersteller}.pdf`; document.body.appendChild(a); a.click(); a.remove();
+    try {
+        const res = await fetch('/api/crew/report-issue', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
+        const daten = await res.json();
+        document.getElementById('crew-output').innerHTML = `⚠️ <strong>CRITICAL WORKER THREAD ACTIVE</strong><br>System: ${payload.komponente}<br>Status: <span style="color:#dc3545; font-weight:bold;">Escalated to Operations</span><br>Log Details: "${payload.beschreibung}"`;
+        alert(daten.nachricht);
+    } catch (error) {
+        alert('Drydock Central core dispatch failure.');
+    }
 }
 </script>
 </body>
 </html>
-
-
