@@ -19,14 +19,7 @@ const Buyer = mongoose.model('Buyer', new mongoose.Schema({ name: String, budget
 const Mangel = mongoose.model('Mangel', new mongoose.Schema({ yachtId: String, komponente: String, text: String, prioritaet: String }));
 const BrokerAccount = mongoose.model('BrokerAccount', new mongoose.Schema({ email: String, passwortKlartext: String, registriertAm: { type: Date, default: Date.now } }));
 
-// Kalender-Schema für permanente Cloud-Synchronisation
-const CalendarEvent = mongoose.model('CalendarEvent', new mongoose.Schema({
-    uhrzeit: String,
-    text: String,
-    erledigt: { type: Boolean, default: false }
-}));
-
-// API Credentials Platzhalter
+// API Credentials
 const stripe = require('stripe')('sk_test_51PXXXXXXXXXXXXXX'); 
 const groq = new Groq({ apiKey: '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' }); 
 
@@ -62,42 +55,7 @@ app.post('/api/auth/register', async (req, res) => {
 });
 
 // =========================================================================
-// 3. KALENDER LIVE CLOUD OPERATIONS
-// =========================================================================
-app.get('/api/calendar/all', async (req, res) => {
-    try {
-        let events = await CalendarEvent.find();
-        if (events.length === 0) {
-            const standardEvents = [
-                { uhrzeit: "11:00", text: "Besichtigung: Heesen 50M 'Project Akira' — Monaco", erledigt: false },
-                { uhrzeit: "15:30", text: "Notar-Termin: SPA-Vertragsabschluss (Maddox Capital)", erledigt: false },
-                { uhrzeit: "09:00", text: "See-Erprobung: Benetti Oasis 40M — Cannes", erledigt: false }
-            ];
-            await CalendarEvent.insertMany(standardEvents);
-            events = await CalendarEvent.find();
-        }
-        res.json(events);
-    } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.post('/api/calendar/add', async (req, res) => {
-    try {
-        const neuesEvent = new CalendarEvent(req.body);
-        await neuesEvent.save();
-        res.json({ status: "Erfolg", event: neuesEvent });
-    } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.post('/api/calendar/update', async (req, res) => {
-    try {
-        const { id, text, erledigt } = req.body;
-        await CalendarEvent.findByIdAndUpdate(id, { text, erledigt });
-        res.json({ status: "Erfolg" });
-    } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// =========================================================================
-// 4. CORE ENTERPRISE OPERATIONS (CRM, MARKETING, SOURCING)
+// 3. CORE ENTERPRISE OPERATIONS (CRM, MARKETING, SOURCING)
 // =========================================================================
 app.post('/api/fleet/add', async (req, res) => {
     try {
@@ -123,7 +81,7 @@ app.post('/api/crew/report-issue', async (req, res) => {
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// GLOBAL SOURCING ENGINE DATENSTROM
+// GLOBAL SOURCING ENGINE DATENSTROM (12 Plattformen)
 app.post('/api/sourcing/query', async (req, res) => {
     try {
         const { brand, model, page } = req.body;
