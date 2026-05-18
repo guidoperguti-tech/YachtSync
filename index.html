@@ -3,142 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YachtSync OS — Enterprise Workstation</title>
+    <title>YachtSync OS — Custom Workspace</title>
     <script src="https://stripe.com"></script>
     <style>
-        :root { 
-            --bg-canvas: #fafafa; 
-            --navy-dark: #0a1128; 
-            --border-fine: #1e293b; 
-            --slate-gray: #475569; 
-            --pure-white: #ffffff; 
-            --action-blue: #1c3d5a; 
-            --mobile-orange: #ee5c00; 
-        }
+        :root { --bg-canvas: #fafafa; --navy-dark: #0a1128; --border-fine: #1e293b; --slate-gray: #475569; --pure-white: #ffffff; --mobile-orange: #ee5c00; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg-canvas); color: var(--navy-dark); margin: 0; display: flex; height: 100vh; overflow: hidden; -webkit-font-smoothing: antialiased; }
-        
-        /* Master Sidebar */
-        .sidebar { width: 260px; background: var(--navy-dark); padding: 32px 24px; display: flex; flex-direction: column; border-right: 1px solid var(--border-fine); box-sizing: border-box; }
-        .sidebar-brand { font-family: "Didot", "Bodoni MT", serif; font-size: 20px; font-weight: 700; color: var(--pure-white); padding-bottom: 20px; border-bottom: 1px solid #1e293b; margin-bottom: 20px; letter-spacing: 0.5px; }
-        
-        .sidebar-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #475569; letter-spacing: 1px; margin-top: 15px; margin-bottom: 8px; }
-        .nav-link { display: flex; align-items: center; padding: 10px 0; color: #94a3b8; text-decoration: none; font-size: 13px; font-weight: 500; cursor: pointer; transition: color 0.15s ease; }
+        .sidebar { width: 250px; background: var(--navy-dark); padding: 32px 24px; display: flex; flex-direction: column; border-right: 1px solid var(--border-fine); }
+        .sidebar-brand { font-family: "Didot", serif; font-size: 20px; font-weight: 500; color: var(--pure-white); padding-bottom: 24px; border-bottom: 1px solid #1e293b; margin-bottom: 24px; }
+        .nav-link { display: block; padding: 12px 0; color: #94a3b8; text-decoration: none; font-size: 13px; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; cursor: pointer; }
         .nav-link:hover, .nav-link.active { color: var(--pure-white); }
-        
-        .sidebar-footer { margin-top: auto; border-top: 1px solid #1e293b; padding-top: 16px; font-size: 11px; display: flex; gap: 12px; }
-        .legal-link { color: #64748b; text-decoration: none; cursor: pointer; }
-        .legal-link:hover { color: var(--pure-white); }
-        
-        /* Content & Navigation Layout */
+        .sidebar-footer { margin-top: auto; border-top: 1px solid #1e293b; padding-top: 16px; font-size: 11px; color: #64748b; }
+        .legal-link { color: #94a3b8; text-decoration: none; cursor: pointer; display: inline-block; margin-right: 12px; }
         .app-container { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
         .top-navbar { height: 70px; background: var(--pure-white); border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; }
         .top-navbar h1 { font-family: "Didot", serif; font-size: 22px; font-weight: 400; margin: 0; }
         .navbar-controls { display: flex; align-items: center; gap: 24px; }
-        .system-badge { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); border-bottom: 1px solid #cbd5e1; padding-bottom: 2px; }
-        .btn-corporate-auth { background: transparent; border: 1px solid var(--navy-dark); color: var(--navy-dark); padding: 8px 18px; font-size: 11px; font-weight: 600; text-transform: uppercase; cursor: pointer; letter-spacing: 0.5px; }
-        .btn-corporate-auth:hover { background: var(--navy-dark); color: var(--pure-white); }
-        .btn-corporate-auth.active { background: #e2f0d9; border-color: #a9d08e; color: #385723; cursor: default; }
-
+        .system-badge { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--slate-gray); border-bottom: 1px solid #cbd5e1; padding-bottom: 2px; }
+        .btn-corporate-auth { background: transparent; border: 1px solid var(--navy-dark); color: var(--navy-dark); padding: 8px 18px; font-size: 11px; font-weight: 600; text-transform: uppercase; cursor: pointer; }
         .workspace { flex: 1; padding: 40px; overflow-y: auto; }
         .app-view { display: none; }
         .app-view.active { display: block; }
-        
-        /* Forms & Containers */
         .grid-layout { display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; max-width: 1200px; }
         .panel { background: var(--pure-white); border: 1px solid #e2e8f0; padding: 32px; margin-bottom: 24px; }
-        .panel-title { font-family: "Didot", serif; font-size: 16px; font-weight: 600; margin-top: 0; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; }
-        .form-group { margin-bottom: 16px; }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-        label { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; margin-bottom: 6px; color: var(--slate-gray); letter-spacing: 0.5px; }
-        input, select, textarea { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; background: var(--pure-white); font-size: 14px; box-sizing: border-box; border-radius: 0; }
-        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--navy-dark); }
-        
-        .btn-action { background: var(--navy-dark); color: var(--pure-white); border: none; padding: 14px 20px; font-size: 13px; font-weight: 600; text-transform: uppercase; cursor: pointer; width: 100%; margin-top: 12px; letter-spacing: 0.5px; }
+        .panel-title { font-family: "Didot", serif; font-size: 16px; font-weight: 600; color: var(--navy-dark); margin-top: 0; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; }
+        .form-group { margin-bottom: 20px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        label { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; margin-bottom: 8px; color: var(--slate-gray); }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #cbd5e1; background: var(--pure-white); font-size: 14px; box-sizing: border-box; }
+        .btn-action { background: var(--navy-dark); color: var(--pure-white); border: none; padding: 14px 20px; font-size: 13px; font-weight: 600; text-transform: uppercase; cursor: pointer; width: 100%; margin-top: 12px; }
         .btn-secondary { background: transparent; border: 1px solid var(--navy-dark); color: var(--navy-dark); margin-bottom: 20px; }
         .btn-secondary:hover { background: var(--navy-dark); color: var(--pure-white); }
         
-        .checkbox-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-        .checkbox-item { display: flex; align-items: center; gap: 10px; font-size: 14px; }
-        .checkbox-item input { width: auto; }
-        .output-box { margin-top: 32px; padding: 20px; font-size: 13px; display: none; background: var(--pure-white); border: 1px solid #cbd5e1; }
-
-        /* =========================================================================
-           ULTIMATIVE MONOPOL SOURCING MATRIX (Boot24 & YachtWorld Deep Style)
-           ========================================================================= */
+        /* Mobile.de Sourcing Architecture */
         .sourcing-container { display: grid; grid-template-columns: 320px 1fr; gap: 32px; max-width: 1400px; }
-        .search-filter-sidebar { background: var(--pure-white); border: 1px solid #e2e8f0; padding: 24px; box-sizing: border-box; height: fit-content; }
-        .filter-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-top: 24px; margin-bottom: 12px; color: var(--navy-dark); border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; letter-spacing: 0.5px; }
-        .filter-section-title:first-child { margin-top: 0; }
-        
+        .search-filter-sidebar { background: var(--pure-white); border: 1px solid #e2e8f0; padding: 24px; max-height: 90vh; overflow-y: auto; }
+        .filter-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; color: var(--navy-dark); border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; letter-spacing: 0.5px; }
         .search-results-feed { display: flex; flex-direction: column; gap: 20px; }
-        .boat-result-card { display: flex; background: var(--pure-white); border: 1px solid #e2e8f0; position: relative; min-height: 240px; }
-        .boat-result-card:hover { border-color: var(--slate-gray); }
-        .boat-image-placeholder { width: 260px; background: #e2e8f0; display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--slate-gray); font-weight: 700; text-transform: uppercase; }
+        .boat-result-card { display: flex; background: var(--pure-white); border: 1px solid #e2e8f0; position: relative; }
+        .boat-image-placeholder { width: 240px; background: #e2e8f0; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--slate-gray); font-weight: bold; }
         .boat-details-pane { flex: 1; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; }
-        .boat-title-line { font-size: 18px; font-weight: 700; margin: 0; color: var(--navy-dark); }
-        .boat-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; margin-top: 8px; font-size: 13px; color: var(--slate-gray); }
+        .boat-title-line { font-size: 18px; font-weight: 700; margin: 0; }
+        .boat-meta-line { font-size: 13px; color: var(--slate-gray); margin-top: 4px; }
         .boat-price-tag { font-size: 22px; font-weight: 800; color: var(--mobile-orange); margin: 0; }
         .platform-origin-badge { position: absolute; top: 12px; right: 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; background: #f1f5f9; border: 1px solid #cbd5e1; padding: 4px 8px; }
-
-        /* Authentic Auth Modals */
+        
+        /* Auth Modal Window */
         .auth-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 17, 40, 0.6); z-index: 5000; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
         .auth-modal { background: var(--pure-white); border: 1px solid var(--navy-dark); width: 100%; max-width: 400px; padding: 40px; box-sizing: border-box; }
-        .auth-modal h3 { font-family: "Didot", serif; font-size: 22px; margin-top: 0; margin-bottom: 24px; text-align: center; }
-        .close-modal { float: right; cursor: pointer; font-size: 18px; color: var(--slate-gray); margin-top: -20px; margin-right: -10px; }
+        .auth-modal h3 { font-family: "Didot", serif; font-size: 22px; text-align: center; margin-top: 0; }
     </style>
 </head>
 <body>
 
-    <!-- AUTH MODAL WITH GEHEIMER BACKDOOR LOGIK -->
+    <!-- CREATOR & AUTHENTICATION OVERLAYS -->
     <div id="authOverlay" class="auth-overlay">
         <div class="auth-modal">
-            <span class="close-modal" onclick="toggleAuthModal()">&#10005;</span>
-            <h3 id="modalTitle">Broker Authentication</h3>
-            
+            <h3 id="modalTitle">Broker Registration</h3>
             <div id="authStep1">
-                <div class="form-group">
-                    <label>Corporate E-Mail / Master Access Key</label>
-                    <input type="text" id="authEmail" placeholder="name@agency.com">
-                </div>
-                <div class="form-group">
-                    <label>Secure Password</label>
-                    <input type="password" id="authPassword" placeholder="••••••••••••">
-                </div>
-                <button class="btn-action" onclick="executeRegister()">Continue to Authentication</button>
+                <div class="form-group"><label>Corporate E-Mail</label><input type="email" id="authEmail" placeholder="name@agency.com"></div>
+                <div class="form-group"><label>Secure Password</label><input type="password" id="authPassword" placeholder="••••••••••••"></div>
+                <button class="btn-action" onclick="executeRegister()">Continue to Verification</button>
             </div>
-
             <div id="authStep2" style="display: none;">
-                <p style="font-size: 13px; color: var(--slate-gray); line-height: 1.5; margin-bottom: 20px;">
-                    🔒 <strong>Two-Factor Verification (2FA)</strong><br>
-                    Geben Sie den Autorisierungscode ein. (Für den Master-Admin-Key kann dieses Feld leer bleiben).
-                </p>
-                <div class="form-group">
-                    <label>Verification Token</label>
-                    <input type="text" id="auth2FACode" placeholder="000 000" style="text-align: center; font-size: 18px; letter-spacing: 4px;">
-                </div>
-                <button class="btn-action" onclick="execute2FAVerify()">Verify Core Workstation</button>
+                <p style="font-size: 13px; color: var(--slate-gray); line-height: 1.5; margin-bottom: 20px;">🔒 <strong>Two-Factor Authentication (2FA) Verified</strong><br>A transmission pass-token was deployed to your server grid.</p>
+                <button class="btn-action" onclick="execute2FAVerify()">Verify & Secure Workstation</button>
             </div>
         </div>
     </div>
 
-    <!-- EDITORIAL MASTER SIDEBAR -->
+    <!-- SIDEBAR WITH THE TWO PRIMARY TITLES -->
     <div class="sidebar">
         <div class="sidebar-brand">YACHTSYNC OS</div>
-        
-        <div class="sidebar-section-title">Core Operations</div>
-        <div class="nav-link active" onclick="switchTab('fleet-view', this)">⚓ Fleet Distribution (Verkauf)</div>
+        <div class="nav-link active" onclick="switchTab('fleet-view', this)">⚓ Fleet Marketing (Verkauf)</div>
         <div class="nav-link" onclick="switchTab('sourcing-view', this)">🔍 Global Sourcing (Ankauf)</div>
-        
-        <div class="sidebar-section-title">Broker Intelligence</div>
-        <div class="nav-link" onclick="switchTab('crm-view', this)">👥 Client CRM Matrix</div>
+        <div class="nav-link" onclick="switchTab('crm-view', this)">👥 Broker CRM Matrix</div>
         <div class="nav-link" onclick="switchTab('charter-view', this)">📅 Charter Scheduling</div>
-        
-        <div class="sidebar-section-title">Administration</div>
-        <div class="nav-link" onclick="switchTab('legal-view', this)">📜 Legal Operations (SPA)</div>
-        <div class="nav-link" onclick="switchTab('finanzen-view', this)">📊 Financial Ledger</div>
-        <div class="nav-link" onclick="switchTab('crew-view', this)">🔧 Fleet Maintenance</div>
-        
+        <div class="nav-link" onclick="switchTab('legal-view', this)">📜 Legal Ledger (SPA)</div>
+        <div class="nav-link" onclick="switchTab('crew-view', this)">🔧 Crew Registry Core</div>
         <div class="sidebar-footer">
             <span class="legal-link" onclick="switchTab('impressum-view', this)">Impressum</span>
             <span class="legal-link" onclick="switchTab('datenschutz-view', this)">Datenschutz</span>
@@ -147,308 +88,71 @@
 
     <div class="app-container">
         <div class="top-navbar">
-            <h1 id="page-title">Fleet Distribution Operations</h1>
+            <h1 id="page-title">Fleet Marketing Operations</h1>
             <div class="navbar-controls">
-                <div id="systemStatus" class="system-badge">Mode: Sandbox Vorschau</div>
+                <div id="systemStatus" class="system-badge">Mode: Sandbox Analytics</div>
                 <button id="authBtn" class="btn-corporate-auth" onclick="toggleAuthModal()">Broker Login / Unlock</button>
             </div>
         </div>
 
         <div class="workspace">
 
-            <!-- SÄULE 6: GLOBAL SOURCING INTERFACE (DEEP BOOT24 FILTERS) -->
-            <div id="sourcing-view" class="app-view">
-                <div class="sourcing-container">
-                    
-                    <!-- DIE GIGANTISCHE FILTERMASKE (Boot24 & YachtWorld Deep Spec) -->
-                    <div class="search-filter-sidebar">
-                        <div class="filter-section-title">Hersteller & Modell</div>
-                        <div class="form-group"><label>Werft / Builder</label><input type="text" id="srcBrand" value="Azimut"></div>
-                        <div class="form-group"><label>Modellreihe</label><input type="text" id="srcModel" placeholder="z.B. Flybridge"></div>
-                        
-                        <div class="filter-section-title">Wirtschaftliche Kennzahlen</div>
-                        <div class="form-row">
-                            <div><label>Min Preis (€)</label><input type="number" id="srcPriceMin" placeholder="0"></div>
-                            <div><label>Max Preis (€)</label><input type="number" id="srcPriceMax" placeholder="3.000.000"></div>
-                        </div>
-                        <div class="form-group">
-                            <label>Max Jährl. Erhaltungskosten (€)</label>
-                            <input type="number" id="srcMaintMax" placeholder="z.B. 50000">
-                        </div>
-
-                        <div class="filter-section-title">Technische Dimensionen</div>
-                        <div class="form-row">
-                            <div><label>Min Länge (m)</label><input type="number" id="srcLengthMin" value="18"></div>
-                            <div><label>Max Tiefgang (m)</label><input type="number" id="srcDraftMax" placeholder="1.80"></div>
-                        </div>
-                        <div class="form-group">
-                            <label>Verdrängung / Gewicht (Tonnen)</label>
-                            <input type="number" id="srcWeight" placeholder="z.B. 35">
-                        </div>
-
-                        <div class="filter-section-title">Antrieb & Telemetrie</div>
-                        <div class="form-row">
-                            <div><label>Min Leistung (PS)</label><input type="number" id="srcHpMin" placeholder="800"></div>
-                            <div><label>Max Motorstunden</label><input type="number" id="srcHoursMax" placeholder="1200"></div>
-                        </div>
-                        <div class="form-row">
-                            <div><label>Hubraum (ccm)</label><input type="number" id="srcCcm" placeholder="z.B. 12000"></div>
-                            <div><label>Max Verbrauch (l/h)</label><input type="number" id="srcConsumption" placeholder="z.B. 180"></div>
-                        </div>
-                        <div class="form-group">
-                            <label>Treibstoff / Kraftstoffart</label>
-                            <select id="srcFuel"><option>Diesel (Heavy Marine)</option><option>Benzin</option><option>Hybrid / Electric</option></select>
-                        </div>
-
-                        <div class="filter-section-title">Historie</div>
-                        <div class="form-group">
-                            <label>Baujahr ab (Launch)</label>
-                            <select id="srcYear"><option>2020</option><option>2015</option><option>2010</option></select>
-                        </div>
-
-                        <button class="btn-action" onclick="executeGlobalSearch()" style="background: var(--mobile-orange); color:white;">Globale Bestände abfragen</button>
-                    </div>
-
-                    <!-- RECHTER FEED: LIVE MATRIX AUSGABE -->
-                    <div class="search-results-feed" id="resultsFeed">
-                        <div style="text-align:center; padding: 60px; color: var(--slate-gray); font-style: italic;">Geben Sie Ihre Suchparameter in die Sourcing-Maske ein, um die weltweiten Live-Schnittstellen zu triggern.</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- MODULE 1: FLEET DISTRIBUTION (VERKAUF) -->
+            <!-- HAUPTREITER 1: FLEET MARKETING (HOCHLADEN & VERKAUF MIT KI-SCHÄTZUNG) -->
             <div id="fleet-view" class="app-view active">
                 <div class="grid-layout">
                     <div class="panel">
-                        <div class="mock-notice">System Preview: Sandbox Mock Data Layer</div>
-                        <div class="panel-title">Asset Specifications</div>
+                        <div class="panel-title">Asset Specifications & Media Upload</div>
                         <div class="form-group"><label>Shipyard / Builder</label><input type="text" id="hersteller" value="Lürssen Yachts"></div>
                         <div class="form-group"><label>Model Assignment</label><input type="text" id="modell" value="Custom Displacement 80M"></div>
                         <div class="form-row">
-                            <div class="form-group"><label>Valuation Price (EUR)</label><input type="number" id="preis" value="85000000"></div>
                             <div class="form-group"><label>Year of Launch</label><input type="number" id="baujahr" value="2025"></div>
+                            <div class="form-group"><label>Total Engine Hours</label><input type="number" id="betriebsstunden" value="120"></div>
                         </div>
                         <div class="form-group"><label>Current Port of Registry</label><input type="text" id="liegeplatz" value="Port Hercule, Monaco"></div>
+                        
+                        <!-- NEU: ECHTES DATEI- UND MEDIEN-HOCHLADEFELD -->
+                        <div class="form-group" style="margin-top: 24px;">
+                            <label>Vessel Media Library (Photos & Blueprints)</label>
+                            <input type="file" id="mediaUpload" multiple style="border: 1px dashed var(--border-fine); padding: 20px; text-align: center; width: 100%; cursor: pointer;">
+                        </div>
                     </div>
+                    
                     <div class="panel">
-                        <div class="panel-title">AI Engine & Distribution</div>
-                        <div class="form-group"><label>Dossier Narrative</label><textarea id="beschreibung" rows="4">Delivered by Lürssen. Carbon infrastructure. Certified for charter.</textarea></div>
+                        <div class="panel-title">AI Engine Valuations & Sync</div>
+                        
+                        <!-- NEU: BUTTON FÜR AUTOMATISIERTE AI-PREISSCHÄTZUNG -->
+                        <button class="btn-action" onclick="wachePrüfen(berechneAIPreisschaetzung)" style="background:#0f172a; color:white; margin-bottom: 24px;">🔮 Calculate AI Market Price Estimate</button>
+                        
+                        <div class="form-group"><label>Dossier Narrative</label><textarea id="beschreibung" rows="4">Pristine condition. Helipad infrastructure. Infinity pool config.</textarea></div>
                         <button class="btn-action btn-secondary" onclick="wachePrüfen(generiereKIText)">Veredel Narrative with Broker Text Engine</button>
                         <button class="btn-action" onclick="wachePrüfen(speichereYachtInCloud)">Commit Records & Execute Live Sync</button>
-                        <button class="btn-action btn-secondary" onclick="wachePrüfen(generierePDF)" style="margin-top: 20px;">Generate Print Specification Document</button>
                     </div>
                 </div>
                 <div id="fleet-output" class="output-box"></div>
             </div>
 
-            <!-- UNVERÄNDERTE LIVE FINANZEN & MODULE -->
-            <div id="finanzen-view" class="app-view"><div class="panel" style="max-width:600px;"><div class="panel-title">Financial Ledger & Transactions</div><p style="font-size:14px; color:var(--slate-gray);">Einnahmen aus Verkäufen: 0,00 EUR<br>Ausgaben für Ankauf: 0,00 EUR</p></div></div>
-            <div id="crm-view" class="app-view"><div class="panel"><div class="panel-title">CRM Central</div></div></div>
-            <div id="charter-view" class="app-view"><div class="panel"><div class="panel-title">Charter Scheduling</div></div></div>
-            <div id="legal-view" class="app-view"><div class="panel"><div class="panel-title">Legal Operations</div></div></div>
-            <div id="crew-view" class="app-view"><div class="panel"><div class="panel-title">Crew Registry</div></div></div>
-            <div id="impressum-view" class="app-view"><div class="panel"><div class="panel-title">Impressum</div></div></div>
-            <div id="datenschutz-view" class="app-view"><div class="panel"><div class="panel-title">Datenschutz</div></div></div>
-        </div>
-    </div>
+            <!-- HAUPTREITER 2: GLOBAL SOURCING (HOCHSERIÖSER MOBILE.DE LOOK MIT ALLEN FILTERN) -->
+            <div id="sourcing-view" class="app-view">
+                <div class="sourcing-container">
+                    
+                    <!-- DIE GIGANTISCHE SYSTEM-FILTERMASKE (ALLE PARAMETER INKL. GEWICHT, MOTOREN, VERBRAUCH) -->
+                    <div class="search-filter-sidebar">
+                        <div class="filter-section-title">Klassifizierung</div>
+                        <div class="form-group"><label>Werft / Builder</label><input type="text" id="srcBrand" value="Azimut"></div>
+                        <div class="form-group"><label>Modell</label><input type="text" id="srcModel" placeholder="z.B. Grande"></div>
+                        <div class="form-group"><label>Zustand</label><select id="srcCondition"><option>Alle Zustände</option><option>Gebraucht</option><option>Neu</option></select></div>
+                        
+                        <div class="filter-section-title" style="margin-top:20px;">Abmessungen & Gewicht</div>
+                        <div class="form-row"><input type="number" id="srcLengthMin" placeholder="Länge Min (m)"><input type="number" id="srcLengthMax" placeholder="Länge Max (m)"></div>
+                        <div class="form-row" style="margin-top:8px;"><input type="number" id="srcBeamMin" placeholder="Breite Min (m)"><input type="number" id="srcBeamMax" placeholder="Breite Max (m)"></div>
+                        <div class="form-row" style="margin-top:8px;"><input type="number" id="srcDraftMin" placeholder="Tiefgang Min (m)"><input type="number" id="srcDraftMax" placeholder="Tiefgang Max (m)"></div>
+                        <div class="form-row" style="margin-top:8px;"><input type="number" id="srcWeightMin" placeholder="Gewicht Min (kg)"><input type="number" id="srcWeightMax" placeholder="Gewicht Max (kg)"></div>
 
-<script>
-let enterpriseLizenzAktiv = false;
-let istMasterAdmin = false; // Wird wahr, wenn du deinen Geheimcode nutzt!
+                        <div class="filter-section-title" style="margin-top:20px;">Preise & Erhaltung (€)</div>
+                        <div class="form-row"><input type="number" id="srcPriceMin" placeholder="Preis von"><input type="number" id="srcPriceMax" placeholder="Preis bis"></div>
+                        <div class="form-group" style="margin-top:8px;"><label>Max. jährliche Unterhaltskosten</label><input type="number" id="srcMaintenance" placeholder="Limit in EUR"></div>
 
-function toggleAuthModal() {
-    const overlay = document.getElementById('authOverlay');
-    overlay.style.display = overlay.style.display === 'flex' ? 'none' : 'flex';
-}
-
-// BACKDOOR LOGIN SYSTEM FÜR DICH ALS INHABER
-async function executeRegister() {
-    const emailInput = document.getElementById('authEmail').value.trim();
-    const passwordInput = document.getElementById('authPassword').value;
-    
-    // HIER IST DEIN GEHEIMER MASTER-ADMIN CODE!
-    // Wenn du als E-Mail "YACHTSYNC-ADMIN-MASTER" und als Passwort "hustle2026" eingibst, knackst du das System!
-    if (emailInput === "YACHTSYNC-ADMIN-MASTER" && passwordInput === "hustle2026") {
-        istMasterAdmin = true;
-        document.getElementById('authStep1').style.display = 'none';
-        document.getElementById('authStep2').style.display = 'block';
-        document.getElementById('modalTitle').innerText = "Developer Override";
-        return;
-    }
-
-    // Normaler Broker-Registrierungs-Prozess
-    if(!emailInput || !passwordInput) return alert("Bitte alle Felder befüllen.");
-    const res = await fetch('/api/auth/register', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ email: emailInput, password: passwordInput }) });
-    const d = await res.json();
-    if(d.status === "Erfolg") {
-        document.getElementById('authStep1').style.display = 'none';
-        document.getElementById('authStep2').style.display = 'block';
-    } else { alert("Fehler: " + d.nachricht); }
-}
-
-function execute2FAVerify() {
-    toggleAuthModal();
-    
-    if (istMasterAdmin) {
-        // Schaltet für dich ALLES sofort frei, ohne Stripe aufzurufen!
-        enterpriseLizenzAktiv = true;
-        freischaltungAktivieren("DEVELOPER KEY VALIDATED");
-        alert("⚓ WELCOME BACK, STARTUP OWNER!\n\nDer Master-Entwicklerschlüssel wurde akzeptiert. Alle Cloud-Datenbanken, die Live-KI von Groq und Playwright-Module laufen jetzt zu 100 % real auf Ihren Servern.");
-    } else {
-        // Schickt den normalen Broker zu Stripe
-        alert("🔒 ACCOUNT FILLED\n\nIhr Profil wurde angelegt. Klicken Sie auf OK, um Ihre Workstation freizuschalten.");
-        jetztAbonnieren();
-    }
-}
-
-function freischaltungAktivieren(badgeText) {
-    const authBtn = document.getElementById('authBtn');
-    authBtn.innerText = "Workstation Live";
-    authBtn.classList.add('active');
-    authBtn.onclick = null;
-    const badge = document.getElementById('systemStatus');
-    badge.innerText = `Mode: ${badgeText}`;
-    badge.style.background = "#e2f0d9"; badge.style.color = "#385723"; badge.style.borderColor = "#a9d08e";
-}
-
-function wachePrüfen(auszuführendeAktion) {
-    if (enterpriseLizenzAktiv) { auszuführendeAktion(); } 
-    else { toggleAuthModal(); }
-}
-
-async function jetztAbonnieren() {
-    const response = await fetch('/create-checkout-session', { method: 'POST' });
-    const session = await response.json(); window.location.href = session.url;
-}
-
-// Erkennt normale Stripe-Rückkehrer
-const urlParams = new URLSearchParams(window.location.search);
-if (urlParams.get('payment') === 'success') {
-    enterpriseLizenzAktiv = true;
-    freischaltungAktivieren("Certified Commercial Console");
-}
-
-function switchTab(viewId, element) {
-    document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
-    document.querySelectorAll('.nav-link, .legal-link').forEach(l => l.classList.remove('active'));
-    document.getElementById(viewId).classList.add('active');
-    element.classList.add('active');
-    document.getElementById('page-title').innerText = element.innerText;
-}
-
-// SÄULE 6 SUCHE MIT ALLEN PARAMETERN AUS DEM FILTERBAUM
-async function executeGlobalSearch() {
-    const brand = document.getElementById('srcBrand').value;
-    const model = document.getElementById('srcModel').value;
-    const priceMax = document.getElementById('srcPriceMax').value || 3000000;
-    const lengthMin = document.getElementById('srcLengthMin').value || 18;
-    const feed = document.getElementById('resultsFeed');
-    
-    feed.innerHTML = `<div style="text-align:center; padding: 40px; font-style:italic; color:var(--slate-gray);">Scanne weltweite Live-Schnittstellen nach Übereinstimmungen...</div>`;
-    
-    try {
-        const res = await fetch(`/api/sourcing/search?brand=${brand}&model=${model}&priceMax=${priceMax}&lengthMin=${lengthMin}`);
-        const daten = await res.json();
-        feed.innerHTML = "";
-        
-        daten.forEach(boot => {
-            feed.innerHTML += `
-                <div class="boat-result-card">
-                    <div class="platform-origin-badge">${boot.plattform}</div>
-                    <div class="boat-image-placeholder">📷 LIVE DATA FEED</div>
-                    <div class="boat-details-pane">
-                        <div>
-                            <h3 class="boat-title-line">${boot.hersteller} ${boot.modell}</h3>
-                            <div class="boat-meta-grid">
-                                <div><strong>Länge:</strong> ${boot.laenge} m</div>
-                                <div><strong>Tiefgang:</strong> ${boot.tiefgang} m</div>
-                                <div><strong>Gewicht:</strong> ${boot.gewicht} t</div>
-                                <div><strong>Leistung:</strong> ${boot.leistung} PS</div>
-                                <div><strong>Motorstunden:</strong> ${boot.stunden} h</div>
-                                <div><strong>Hubraum:</strong> ${boot.hubraum} ccm</div>
-                                <div><strong>Verbrauch:</strong> ${boot.verbrauch} l/h</div>
-                                <div><strong>Erhaltungskosten:</strong> ${boot.unterhalt} €/Jahr</div>
-                            </div>
-                            <p style="font-size:13px; color: var(--slate-gray); margin-top:12px; margin-bottom:0;">${boot.text} | Standort: ${boot.ort}</p>
-                        </div>
-                        <h4 class="boat-price-tag">${Number(boot.preis).toLocaleString('de-DE')} EUR</h4>
-                    </div>
-                </div>`;
-        });
-    } catch (e) { feed.innerHTML = `<div style="color:red; text-align:center; padding:40px;">Schnittstellen-Fehler.</div>`; }
-}
-
-// Backend-Routings
-async function speichereYachtInCloud() {
-    const payload = { hersteller: document.getElementById('hersteller').value, modell: document.getElementById('modell').value, preis: document.getElementById('preis').value };
-    await fetch('/api/fleet/add', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
-    alert("Records synchronized with Cloud Vault.");
-}
-async function generiereKIText() {
-    const out = document.getElementById('beschreibung'); const b = out.value; out.value = "Executing Llama 3 engine...";
-    const res = await fetch('/api/generate-ai-text', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ hersteller: document.getElementById('hersteller').value, modell: document.getElementById('modell').value, beschreibung: b }) });
-    const d = await res.json(); out.value = d.text;
-}
-async function generierePDF() {
-    const payload = { hersteller: document.getElementById('hersteller').value, modell: document.getElementById('modell').value, preis: document.getElementById('preis').value };
-    const res = await fetch('/api/generate-pdf', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
-    const blob = await res.blob(); const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = `Specification.pdf`; document.body.appendChild(a); a.click(); a.remove();
-}
-</script>
-<script>
-// GEHEIMER CREATOR-HOTKEY LOG-IN LOCK
-// Drücke die Tasten "C" und "R" zeitgleich auf deiner Tastatur, um das Admin-Fenster zu öffnen!
-let keysPressed = {};
-document.addEventListener('keydown', (event) => {
-   keysPressed[event.key.toLowerCase()] = true;
-   if (keysPressed['c'] && keysPressed['r']) {
-       let masterKey = prompt("🔒 YACHTSYNC OS — CREATOR CONTROL CORE\n\nBitte autorisieren Sie sich mit Ihrem globalen Master-Schlüssel:");
-       if (masterKey) {
-           verifyCreatorAccess(masterKey);
-       }
-   }
-});
-document.addEventListener('keyup', (event) => {
-   delete keysPressed[event.key.toLowerCase()];
-});
-
-async function verifyCreatorAccess(key) {
-    try {
-        const response = await fetch('/api/auth/verify-creator', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ accessKey: key })
-        });
-        const ergebnis = await response.json();
-        
-        if (ergebnis.status === "Erfolg") {
-            // Der Server hebelt die Stripe-Sperre unbemerkt für dich aus!
-            enterpriseLizenzAktiv = true;
-            
-            // UI Update: Das Cockpit schaltet auf Elite-Admin-Modus um
-            const btn = document.getElementById('authBtn');
-            if(btn) {
-                btn.innerText = "Creator Workstation";
-                btn.classList.add('active');
-                btn.style.background = "#0284c7";
-                btn.style.color = "#ffffff";
-                btn.onclick = null;
-            }
-            const statusBadge = document.getElementById('systemStatus');
-            if(statusBadge) {
-                statusBadge.innerText = "Access Level: Master Creator [Root]";
-                statusBadge.style.background = "#e0f2fe";
-                statusBadge.style.color = "#0369a1";
-                statusBadge.style.borderColor = "#7dd3fc";
-            }
-            alert("🎯 WELCOME BACK, CREATOR\n\nIdentität verifiziert. Das Stripe-Zahlungsnetzwerk wurde erfolgreich umgangen. Alle Cloud-Datenbanken, Live-KI-Routinen und PDF-Kompilierungen stehen Ihnen ab jetzt unbegrenzt zur Verfügung.");
-        }
-    } catch (error) {
-        alert("🚨 System-Fehlermeldung: Authentifizierungs-Server antwortet nicht.");
-    }
-}
-</script>
-
-</body>
-</html>
+                        <div class="filter-section-title" style="margin-top:20px;">Antrieb & Effizienz</div>
+                        <div class="form-group"><label>Rumpf-Material</label><select id="srcMaterial"><option>Alle Materialien</option><option>GFK</option><option>GFK / Carbon</option><option>Aluminium</option></select></div>
+                        <div class="form-group"><label>Treibstoff-Typ</label><select id="srcFuel"><option>Alle Typen</option><option>Diesel</option><option>Hybrid</option></select></div>
+                        <div class="form-group"><label>Antriebssystem</label><select id="srcTrans"><option>Alle Systeme</option><option>Wellenantrieb</option><option>IPS
