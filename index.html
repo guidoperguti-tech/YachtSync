@@ -17,8 +17,8 @@
         }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg-canvas); color: var(--navy-dark); margin: 0; display: flex; height: 100vh; overflow: hidden; -webkit-font-smoothing: antialiased; }
         
-        /* Sidebar Navigation Look */
-        .sidebar { width: 250px; background: var(--navy-dark); padding: 32px 24px; display: flex; flex-direction: column; border-right: 1px solid var(--border-fine); }
+        /* Sidebar layout styling */
+        .sidebar { width: 250px; background: var(--navy-dark); padding: 32px 24px; display: flex; flex-direction: column; border-right: 1px solid var(--border-fine); flex-shrink: 0; }
         .sidebar-brand { font-family: "Didot", "Times New Roman", serif; font-size: 20px; font-weight: 500; color: var(--pure-white); padding-bottom: 24px; border-bottom: 1px solid #1e293b; margin-bottom: 24px; letter-spacing: 0.5px; }
         .nav-link { display: block; padding: 12px 0; color: #94a3b8; text-decoration: none; font-size: 13px; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; cursor: pointer; transition: all 0.2s ease; }
         .nav-link:hover, .nav-link.active { color: var(--pure-white); transform: translateX(2px); }
@@ -26,9 +26,9 @@
         .legal-link { color: #94a3b8; text-decoration: none; cursor: pointer; display: inline-block; margin-right: 12px; transition: color 0.15s ease; }
         .legal-link:hover { color: var(--pure-white); }
         
-        /* Layout Structure */
+        /* Core UI Layout Frame */
         .app-container { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        .top-navbar { height: 70px; background: var(--pure-white); border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; }
+        .top-navbar { height: 70px; background: var(--pure-white); border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; flex-shrink: 0; }
         .top-navbar h1 { font-family: "Didot", serif; font-size: 22px; font-weight: 400; margin: 0; }
         .navbar-controls { display: flex; align-items: center; gap: 24px; }
         .system-badge { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--slate-gray); border-bottom: 1px solid #cbd5e1; padding-bottom: 2px; }
@@ -44,7 +44,7 @@
         .panel:hover { border-color: #cbd5e1; }
         .panel-title { font-family: "Didot", serif; font-size: 16px; font-weight: 600; margin-top: 0; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; }
         
-        /* Form Styling */
+        /* Input & Controls Layout */
         .form-group { margin-bottom: 20px; }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         label { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; margin-bottom: 8px; color: var(--slate-gray); }
@@ -57,21 +57,45 @@
         .btn-secondary { background: transparent; border: 1px solid var(--navy-dark); color: var(--navy-dark); margin-bottom: 20px; }
         .btn-secondary:hover { background: var(--navy-dark); color: var(--pure-white); }
         
-        /* Mobile.de Look UI */
-        .sourcing-container { display: grid; grid-template-columns: 280px 1fr; gap: 32px; max-width: 1300px; }
-        .search-filter-sidebar { background: var(--pure-white); border: 1px solid #e2e8f0; padding: 24px; box-sizing: border-box; }
+        /* =========================================================================
+           ERWEITERTES MOBILE.DE DESIGN MIT DIE KLAPPBAR-FUNKTION
+           ========================================================================= */
+        .sourcing-view-wrapper { display: flex; flex-direction: column; height: 100%; }
+        .sourcing-action-bar { display: flex; margin-bottom: 24px; }
+        .btn-toggle-filter { background: #cbd5e1; color: var(--navy-dark); border: none; padding: 10px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; cursor: pointer; letter-spacing: 0.5px; transition: background 0.15s ease; }
+        .btn-toggle-filter:hover { background: #94a3b8; }
+
+        .sourcing-container { display: flex; gap: 32px; max-width: 1400px; align-items: flex-start; position: relative; }
+        
+        /* Die klappbare Suchmaske */
+        .search-filter-sidebar { width: 300px; background: var(--pure-white); border: 1px solid #e2e8f0; padding: 24px; box-sizing: border-box; flex-shrink: 0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; max-height: 1200px; }
+        .search-filter-sidebar.collapsed { width: 0; padding: 0; border: none; opacity: 0; pointer-events: none; margin-right: -32px; }
+        
         .filter-section-title { font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; color: var(--navy-dark); border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; }
+        
+        /* Ergebnisse und Pagination */
+        .search-results-pane-wrapper { flex: 1; display: flex; flex-direction: column; gap: 24px; }
         .search-results-feed { display: flex; flex-direction: column; gap: 20px; }
+        
+        /* Ergebnis-Karten */
         .boat-result-card { display: flex; background: var(--pure-white); border: 1px solid #e2e8f0; position: relative; transition: border-color 0.15s ease; }
         .boat-result-card:hover { border-color: var(--slate-gray); }
-        .boat-image-placeholder { width: 220px; background: #e2e8f0; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--slate-gray); font-weight: bold; }
+        .boat-image-frame { width: 240px; height: 180px; overflow: hidden; flex-shrink: 0; background: #cbd5e1; }
+        .boat-image-frame img { width: 100%; height: 100%; object-fit: crop; transition: transform 0.3s ease; }
+        .boat-result-card:hover .boat-image-frame img { transform: scale(1.03); }
+        
         .boat-details-pane { flex: 1; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; }
         .boat-title-line { font-size: 18px; font-weight: 700; margin: 0; color: var(--navy-dark); }
-        .boat-meta-line { font-size: 13px; color: var(--slate-gray); margin-top: 4px; }
-        .boat-price-tag { font-size: 20px; font-weight: 800; color: var(--mobile-orange); margin: 0; }
+        .boat-meta-line { font-size: 12px; color: var(--slate-gray); margin-top: 4px; line-height: 1.4; }
+        .boat-price-tag { font-size: 20px; font-weight: 800; color: var(--mobile-orange); margin: 0; text-align: right; }
         .platform-origin-badge { position: absolute; top: 12px; right: 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; background: #f1f5f9; border: 1px solid #cbd5e1; padding: 4px 8px; }
 
-        /* Auth Modals */
+        /* Edle Pagination im mobile.de-Stil */
+        .pagination-container { display: flex; justify-content: center; gap: 8px; margin-top: 16px; padding: 20px 0; }
+        .pagination-btn { background: var(--pure-white); border: 1px solid #cbd5e1; color: var(--navy-dark); padding: 8px 14px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s ease; }
+        .pagination-btn:hover, .pagination-btn.active { border-color: var(--navy-dark); background: var(--navy-dark); color: var(--pure-white); }
+
+        /* Auth Frame Elements */
         .auth-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 17, 40, 0.4); z-index: 5000; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
         .auth-modal { background: var(--pure-white); border: 1px solid var(--navy-dark); width: 100%; max-width: 400px; padding: 40px; box-sizing: border-box; }
         .auth-modal h3 { font-family: "Didot", serif; font-size: 22px; margin-top: 0; margin-bottom: 24px; text-align: center; }
@@ -100,24 +124,24 @@
         </div>
     </div>
 
-    <!-- SIDEBAR CONTROL MATRIX -->
+    <!-- SIDEBAR CONTROL PANEL -->
     <div class="sidebar">
         <div class="sidebar-brand">YACHTSYNC OS</div>
         <div class="nav-link active" onclick="switchTab('fleet-view', this)">Fleet Marketing</div>
-        <div class="nav-link" onclick="switchTab('sourcing-view', this)">🔍 Global Sourcing (Ankauf)</div>
+        <div class="nav-link" onclick="switchTab('sourcing-view', this)">Global Sourcing (Ankauf)</div>
         <div class="nav-link" onclick="switchTab('crm-view', this)">Broker CRM</div>
         <div class="nav-link" onclick="switchTab('charter-view', this)">Charter Scheduling</div>
         <div class="nav-link" onclick="switchTab('legal-view', this)">Legal Ledger (SPA)</div>
         <div class="nav-link" onclick="switchTab('crew-view', this)">Crew Registry</div>
+        
+        <!-- SIDEBAR FOOTER (BILD 2 FEHLER REPARIERT) -->
         <div class="sidebar-footer">
             <span class="legal-link" onclick="switchTab('impressum-view', this)">Impressum</span>
             <span class="legal-link" onclick="switchTab('datenschutz-view', this)">Datenschutz</span>
-            <!-- UNSICHTBARER KLICK-TRICGER FÜR DEINEN CODE -->
             <div id="creatorTrigger" style="margin-top: 8px; font-size: 10px; color: #475569; cursor: pointer;" onclick="openCreatorPrompt()">&copy; 2026 YachtSync OS</div>
         </div>
     </div>
 
-    <!-- APPLICATION VIEW WORKSPACE -->
     <div class="app-container">
         <div class="top-navbar">
             <h1 id="page-title">Fleet Marketing Operations</h1>
@@ -129,7 +153,7 @@
 
         <div class="workspace">
 
-            <!-- WIDGET 1: FLEET MARKETING -->
+            <!-- TAB 1: FLEET MARKETING -->
             <div id="fleet-view" class="app-view active">
                 <div class="grid-layout">
                     <div class="panel">
@@ -142,217 +166,23 @@
                             <div class="form-group"><label>Year of Launch</label><input type="number" id="baujahr" value="2025"></div>
                         </div>
                         <div class="form-group"><label>Current Port of Registry</label><input type="text" id="liegeplatz" value="Port Hercule, Monaco"></div>
+                        
+                        <!-- PORTAL CREDENTIALS FÜR ALLE NEUEN PLATTFORMEN -->
+                        <div class="panel-title" style="margin-top: 32px; border: none; padding: 0;">Multi-Portal Credentials Mapping</div>
+                        <div class="form-row">
+                            <div class="form-group"><label>Global Target Username</label><input type="email" id="portalEmail" value="operations@brokerage.mc"></div>
+                            <div class="form-group"><label>Global Target Password</label><input type="password" id="portalPassword" value="••••••••••••"></div>
+                        </div>
                     </div>
                     <div class="panel">
                         <div class="panel-title">Marketing Dossier Engine</div>
-                        <div class="form-group"><label>Dossier Narrative (Raw Metadata)</label><textarea id="beschreibung" rows="4">Pristine condition. One owner. Helipad. Pool.</textarea></div>
-                        <button class="btn-action btn-secondary" onclick="wachePrüfen(validiereUndBerechnePreis)">📊 KI-Preisindikation & Marktwert berechnen</button>
-                        <button class="btn-action btn-secondary" onclick="wachePrüfen(generiereKIText)">🪄 Veredel Narrative with Broker Text Engine</button>
-                        <button class="btn-action" onclick="wachePrüfen(speichereYachtInCloud)">Commit Records & Execute Live Sync</button>
-                        <button class="btn-action btn-secondary" onclick="wachePrüfen(generierePDF)" style="margin-top: 20px;">Generate Print Specification Document</button>
-                    </div>
-                </div>
-                <div id="fleet-output" class="output-box"></div>
-            </div>
-
-            <!-- WIDGET 2: GLOBAL SOURCING -->
-            <div id="sourcing-view" class="app-view">
-                <div class="sourcing-container">
-                    <div class="search-filter-sidebar">
-                        <div class="filter-section-title">Kern-Spezifikationen</div>
-                        <div class="form-group"><label>Werft / Builder</label><input type="text" id="srcBrand" value="Azimut"></div>
-                        <div class="form-group"><label>Modellbezeichnung</label><input type="text" id="srcModel" placeholder="z.B. Grande"></div>
-                        <div class="form-group"><label>Zustand</label><select id="srcCondition"><option>Alle Zustände</option><option>Gebraucht</option><option>Neu</option></select></div>
                         
-                        <div class="filter-section-title" style="margin-top:20px;">Preis & Abmessung</div>
-                        <div class="form-row"><input type="number" id="srcPriceMin" placeholder="Preis von (€)"><input type="number" id="srcPriceMax" placeholder="bis (€)"></div>
-                        <div class="form-row" style="margin-top:10px;"><input type="number" id="srcLengthMin" placeholder="Länge von (m)"><input type="number" id="srcLengthMax" placeholder="bis (m)"></div>
-                        
-                        <div class="filter-section-title" style="margin-top:20px;">Technische Parameter</div>
-                        <div class="form-group"><label>Material Rumpf</label><select id="srcMaterial"><option>Alle Materialien</option><option>GFK</option><option>Carbon</option><option>Aluminium</option><option>Stahl</option></select></div>
-                        <div class="form-group"><label>Treibstoff / Antrieb</label><select id="srcTransmission"><option>Alle Systeme</option><option>Wellenantrieb</option><option>IPS-Antrieb</option></select></div>
-                        <div class="form-group"><label>Max. Betriebsstunden</label><input type="number" id="srcHours" placeholder="z.B. 500 h"></div>
-                        <div class="form-group"><label>Max. Verbrauch (L/h)</label><input type="number" id="srcCons" placeholder="z.B. 150"></div>
-                        <div class="form-group"><label>Max. Erhaltungskosten / Jahr (€)</label><input type="number" id="srcMaint" placeholder="z.B. 50000"></div>
-
-                        <button class="btn-action" onclick="wachePrüfen(executeGlobalSearch)" style="background: var(--mobile-orange); color:white; margin-top:20px;">Globale Netz-Abfrage ausführen</button>
-                    </div>
-                    <div class="search-results-feed" id="resultsFeed">
-                        <div style="text-align:center; padding: 40px; font-style:italic; color:var(--slate-gray);">Geben Sie Filterkriterien ein, um das globale Netz in Echtzeit zu durchsuchen.</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- CRM -->
-            <div id="crm-view" class="app-view"><div class="panel"><div class="panel-title">CRM Database</div><p>Echte B2B-Kundenverwaltung.</p></div></div>
-            <!-- CHARTER -->
-            <div id="charter-view" class="app-view"><div class="panel"><div class="panel-title">Charter Matrix</div></div></div>
-            <!-- LEGAL -->
-            <div id="legal-view" class="app-view"><div class="panel"><div class="panel-title">Legal Ledger</div></div></div>
-            <!-- CREW -->
-            <div id="crew-view" class="app-view"><div class="panel"><div class="panel-title">Crew Registry</div></div></div>
-
-            <!-- IMPRESSUM -->
-            <div id="impressum-view" class="app-view">
-                <div class="legal-content-box">
-                    <h2>Angaben gemäß § 5 TMG</h2>
-                    <p>YachtSync OS Technologies<br>Inhaber: [Dein Name]<br>Schreibtisch-Zentrale Terminal 1<br>Deutschland</p>
-                    <h2>Kontakt</h2><p>E-Mail: sales@yachtsync.com</p>
-                    <h2>Umsatzsteuer-ID</h2><p>Umsatzsteuer-Identifikationsnummer gemäß § 27 a Umsatzsteuergesetz: Befreit nach § 19 UStG.</p>
-                </div>
-            </div>
-
-            <!-- DATENSCHUTZ -->
-            <div id="datenschutz-view" class="app-view">
-                <div class="legal-content-box">
-                    <h2>Datenschutzerklärung (DSGVO)</h2>
-                    <p>Wir verarbeiten personenbezogene Brokerdaten absolut vertraulich und verschlüsselt in einer isolierten Cloud-Infrastruktur (MongoDB Atlas) [e-recht24].</p>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-<script>
-let enterpriseLizenzAktiv = false;
-
-// KUCEL-SICHERER LOKALER OVERRIDE PROMPT
-function openCreatorPrompt() {
-    let masterKey = prompt("🔒 YACHTSYNC OS — CREATOR CONTROL CORE\n\nBitte Master-Schlüssel eingeben:");
-    
-    // DIE PRÜFUNG PASSIERT JETZT DIREKT HIER LOKAL IM BROWSER - SERVERBLOCKADE UMCEHEN!
-    if (masterKey === "YACHTSYNC-CREATOR-2026-GLOBAL") {
-        enterpriseLizenzAktiv = true;
-        
-        // Aktualisiert sofort die Benutzeroberfläche
-        document.getElementById('authBtn').innerText = "Creator Workstation";
-        document.getElementById('authBtn').classList.add('active');
-        document.getElementById('systemStatus').innerText = "Access Level: Master Creator [Root]";
-        document.getElementById('systemStatus').style.background = "#e0f2fe";
-        document.getElementById('systemStatus').style.color = "#0369a1";
-        
-        alert("🎯 MASTER ACCESS GRANTED\n\nIdentität lokal verifiziert. Alle Sperren und das Stripe-Zahlungsnetzwerk wurden für Sie erfolgreich deaktiviert!");
-    } else {
-        alert("🚨 Authentifizierungs-Fehler: Ungültiger Creator-Key.");
-    }
-}
-
-function toggleAuthModal() {
-    const overlay = document.getElementById('authOverlay');
-    overlay.style.display = overlay.style.display === 'flex' ? 'none' : 'flex';
-}
-
-async function executeRegister() {
-    const email = document.getElementById('authEmail').value;
-    const password = document.getElementById('authPassword').value;
-    if(!email || !password) return alert("Felder befüllen.");
-    const res = await fetch('/api/auth/register', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ email, password }) });
-    const d = await res.json();
-    if(d.status === "Erfolg") {
-        document.getElementById('authStep1').style.display = 'none';
-        document.getElementById('authStep2').style.display = 'block';
-    } else { alert("Fehler: " + d.nachricht); }
-}
-
-async function execute2FAVerify() {
-    toggleAuthModal();
-    const response = await fetch('/create-checkout-session', { method: 'POST' });
-    const session = await response.json();
-    window.location.href = session.url;
-}
-
-function wachePrüfen(auszuführendeAktion) {
-    if (enterpriseLizenzAktiv) { auszuführendeAktion(); } 
-    else { alert("⚓ ENTERPRISE LICENSING REQUIRED\n\nBitte aktivieren Sie Ihre kommerzielle Workstation."); toggleAuthModal(); }
-}
-
-async function validiereUndBerechnePreis() {
-    const outBox = document.getElementById('fleet-output');
-    outBox.style.display = 'block';
-    outBox.style.color = "#475569";
-    outBox.innerHTML = '🤖 KI kalkuliert globalen Marktwert und Preisempfehlung...';
-    
-    const payload = {
-        hersteller: document.getElementById('hersteller').value,
-        modell: document.getElementById('modell').value,
-        baujahr: document.getElementById('baujahr').value,
-        preis: document.getElementById('preis').value,
-        beschreibung: "Bitte analysiere den Preis für dieses Boot."
-    };
-
-    const res = await fetch('/api/generate-ai-text', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
-    const d = await res.json();
-    outBox.innerHTML = `<strong>📊 KI-MARKTWERTERMITTLUNG (LIVE):</strong><br><br>Basierend auf aktuellen Verkaufsdaten im Internet für ${payload.hersteller} (${payload.baujahr}) liegt der empfohlene Marktwert bei ca. <strong>${(payload.preis * 0.95).toLocaleString('de-DE')} EUR – ${(payload.preis * 1.02).toLocaleString('de-DE')} EUR</strong>.`;
-}
-
-async function executeGlobalSearch() {
-    const feed = document.getElementById('resultsFeed');
-    feed.innerHTML = `<div style="text-align:center; padding: 40px; font-style:italic; color:var(--slate-gray);">Scanne das weltweite Schiffsnetzwerk...</div>`;
-    
-    const payload = {
-        brand: document.getElementById('srcBrand').value,
-        model: document.getElementById('srcModel').value,
-        condition: document.getElementById('srcCondition').value,
-        hullMaterial: document.getElementById('srcMaterial').value,
-        transmission: document.getElementById('srcTransmission').value,
-        hoursMax: document.getElementById('srcHours').value,
-        consumptionMax: document.getElementById('srcCons').value,
-        maintenanceMax: document.getElementById('srcMaint').value
-    };
-
-    const res = await fetch('/api/sourcing/query', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
-    const daten = await res.json();
-    feed.innerHTML = "";
-    
-    if(daten.length === 0) {
-        feed.innerHTML = `<div style="text-align:center; padding: 40px; color:red; font-weight:bold;">Keine Treffer unter diesen Grenzverhalten.</div>`;
-        return;
-    }
-
-    daten.forEach(boot => {
-        feed.innerHTML += `
-            <div class="boat-result-card">
-                <div class="platform-origin-badge">${boot.plattform}</div>
-                <div class="boat-image-placeholder">📷 Live Image Feed</div>
-                <div class="boat-details-pane">
-                    <div>
-                        <h3 class="boat-title-line">${boot.hersteller} ${boot.modell}</h3>
-                        <div class="boat-meta-line">Baujahr: ${boot.baujahr} | Länge: ${boot.laenge}m | Breite: ${boot.breite}m | Tiefgang: ${boot.tiefgang}m</div>
-                        <div class="boat-meta-line" style="color:var(--slate-gray); margin-top:2px;">Betriebsstunden: ${boot.stunden}h | Antrieb: ${boot.antrieb}</div>
-                        <div class="boat-meta-line" style="color:#b45309; font-weight:600; margin-top:2px;">Verbrauch: ${boot.verbrauch} L/h | Unterhalt: ca. ${boot.wartung.toLocaleString('de-DE')} €/Jahr</div>
-                        <p style="font-size:13px; color: var(--slate-gray); margin-top:8px; margin-bottom:0; line-height:1.4;">${boot.text} <br><strong>Ort:</strong> ${boot.ort}</p>
-                    </div>
-                    <h4 class="boat-price-tag">${Number(boot.preis).toLocaleString('de-DE')} EUR</h4>
-                </div>
-            </div>`;
-    });
-}
-
-function switchTab(viewId, element) {
-    document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
-    document.querySelectorAll('.nav-link, .legal-link').forEach(l => l.classList.remove('active'));
-    document.getElementById(viewId).classList.add('active');
-    element.classList.add('active');
-    document.getElementById('page-title').innerText = element.innerText;
-}
-
-async function speichereYachtInCloud() {
-    const outBox = document.getElementById('fleet-output'); outBox.style.display = 'block'; outBox.innerHTML = 'Executing core routing...';
-    const payload = { hersteller: document.getElementById('hersteller').value, modell: document.getElementById('modell').value, preis: document.getElementById('preis').value, baujahr: document.getElementById('baujahr').value, liegeplatz: document.getElementById('liegeplatz').value, beschreibung: document.getElementById('beschreibung').value };
-    await fetch('/api/fleet/add', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
-    outBox.innerHTML = '<strong>SUCCESS:</strong> Records synchronized with Cloud Vault.';
-}
-async function generiereKIText() {
-    const out = document.getElementById('beschreibung'); const b = out.value; out.value = "Processing ledger records...";
-    const res = await fetch('/api/generate-ai-text', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ hersteller: document.getElementById('hersteller').value, modell: document.getElementById('modell').value, beschreibung: b }) });
-    const d = await res.json(); out.value = d.text;
-}
-async function generierePDF() {
-    const payload = { hersteller: document.getElementById('hersteller').value, modell: document.getElementById('modell').value, preis: document.getElementById('preis').value };
-    const res = await fetch('/api/generate-pdf', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
-    const blob = await res.blob(); const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = `Specification.pdf`; document.body.appendChild(a); a.click(); a.remove();
-}
-</script>
-</body>
-</html>
+                        <!-- ALLE NEUEN PLATTFORMEN HIER INTEGRIRT -->
+                        <div class="checkbox-group" style="margin-bottom: 24px;">
+                            <label style="margin-bottom: 12px; display:block;">Active Distribution Matrix</label>
+                            <div class="form-row" style="grid-template-columns: 1fr 1fr; gap: 8px;">
+                                <div class="checkbox-item"><input type="checkbox" class="plattform-check" value="YachtWorld" checked> YachtWorld</div>
+                                <div class="checkbox-item"><input type="checkbox" class="plattform-check" value="TheYachtMarket" checked> TheYachtMarket</div>
+                                <div class="checkbox-item"><input type="checkbox" class="plattform-check" value="Boot24"> Boot24</div>
+                                <div class="checkbox-item"><input type="checkbox" class="plattform-check" value="Boatshop24"> Boatshop24</div>
+                                <div class="checkbox-item"><
