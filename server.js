@@ -1,8 +1,23 @@
 const express = require('express');
 const path = require('path');
 const PDFDocument = require('pdfkit');
+const mongoose = require('mongoose');
 const { OpenAI } = require('openai');
 const { starteYachtPosting } = require('./bot.js');
+
+// =========================================================================
+// DATENBANK VERBINDUNG (Füge hier deinen Link aus Schritt 1 ein!)
+// =========================================================================
+const MONGO_URI = "mongodb+srv://yachtsyncadmin:<QitaPenas2009$$$>@yachtsync.vdxrew1.mongodb.net/?appName=YachtSync";
+mongoose.connect(MONGO_URI)
+    .then(() => console.log('💾 [Cloud Database] Live-Verbindung hergestellt!'))
+    .catch(err => console.error('🚨 [Database Error] Verbindung fehlgeschlagen:', err));
+
+// Datenbank Tabellen-Strukturen
+const Yacht = mongoose.model('Yacht', new mongoose.Schema({ hersteller: String, modell: String, preis: Number, baujahr: Number, liegeplatz: String, beschreibung: String }));
+const Buyer = mongoose.model('Buyer', new mongoose.Schema({ name: String, budget: Number, minLaenge: Number, region: String }));
+const Charter = mongoose.model('Charter', new mongoose.Schema({ yachtId: String, start: String, end: String, kunde: String }));
+const Mangel = mongoose.model('Mangel', new mongoose.Schema({ yachtId: String, komponente: String, text: String, prioritaet: String }));
 
 const stripe = require('stripe')('sk_test_51PXXXXXXXXXXXXXX'); 
 const openai = new OpenAI({ apiKey: 'sk-proj-XXXXXXXXXXXXXX' });
@@ -10,119 +25,64 @@ const openai = new OpenAI({ apiKey: 'sk-proj-XXXXXXXXXXXXXX' });
 const app = express();
 app.use(express.json());
 
-// In-Memory-Datenbank-Tabellen (Zentrales ERP-Datenregister)
-let fleetInventory = [];
-let crmLeads = [];
-let charterCalendar = [];
-let financeLedger = [];
-let telemetryLog = [];
-
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// =========================================================================
-// MODULE 1: INVENTORY & GLOBAL DISTRIBUTION SYSTEM
-// =========================================================================
-app.post('/api/fleet/register', (req, res) => {
-    const { hersteller, modell, preis, baujahr, liegeplatz, beschreibung } = req.body;
-    const neueYacht = { id: Date.now(), hersteller, modell, preis: Number(preis), baujahr: Number(baujahr), liegeplatz, beschreibung, status: "Verfügbar" };
-    fleetInventory.push(neueYacht);
-    res.json({ status: "Erfolg", nachricht: "Yacht im globalen ERP-Register erfasst.", daten: neueYacht });
+// APIs
+app.post('/api/fleet/add', async (req, res) => {
+    try {
+        const neueYacht = new Yacht(req.body);
+        await neueYacht.save();
+        res.json({ status: "Erfolg", nachricht: "Yacht erfolgreich in der Cloud-Datenbank gespeichert!", daten: neueYacht });
+    } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// =========================================================================
-// MODULE 2: HIGH-NET-WORTH CRM (AI Matching Core)
-// =========================================================================
-app.post('/api/crm/add-lead', (req, res) => {
-    const { clientName, targetBudget, minLength, clientType } = req.body;
-    const neuerLead = { id: Date.now(), clientName, targetBudget: Number(targetBudget), minLength: Number(minLength), clientType, timestamp: new Date() };
-    crmLeads.push(neuerLead);
-
-    // AI Matching-Algorithmus sucht im Live-Bootsbestand
-    const match = fleetInventory.find(y => y.preis <= neuerLead.targetBudget && y.status === "Verfügbar");
-    res.json({ status: "Erfolg", nachricht: "HNI-Client erfolgreich registriert.", daten: neuerLead, match: match || null });
+app.post('/api/crm/add-buyer', async (req, res) => {
+    try {
+        const { kaeuferName, budget, mindestLaenge, liegeplatzWunsch } = req.body;
+        const neuerKaeufer = new Buyer({ name: kaeuferName, budget: Number(budget), minLaenge: Number(mindestLaenge), region: liegeplatzWunsch });
+        await neuerKaeufer.save();
+        const passendesBoot = await Yacht.findOne({ preis: { $lte: Number(budget) } });
+        res.json({ status: "Erfolg", neuerKaeufer, passendesBoot });
+    } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// =========================================================================
-// MODULE 3: CHARTER OPERATIONS & COLLISION GUARD
-// =========================================================================
-app.post('/api/charter/schedule', (req, res) => {
-    const { vesselId, client, startDate, endDate, weeklyRate } = req.body;
-    
-    // Mathematische Kollisionsprüfung (Doppelbuchungsschutz)
-    const overlap = charterCalendar.find(c => 
-        c.vesselId === vesselId && 
-        ((startDate >= c.start && startDate <= c.end) || (endDate >= c.start && endDate <= c.end))
-    );
-    if (overlap) {
-        return res.status(400).json({ status: "Konflikt", nachricht: "🚨 Belegungs-Konflikt: Das Schiff ist im Zeitraum bereits gebucht." });
-    }
-
-    const buchung = { id: Date.now(), vesselId, client, start: startDate, end: endDate, rate: Number(weeklyRate) };
-    charterCalendar.push(buchung);
-    res.json({ status: "Erfolg", nachricht: "Zeitraum im Flottenkalender erfolgreich gesperrt.", daten: buchung });
+app.post('/api/charter/book', async (req, res) => {
+    const { yachtId, startDatum, endDatum, chartererName } = req.body;
+    try {
+        const konflikt = await Charter.findOne({ yachtId, $or: [{ start: { $gte: startDatum, $lte: endDatum } }, { end: { $gte: startDatum, $lte: endDatum } }] });
+        if (konflikt) return res.status(400).json({ status: "Konflikt", nachricht: "🚨 Diese Yacht ist im gewählten Zeitraum bereits besetzt!" });
+        const neueBuchung = new Charter({ yachtId, start: startDatum, end: endDatum, kunde: chartererName });
+        await neueBuchung.save();
+        res.json({ status: "Erfolg", nachricht: "Charterzeitraum im Kalender erfolgreich blockiert." });
+    } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// =========================================================================
-// MODULE 4: LEGAL CONTRACT ENGINE (SPA & MYBA Standards)
-// =========================================================================
-app.post('/api/legal/build-agreement', (req, res) => {
-    const { sellerName, buyerName, assetName, purchasePrice } = req.body;
+app.post('/api/legal/generate-contract', (req, res) => {
+    const { verkaeufer, kaeufer, yachtName, kaufpreis } = req.body;
     const doc = new PDFDocument({ margin: 50 });
-    
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename=SPA_Agreement_${assetName}.pdf`);
+    res.setHeader('Content-Disposition', `attachment; filename=SPA_Vertrag_${yachtName}.pdf`);
     doc.pipe(res);
-
-    doc.fillColor('#0f172a').font('Helvetica-Bold').fontSize(18).text('MEMORANDUM OF AGREEMENT (MOA) / SPA', 50, 50);
-    doc.moveDown();
-    doc.font('Helvetica').fontSize(10).fillColor('#334155').text(`Offizieller Kaufvertrag für maritime Vermögenswerte.`, { width: 500 });
-    doc.moveDown();
-    doc.text(`VERKÄUFER (EIGNER): ${sellerName}`);
-    doc.text(`KÄUFER (INVESTOR): ${buyerName}`);
-    doc.text(`SCHIFFS-ASSET: ${assetName}`);
-    doc.text(`KAUFPREIS: ${Number(purchasePrice).toLocaleString('de-DE')} EUR`);
-    doc.moveDown();
-    doc.text('Dieses Dokument unterliegt dem Seerecht des Fürstentums Monaco. Die Übergabe erfolgt frei von maritimem Arrest.', { align: 'justify' });
+    doc.fillColor('#0f172a').font('Helvetica-Bold').fontSize(20).text('YACHT SALES AND PURCHASE AGREEMENT (SPA)', 50, 50);
+    doc.moveDown().font('Helvetica').fontSize(12).text(`Verkäufer: ${verkaeufer}\nKäufer: ${kaeufer}\nObjekt: ${yachtName}\nPreis: ${kaufpreis} EUR`);
     doc.end();
 });
 
-// =========================================================================
-// MODULE 5: FINANCIAL LEDGER & TRANSACTION TRACKING
-// =========================================================================
-app.post('/api/finance/post-invoice', (req, res) => {
-    const { debtor, invoiceAmount, serviceType } = req.body;
-    const rechnung = { id: Date.now(), debtor, amount: Number(invoiceAmount), serviceType, paymentStatus: "Offen (Treuhandkonto)" };
-    financeLedger.push(rechnung);
-    res.json({ status: "Erfolg", nachricht: "Transaktion im Hauptbuch gebucht.", daten: rechnung });
-});
-
-// =========================================================================
-// MODULE 6: VESSEL TELEMETRY & MAINTENANCE SYSTEMS
-// =========================================================================
-app.post('/api/crew/log-telemetry', (req, res) => {
-    const { vesselName, engineHours, activeIssues, fuelLevel } = req.body;
-    const log = { id: Date.now(), vesselName, hours: Number(engineHours), issues: activeIssues, fuel: Number(fuelLevel), reportTime: new Date() };
-    telemetryLog.push(log);
-    res.json({ status: "Erfolg", nachricht: "Telemetriedaten von Bord erfolgreich synchronisiert.", daten: log });
-});
-
-// CORE WRAPPERS (AI & WEB SCRAPING)
-app.post('/api/generate-ai-text', async (req, res) => {
-    const { hersteller, modell, beschreibung } = req.body;
+app.post('/api/crew/report-issue', async (req, res) => {
     try {
-        const response = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
-            messages: [
-                { role: "system", content: "You are an elite superyacht copywriter. Write a highly emotional, prestigious sales description in English." },
-                { role: "user", content: `Shipyard: ${hersteller}, Model: ${modell}. Raw Data: ${beschreibung}` }
-            ],
-        });
+        const neuerMangel = new Mangel(req.body);
+        await neuerMangel.save();
+        res.json({ status: "Erfolg", nachricht: "Mängelbericht im Werft-Register gesichert." });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/api/generate-ai-text', async (req, res) => {
+    try {
+        const response = await openai.chat.completions.create({ model: "gpt-4o-mini", messages: [{ role: "system", content: "Schreibe ein britisches Yacht-Exposé." }, { role: "user", content: req.body.beschreibung }] });
         res.json({ text: response.choices.message.content });
-    } catch (e) {
-        res.json({ text: `✨ PRESTIGIOUS MARITIME ASSET ✨\n\nThe magnificent ${hersteller} ${modell} represents the zenith of naval luxury. Engineered to perfection, she stands ready for immediate delivery.` });
-    }
+    } catch (e) { res.json({ text: `✨ PRESTIGIOUS OFF-MARKET VESSEL ✨\n\nRedefining coastal luxury. Available for immediate viewings in Monaco.` }); }
 });
 
 app.post('/api/generate-pdf', (req, res) => {
@@ -132,10 +92,9 @@ app.post('/api/generate-pdf', (req, res) => {
     res.setHeader('Content-Disposition', `attachment; filename=Specification_${hersteller}.pdf`);
     doc.pipe(res);
     doc.rect(0, 0, 612, 50).fill('#0f172a');
-    doc.fillColor('#0284c7').font('Helvetica-Bold').fontSize(16).text('⚓ YACHTSYNC SUITE COMMERCIAL SPEC SHEET', 50, 18);
-    doc.fillColor('#0f172a').fontSize(22).text(`${hersteller} ${modell}`, 50, 90);
-    doc.fontSize(12).text(`Price: ${preis} EUR | Year: ${baujahr} | Port: ${liegeplatz}`, 50, 125);
-    doc.font('Helvetica').fontSize(10).text(beschreibung, 50, 160, { width: 500 });
+    doc.fillColor('#0284c7').font('Helvetica-Bold').fontSize(18).text('⚓ YACHTSYNC SUITE SPECIFICATION SHEET', 50, 18);
+    doc.fillColor('#0f172a').fontSize(24).text(`${hersteller} ${modell}`, 50, 90);
+    doc.fontSize(12).text(`Preis: ${preis} EUR\nBaujahr: ${baujahr}\nLiegeplatz: ${liegeplatz}\n\nDetails:\n${beschreibung}`, 50, 140);
     doc.end();
 });
 
@@ -144,9 +103,5 @@ app.post('/api/post-yacht', async (req, res) => {
     res.json(ergebnis);
 });
 
-// START PROTOKOLL
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`[YachtSync OS Enterprise Monopol Engine Active on Port ${PORT}]`);
-});
-
+app.listen(PORT, () => console.log(`🚀 Server läuft stabil auf Port ${PORT}`));
