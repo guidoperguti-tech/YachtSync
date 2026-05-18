@@ -1,4 +1,4 @@
-<!<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
@@ -9,7 +9,7 @@
         
         /* Sidebar Navigation */
         .sidebar { width: 260px; background: var(--card-bg); border-right: 1px solid var(--border); padding: 30px 20px; display: flex; flex-direction: column; gap: 20px; }
-        .logo { font-size: 22px; font-weight: bold; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .logo { font-size: 22px; font-weight: bold; background: var(--accent-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
         .nav-item { padding: 12px 15px; border-radius: 8px; color: #94a3b8; cursor: pointer; transition: all 0.2s; font-weight: 500; font-size: 15px; }
         .nav-item:hover, .nav-item.active { background: rgba(0, 242, 254, 0.1); color: var(--accent); }
         
@@ -21,22 +21,21 @@
         /* Grid Layout */
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
         .card { background: var(--card-bg); border: 1px solid var(--border); padding: 30px; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); margin-bottom: 25px; position: relative; }
-        h2 { font-size: 16px; text-transform: uppercase; color: var(--accent); letter-spacing: 1px; margin-top: 0; margin-bottom: 20px; }
+        h2 { font-size: 14px; text-transform: uppercase; color: var(--accent); letter-spacing: 1px; margin-top: 0; margin-bottom: 20px; }
         
         /* Forms */
         label { display: block; margin-bottom: 8px; font-size: 13px; color: #94a3b8; font-weight: 500; }
-        input, textarea, select { width: 100%; padding: 12px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; color: white; font-size: 14px; box-sizing: border-box; margin-bottom: 15px; transition: border 0.2s; }
-        input:focus, textarea:focus, select:focus { border-color: var(--accent); outline: none; }
+        input, textarea, select { width: 100%; padding: 12px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; color: white; font-size: 14px; box-sizing: border-box; margin-bottom: 15px; }
         
         /* Buttons */
         .btn { width: 100%; background: var(--accent-gradient); color: #070a13; border: none; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3); }
         .btn:hover { transform: translateY(-2px); }
-        .btn-secondary { background: transparent; border: 1px solid var(--border); color: white; box-shadow: none; margin-top: 10px; }
+        .btn-secondary { width: 100%; background: transparent; border: 1px solid var(--border); color: white; margin-top: 0; margin-bottom: 20px; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: transform 0.2s; }
         .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
         
         /* Paywall overlay */
         .overlay { display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7, 10, 19, 0.96); border-radius: 16px; z-index: 100; text-align: center; padding-top: 180px; box-sizing: border-box; }
-        .pay-btn { background: var(--accent-gradient); color: #070a13; font-size: 18px; padding: 16px 36px; font-weight: bold; border-radius: 8px; cursor: pointer; border: none; box-shadow: 0 4px 20px rgba(0,242,254,0.4); }
+        .pay-btn { background: var(--accent-gradient); color: #070a13; font-size: 18px; padding: 16px 36px; font-weight: bold; border-radius: 8px; cursor: pointer; border: none; }
     </style>
 </head>
 <body>
@@ -48,13 +47,10 @@
         <div class="nav-item">KI-Exposé Text</div>
         <div class="nav-item">Charter-Flotte</div>
         <div class="nav-item">Kunden-CRM</div>
-        <div class="nav-item" style="margin-top: auto; color: #ef4444;">Abmelden</div>
     </div>
 
     <!-- MAIN CONTENT -->
     <div class="main-content">
-        
-        <!-- HEADER -->
         <div class="header-bar">
             <div>
                 <h1 style="margin: 0; font-size: 28px;">Yacht-Management Zentrale</h1>
@@ -63,67 +59,49 @@
             <div class="price-badge">Enterprise Plan Aktiv</div>
         </div>
 
-        <div class="card" style="position: relative;">
-            <!-- Bezahlschranke (Overlay) -->
+        <div class="card">
+            <!-- Bezahlschranke -->
             <div id="payWall" class="overlay">
                 <h2 style="color: var(--accent); margin-bottom: 5px; font-size: 24px;">🔒 Enterprise Suite freischalten</h2>
-                <p style="color: #94a3b8; max-width: 440px; margin: 10px auto 25px auto; font-size: 14px;">Erhalten Sie Zugriff auf das vollautomatische Multi-Posting, die KI-Exposé-Übersetzung und den PDF-Katalog-Generator.</p>
+                <p style="color: #94a3b8; max-width: 440px; margin: 10px auto 25px auto; font-size: 14px;">Schalten Sie das unbegrenzte Multi-Posting, die KI-Exposé-Veredelung und den PDF-Katalog-Generator frei.</p>
                 <button class="pay-btn" onclick="jetztAbonnieren()">Jetzt Zugang aktivieren (499€/Monat)</button>
             </div>
 
             <div class="grid-2">
-                <!-- LINKE SPALTE: DETAILS -->
+                <!-- LINKE SPALTE -->
                 <div>
                     <h2>1. Yacht Spezifikationen</h2>
                     <label>Hersteller / Werft</label>
                     <input type="text" id="hersteller" value="Lürssen">
-                    
                     <label>Modell</label>
-                    <input type="text" id="modell" value="Superyacht Custom">
-                    
+                    <input type="text" id="modell" value="Custom Luxury 80M">
                     <div class="grid-2" style="gap: 10px;">
-                        <div>
-                            <label>Preis (EUR)</label>
-                            <input type="number" id="preis" value="65000000">
-                        </div>
-                        <div>
-                            <label>Baujahr</label>
-                            <input type="number" id="baujahr" value="2024">
-                        </div>
+                        <div><label>Preis (EUR)</label><input type="number" id="preis" value="85000000"></div>
+                        <div><label>Baujahr</label><input type="number" id="baujahr" value="2025"></div>
                     </div>
-
-                    <label>Liegeplatz (Hafen / Land)</label>
-                    <input type="text" id="liegeplatz" value="Port Hercule, Monaco">
+                    <label>Liegeplatz</label><input type="text" id="liegeplatz" value="Monaco Grand Harbor">
                 </div>
 
-                <!-- RECHTE SPALTE: KI & AUTOMATION -->
+                <!-- RECHTE SPALTE -->
                 <div>
                     <h2>2. KI-Exposé & Kanäle</h2>
-                    
                     <label>Verkaufstext (Rohdaten)</label>
-                    <textarea id="beschreibung" rows="4">Top Zustand. Ein Besitzer. Hubschrauberlandeplatz. 6 Kabinen.</textarea>
+                    <textarea id="beschreibung" rows="4">Top Zustand. Helipad. Master-Suite. Pool auf dem Deck.</textarea>
                     
-                    <button class="btn btn-secondary" onclick="generiereKIText()" style="margin-top: 0; margin-bottom: 20px;">🪄 KI-Verkaufstext veredeln</button>
+                    <button class="btn btn-secondary" onclick="generiereKIText()">🪄 KI-Verkaufstext veredeln</button>
 
                     <label>Ziel-Marktplätze</label>
-                    <select id="plattform">
-                        <option>Alle verfügbaren (YachtWorld & TheYachtMarket)</option>
-                        <option>Nur YachtWorld</option>
-                        <option>Nur TheYachtMarket</option>
-                    </select>
+                    <select id="plattform"><option>Alle (YachtWorld & TheYachtMarket)</option></select>
                     
-                    <button class="btn" onclick="starteMultiPost()" style="margin-top: 15px;">🚀 Global synchronisieren</button>
-                    <button class="btn btn-secondary" onclick="generierePDF()">📄 PDF-Exposé generieren</button>
+                    <button class="btn" onclick="starteMultiPost()">🚀 Global synchronisieren</button>
+                    <button class="btn btn-secondary" onclick="generierePDF()" style="margin-top: 15px; margin-bottom: 0;">📄 PDF-Exposé generieren</button>
                 </div>
             </div>
-            
             <div id="status-box" style="margin-top: 25px; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold; display: none; background: rgba(0, 242, 254, 0.1); color: var(--accent); border: 1px solid var(--accent);"></div>
         </div>
-
     </div>
 
 <script>
-// Stripe-Erkennung aus der URL
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get('payment') === 'success') {
     document.getElementById('payWall').style.display = 'none';
@@ -137,19 +115,65 @@ async function jetztAbonnieren() {
     } catch (e) { alert('Stripe Verbindung fehlgeschlagen.'); }
 }
 
-function generiereKIText() {
-    alert("🤖 Die KI veredelt den Text... (Feature wird in Schritt 2 verknüpft!)");
+async function generiereKIText() {
+    const beschreibungField = document.getElementById('beschreibung');
+    const alterText = beschreibungField.value;
+    beschreibungField.value = "🤖 KI schreibt exklusiven Text... Bitte warten...";
+    
+    try {
+        const response = await fetch('/api/generate-ai-text', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                hersteller: document.getElementById('hersteller').value,
+                modell: document.getElementById('modell').value,
+                beschreibung: alterText
+            })
+        });
+        const daten = await response.json();
+        beschreibungField.value = daten.text;
+    } catch (error) {
+        beschreibungField.value = alterText;
+        alert('Verbindung zur KI-Schnittstelle fehlgeschlagen.');
+    }
 }
 
-function generierePDF() {
-    alert("📄 PDF wird generiert... (Feature wird in Schritt 2 verknüpft!)");
+async function generierePDF() {
+    const payload = {
+        hersteller: document.getElementById('hersteller').value,
+        modell: document.getElementById('modell').value,
+        preis: document.getElementById('preis').value,
+        baujahr: document.getElementById('baujahr').value,
+        liegeplatz: document.getElementById('liegeplatz').value,
+        beschreibung: document.getElementById('beschreibung').value
+    };
+
+    try {
+        const response = await fetch('/api/generate-pdf', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Expose_${payload.hersteller}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+    } catch (error) {
+        alert('PDF-Generierung fehlgeschlagen.');
+    }
 }
 
 function starteMultiPost() {
     const box = document.getElementById('status-box');
     box.style.display = 'block';
-    box.innerText = '🤖 Synchronisierung läuft im Hintergrund...';
+    box.innerText = '🤖 Synchronisierung läuft im Hintergrund auf den Servern...';
 }
 </script>
 </body>
 </html>
+

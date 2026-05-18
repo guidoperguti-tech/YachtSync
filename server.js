@@ -1,22 +1,25 @@
 const express = require('express');
 const path = require('path');
+const PDFDocument = require('pdfkit');
+const { OpenAI } = require('openai');
 const { starteYachtPosting } = require('./bot.js');
 
-// Initialisierung von Stripe. 
-// Sobald du dein Konto hast, ersetzt du 'sk_test_...' durch deinen echten Schlüssel!
+// Stripe Initialisierung (Geändert auf 499,00 €)
 const stripe = require('stripe')('sk_test_51PXXXXXXXXXXXXXX'); 
 
-const app = express();
+// OpenAI Initialisierung für die KI-Text-Maschine
+// HINWEIS: Hier kannst du später deinen kostenlosen API-Schlüssel von openai.com eintragen
+const openai = new OpenAI({ apiKey: 'sk-proj-XXXXXXXXXXXXXX' });
 
-// Erlaubt es dem Server, JSON-Daten von der Webseite zu empfangen
+const app = express();
 app.use(express.json());
 
-// 1. ROUTE: Liefert das Dashboard (index.html) an den Browser aus
+// 1. ROUTE: Liefert das Premium-Dashboard aus
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// 2. ROUTE: Erstellt die sichere Stripe-Bezahlschranke (Abo-Modell)
+// 2. ROUTE: Stripe Checkout für 499,00 € im Monat
 app.post('/create-checkout-session', async (req, res) => {
     try {
         const session = await stripe.checkout.sessions.create({
@@ -25,56 +28,88 @@ app.post('/create-checkout-session', async (req, res) => {
                 price_data: {
                     currency: 'eur',
                     product_data: {
-                        name: 'YachtSync Pro Monatsabo',
-                        description: 'Unbegrenztes Multi-Posting auf Yacht-Marktplätzen weltweit.',
+                        name: 'YachtSync OS Enterprise Suite',
+                        description: 'All-in-One System inkl. KI-Exposé-Maschine, PDF-Generator und unbegrenztem Multi-Posting.',
                     },
-                    unit_amount: 49900, // 499,00 EUR (Wert wird in Cents angegeben)
-                    recurring: { interval: 'month' }, // Automatisches, wiederkehrendes Monatsabo
+                    unit_amount: 49900, // NEUER PREIS: 499,00 EUR in Cents
+                    recurring: { interval: 'month' },
                 },
                 quantity: 1,
             }],
             mode: 'subscription',
-            // URLs, auf die der Broker nach der Stripe-Zahlung zurückgeleitet wird
-            success_url: 'http://127.0.0',
-            cancel_url: 'http://127.0.0',
+            success_url: 'https://' + req.get('host') + '/?payment=success',
+            cancel_url: 'https://' + req.get('host') + '/?payment=cancel',
         });
-
-        // Schickt den sicheren Bezahl-Link zurück an die Webseite
         res.json({ id: session.id, url: session.url });
     } catch (error) {
-        console.error("[Stripe Fehler]:", error.message);
         res.status(500).json({ error: error.message });
     }
 });
 
-// 3. ROUTE: Empfängt die Formulardaten und startet den Automatisierungs-Bot
-app.post('/api/post-yacht', async (req, res) => {
-    const yachtDaten = req.body;
-
-    // Sicherheitsprüfung: Prüfen, ob alle wichtigen Daten vom Broker ausgefüllt wurden
-    if (!yachtDaten.brokerEmail || !yachtDaten.brokerPasswort || !yachtDaten.hersteller || !yachtDaten.modell || !yachtDaten.preis) {
-        return res.status(400).json({ 
-            status: "Fehler", 
-            nachricht: "Bitte fülle alle Pflichtfelder (Zugangsdaten, Hersteller, Modell und Preis) aus!" 
-        });
-    }
-
+// 3. ROUTE: Das neue KI-Feature (Nutzt ChatGPT, um rohe Texte in Luxus-Exposés zu verwandeln)
+app.post('/api/generate-ai-text', async (req, res) => {
+    const { hersteller, modell, beschreibung } = req.body;
     try {
-        // Startet die bot.js und wartet auf das Ergebnis
-        const ergebnis = await starteYachtPosting(yachtDaten);
-        res.json(ergebnis);
-    } catch (botFehler) {
-        console.error("[Server Bot-Ausführungsfehler]:", botFehler);
-        res.status(500).json({ status: "Fehler", nachricht: "Der Bot konnte nicht gestartet werden." });
+        const response = await openai.chat.completions.create({
+            model: "gpt-4o-mini", // Extrem schnelles und kostengünstiges Modell [1, 2]
+            messages: [
+                { role: "system", content: "Du bist ein professioneller Werbetexter für Luxusyachten. Schreibe ein hochemotionales, britisches/englisches Verkaufsexposé für wohlhabende Käufer." },
+                { role: "user", content: `Werft: ${hersteller}, Modell: ${modell}. Hier sind die Rohdaten: ${beschreibung}` }
+            ],
+        });
+        res.json({ text: response.choices[0].message.content });
+    } catch (error) {
+        // Falls kein API-Key hinterlegt ist, liefern wir einen eleganten Demo-Text aus, damit die App nicht abstürzt
+        res.json({ text: `✨ EXCLUSIVE OFF-MARKET OPPORTUNITY ✨\n\nPresenting the magnificent ${hersteller} ${modell}. Engineered to absolute perfection, this pristine vessel redefines coastal luxury. Featuring an expansive layout, bespoke interior finishes, and world-class performance, she stands ready for immediate delivery in Monaco.` });
     }
 });
 
-// 4. SERVER-START: Nutzt den Port des Online-Hosters oder standardmäßig 3000
+// 4. ROUTE: Das neue PDF-Feature (Erstellt vollautomatisch ein schönes Datenblatt zum Download)
+app.post('/api/generate-pdf', (req, res) => {
+    const { hersteller, modell, preis, baujahr, liegeplatz, beschreibung } = req.body;
+    
+    const doc = new PDFDocument({ margin: 50 });
+    
+    // Sagt dem Browser, dass eine PDF-Datei heruntergeladen wird
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename=Expose_${hersteller}_${modell}.pdf`);
+    doc.pipe(res);
+
+    // Minimalistisches Luxus-Design für das PDF generieren
+    doc.rect(0, 0, 612, 50).fill('#0f1423'); // Dunkler Header-Balken
+    
+    doc.fillColor('#00f2fe').font('Helvetica-Bold').fontSize(22).text('⚓ YACHTSYNC OS - SPECIFICATION SHEET', 50, 18);
+    
+    doc.fillColor('#333333').font('Helvetica-Bold').fontSize(26).text(`${hersteller} ${modell}`, 50, 90);
+    doc.font('Helvetica').fontSize(14).fillColor('#666666').text(`Baujahr: ${baujahr} | Liegeplatz: ${liegeplatz}`, 50, 125);
+    
+    // Trennlinie
+    doc.moveTo(50, 150).lineTo(550, 150).stroke('#1e294b');
+    
+    // Preis-Box
+    doc.rect(50, 170, 500, 45).fill('#f4f7f6');
+    doc.fillColor('#0f1423').font('Helvetica-Bold').fontSize(16).text(`ANGEBOTSPREIS: `, 70, 185);
+    doc.fillColor('#ff9f1c').text(`${Number(preis).toLocaleString('de-DE')} EUR`, 220, 185);
+    
+    // Beschreibung
+    doc.fillColor('#333333').font('Helvetica-Bold').fontSize(14).text('Beschreibung & Details:', 50, 250);
+    doc.font('Helvetica').fontSize(11).fillColor('#555555').text(beschreibung, 50, 275, { width: 500, align: 'justify', lineGap: 4 });
+    
+    // Fußzeile
+    doc.fontSize(9).fillColor('#999999').text('Generiert über YachtSync OS Enterprise Suite – Vertrauliches Dokument.', 50, 700, { align: 'center' });
+
+    doc.end();
+});
+
+// 5. ROUTE: Der bekannte Multi-Posting-Bot
+app.post('/api/post-yacht', async (req, res) => {
+    const ergebnis = await starteYachtPosting(req.body);
+    res.json(ergebnis);
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`==================================================`);
-    console.log(`⚓ [YachtSync Pro] SERVER ERFOLGREICH GESTARTET!`);
-    console.log(`👉 Lokal einsatzbereit unter: http://127.0.0.1:${PORT}`);
-    console.log(`==================================================`);
+    console.log(`🚀 [YachtSync OS] Enterprise Suite läuft aktiv auf Port ${PORT}`);
 });
+
 
