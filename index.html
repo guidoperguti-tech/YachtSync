@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>YachtSync Pro Dashboard</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #0b132b; color: #ffffff; padding: 40px; }
+        .card { max-width: 600px; background: #1c2541; padding: 35px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); margin: 0 auto; border: 1px solid #3a506b; position: relative; }
+        h1 { font-size: 26px; color: #5bc0be; margin-bottom: 5px; text-align: center; font-weight: 700; }
+        .subtitle { text-align: center; color: #a5a5a5; font-size: 14px; margin-bottom: 30px; }
+        .section-title { font-size: 14px; text-transform: uppercase; color: #5bc0be; letter-spacing: 1px; margin-top: 25px; border-bottom: 1px solid #3a506b; padding-bottom: 5px; }
+        label { display: block; margin-top: 15px; margin-bottom: 5px; font-size: 13px; color: #cbd5e1; }
+        input, textarea { width: 100%; padding: 12px; background: #0b132b; border: 1px solid #3a506b; border-radius: 8px; color: white; font-size: 14px; box-sizing: border-box; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        button { width: 100%; background: linear-gradient(135deg, #5bc0be, #3a506b); color: white; border: none; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; margin-top: 30px; cursor: pointer; }
+        #status-box { margin-top: 25px; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold; display: none; font-size: 14px; }
+        
+        /* Sperrbildschirm-Stile */
+        .overlay { display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 19, 43, 0.93); border-radius: 16px; z-index: 10; text-align: center; padding-top: 150px; box-sizing: border-box; }
+        .pay-btn { background: #ff9f1c; color: #0b132b; font-size: 18px; padding: 15px 30px; width: auto; display: inline-block; margin-top: 20px; box-shadow: 0 4px 15px rgba(255,159,28,0.4); }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <!-- Bezahlschranke (Overlay) -->
+    <div id="payWall" class="overlay">
+        <h2 style="color: #ff9f1c; margin-bottom: 5px;">🔒 Premium-Zugang erforderlich</h2>
+        <p style="color: #cbd5e1; max-width: 400px; margin: 0 auto; font-size: 14px;">Schalte unbegrenztes Multi-Posting frei, um Inserate vollautomatisiert weltweit zu streuen.</p>
+        <button class="pay-btn" onclick="jetztAbonnieren()">Jetzt für 199€/Monat aktivieren</button>
+    </div>
+
+    <h1>⚓ YachtSync Pro</h1>
+    <div class="subtitle">Das automatisierte Multi-Posting-System für Premium-Broker</div>
+    
+    <!-- Die Formular-Felder bleiben identisch wie vorher -->
+    <div class="section-title">1. Marktplatz Zugangsdaten</div>
+    <div class="grid"><div><label>Broker E-Mail</label><input type="email" id="brokerEmail" placeholder="name@yachtagentur.com"></div><div><label>Passwort</label><input type="password" id="brokerPasswort" placeholder="••••••••"></div></div>
+    <div class="section-title">2. Yacht Spezifikationen</div>
+    <div class="grid"><div><label>Hersteller / Werft</label><input type="text" id="hersteller" value="Benetti"></div><div><label>Modell</label><input type="text" id="modell" value="Oasis 40M"></div></div>
+    <div class="grid"><div><label>Preis (EUR)</label><input type="number" id="preis" value="18500000"></div><div><label>Baujahr</label><input type="number" id="baujahr" value="2023"></div></div>
+    <label>Verkaufstext & Details</label><textarea id="beschreibung" rows="4">Exklusive Superyacht in neuwertigem Zustand.</textarea>
+    <button onclick="starteMultiPost()">Auf allen Plattformen spiegeln</button>
+    <div id="status-box"></div>
+</div>
+
+<script>
+// Prüfen, ob der Nutzer gerade erfolgreich bezahlt hat
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('payment') === 'success') {
+    // Wenn die Zahlung erfolgreich war, entfernen wir die Bezahlschranke
+    document.getElementById('payWall').style.display = 'none';
+}
+
+async function jetztAbonnieren() {
+    try {
+        const response = await fetch('/create-checkout-session', { method: 'POST' });
+        const session = await response.json();
+        // Weiterleitung zu der sicheren Stripe Bezahlseite
+        window.location.href = session.url;
+    } catch (error) {
+        alert('Stripe-Verbindung fehlgeschlagen. Bitte prüfe deinen Server-Schlüssel.');
+    }
+}
+
+async function starteMultiPost() {
+    // Bleibt identisch wie in deiner vorherigen Version...
+    const box = document.getElementById('status-box');
+    box.style.display = 'block';
+    box.innerText = '🤖 Bot läuft...';
+    // (Hier steht dein restlicher funktionierender Fetch-Befehl von vorhin)
+}
+</script>
+</body>
+</html>
+
