@@ -88,7 +88,7 @@
         </div>
 
         <div class="workspace">
-            <!-- MODULE 1: MARKETING (Mit echten Beispielwerten) -->
+            <!-- MODULE 1: MARKETING -->
             <div id="fleet-view" class="app-view active">
                 <div class="grid-layout">
                     <div class="panel">
@@ -128,7 +128,7 @@
                 <div id="fleet-output" class="output-box"></div>
             </div>
 
-            <!-- MODULE 2: CRM (Vorbefüllt) -->
+            <!-- MODULE 2: CRM -->
             <div id="crm-view" class="app-view">
                 <div class="grid-layout">
                     <div class="panel">
@@ -152,7 +152,7 @@
                 </div>
             </div>
 
-            <!-- MODULE 3: CHARTER (Vorbefüllt) -->
+            <!-- MODULE 3: CHARTER -->
             <div id="charter-view" class="app-view">
                 <div class="panel" style="max-width: 600px;">
                     <div class="mock-notice">System Preview: Sandbox Mock Data Layer</div>
@@ -167,7 +167,7 @@
                 </div>
             </div>
 
-            <!-- MODULE 4: LEGAL (Vorbefüllt) -->
+            <!-- MODULE 4: LEGAL -->
             <div id="legal-view" class="app-view">
                 <div class="panel" style="max-width: 600px;">
                     <div class="mock-notice">System Preview: Sandbox Mock Data Layer</div>
@@ -180,7 +180,7 @@
                 </div>
             </div>
 
-            <!-- MODULE 5: CREW MAINTENANCE (Vorbefüllt) -->
+            <!-- MODULE 5: CREW MAINTENANCE -->
             <div id="crew-view" class="app-view">
                 <div class="grid-layout">
                     <div class="panel">
@@ -205,9 +205,9 @@
             </div>
 
             <!-- IMPRESSUM -->
-            <div id="impressum-view" class="app-view"><div class="legal-content-box"><h2>Angaben gemäß § 5 TMG</h2><p>YachtSync OS Technologies<br>Deutschland</p><h2>Vertreten durch:</h2><p>[Dein Name] (In Kooperation mit den Erziehungsberechtigten)</p><h2>Kontakt</h2><p>E-Mail: sales@yachtsync.com</p></div></div>
+            <div id="impressum-view" class="app-view"><div class="legal-content-box"><h2>Angaben gemäß § 5 TMG</h2><p>YachtSync OS Technologies<br>Deutschland</p><h2>Vertreten durch:</h2><p>[Guido Peretti] (In Kooperation mit den Erziehungsberechtigten)</p><h2>Kontakt</h2><p>E-Mail: sales@yachtsync.com</p></div></div>
             <!-- DATENSCHUTZ -->
-            <div id="datenschutz-view" class="app-view"><div class="legal-content-box"><h2>1. Datenschutz auf einen Blick</h2><p>Die Betreiber dieser Seiten nehmen den Schutz Ihrer persönlichen Daten sehr ernst.</p><h2>2. Datenerfassung</h2><p>Unsere Anwendung speichert die eingegebenen Daten hochsicher in einer isolierten Cloud-Infrastruktur (MongoDB Atlas).</p></div></div>
+            <div id="datenschutz-view" class="app-view"><div class="legal-content-box"><h2>1. Datenschutz auf einen Blick</h2><p>Die Betreiber dieser Seiten nehmen den Schutz Ihrer persönlichen Daten very ernst.</p><h2>2. Datenerfassung</h2><p>Unsere Anwendung speichert die eingegebenen Daten hochsicher in einer isolierten Cloud-Infrastruktur (MongoDB Atlas).</p></div></div>
         </div>
     </div>
 
@@ -229,12 +229,19 @@ if (urlParams.get('payment') === 'success') {
     document.getElementById('systemStatus').style.borderColor = "#a9d08e";
 }
 
-// Diskrete Wächter-Schranke: Schickt anonyme Klicks unaufdringlich zu Stripe
+// Kompakter Wächter mit hoher Scannbarkeit für maximales Verlangen
 function wachePrüfen(auszuführendeAktion) {
     if (enterpriseLizenzAktiv) {
         auszuführendeAktion();
     } else {
-        alert("🔒 SYSTEM WORKSTATION UPDATE REQUIRED\n\nSie befinden sich aktuell in der Sandbox-Vorschau von YachtSync OS.\n\nUm eigene Datensätze in die Live-Cloud zu übertragen, die kostenlose Lamma-3 KI-Veredelung freizuschalten oder ausführbare PDF-Kaufverträge zu kompilieren, aktivieren Sie bitte Ihre kommerzielle Workstation-Lizenz.");
+        alert(
+            "⚓ ENTERPRISE LICENSING REQUIRED\n\n" +
+            "Aktivieren Sie Ihre kommerzielle Workstation, um folgende Core-Features freizuschalten:\n\n" +
+            "• 🚀 Live Multi-Sync — Automatisiertes Inserieren auf YachtWorld & TheYachtMarket.\n" +
+            "• 🪄 Llama-3 AI Engine — Rohe Notizen in Sekundenschnelle zu Luxus-Exposés veredeln.\n" +
+            "• 📜 Document Ledger — Rechtssichere SPA-Kaufverträge und PDF-Exposés on-the-fly.\n\n" +
+            "Klicken Sie auf OK, um Ihre unbegrenzte Lizenz für 499 €/Monat zu aktivieren."
+        );
         jetztAbonnieren();
     }
 }
@@ -255,7 +262,7 @@ function switchTab(viewId, element) {
     document.getElementById('page-title').innerText = element.innerText;
 }
 
-// Backend-Routings (Bleiben geschützt)
+// Backend-Routings
 async function speichereYachtInCloud() {
     const outBox = document.getElementById('fleet-output'); outBox.style.display = 'block'; outBox.innerHTML = 'Executing core routing...';
     let ausgewaehltePlattformen = []; document.querySelectorAll('.plattform-check:checked').forEach(cb => { ausgewaehltePlattformen.push(cb.value); });
@@ -324,3 +331,4 @@ async function sendeCrewMangel() {
 </script>
 </body>
 </html>
+
