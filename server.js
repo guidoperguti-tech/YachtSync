@@ -2,34 +2,45 @@ const express = require('express');
 const path = require('path');
 const PDFDocument = require('pdfkit');
 const mongoose = require('mongoose');
-const { OpenAI } = require('openai');
+const { Groq } = require('groq-sdk');
 const { starteYachtPosting } = require('./bot.js');
 
 // =========================================================================
-// DATENBANK VERBINDUNG (Füge hier deinen Link aus Schritt 1 ein!)
+// 1. DATENBANK VERBINDUNG (Füge hier deinen echten MongoDB-Link ein!)
 // =========================================================================
-const MONGO_URI = "mongodb+srv://yachtsyncadmin:<QitaPenas2009$$$>@yachtsync.vdxrew1.mongodb.net/?appName=YachtSync";
+const MONGO_URI = "mongodb+srv://yachtadmin:DEIN_PASSWORT@cluster0.xxxx.mongodb.net/yachtsync?retryWrites=true&w=majority";
+
 mongoose.connect(MONGO_URI)
     .then(() => console.log('💾 [Cloud Database] Live-Verbindung hergestellt!'))
     .catch(err => console.error('🚨 [Database Error] Verbindung fehlgeschlagen:', err));
 
-// Datenbank Tabellen-Strukturen
+// Datenbank Tabellen-Strukturen (Schemas)
 const Yacht = mongoose.model('Yacht', new mongoose.Schema({ hersteller: String, modell: String, preis: Number, baujahr: Number, liegeplatz: String, beschreibung: String }));
 const Buyer = mongoose.model('Buyer', new mongoose.Schema({ name: String, budget: Number, minLaenge: Number, region: String }));
 const Charter = mongoose.model('Charter', new mongoose.Schema({ yachtId: String, start: String, end: String, kunde: String }));
 const Mangel = mongoose.model('Mangel', new mongoose.Schema({ yachtId: String, komponente: String, text: String, prioritaet: String }));
 
+// =========================================================================
+// 2. EXTERNE INTERFACES (Stripe & KOSTENLOSE GROQ KI-ENGINE)
+// =========================================================================
 const stripe = require('stripe')('sk_test_51PXXXXXXXXXXXXXX'); 
-const openai = new OpenAI({ apiKey: 'sk-proj-XXXXXXXXXXXXXX' });
+
+// Gehe auf groq.com, erstelle in 10 Sekunden einen kostenlosen Account und trage hier deinen Key ein (Format: gsk_...)
+const groq = new Groq({ apiKey: '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' });
 
 const app = express();
 app.use(express.json());
 
+// Liefert das handgemachte Custom-Dashboard aus
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// APIs
+// =========================================================================
+// 3. CORE APIS (CRM, CHARTER, LEGAL, MAINTENANCE)
+// =========================================================================
+
+// SÄULE 1: FLEET REGISTRATION
 app.post('/api/fleet/add', async (req, res) => {
     try {
         const neueYacht = new Yacht(req.body);
@@ -38,6 +49,7 @@ app.post('/api/fleet/add', async (req, res) => {
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// SÄULE 2: BROKER CRM
 app.post('/api/crm/add-buyer', async (req, res) => {
     try {
         const { kaeuferName, budget, mindestLaenge, liegeplatzWunsch } = req.body;
@@ -48,6 +60,7 @@ app.post('/api/crm/add-buyer', async (req, res) => {
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// SÄULE 3: CHARTER SCHEDULING
 app.post('/api/charter/book', async (req, res) => {
     const { yachtId, startDatum, endDatum, chartererName } = req.body;
     try {
@@ -59,6 +72,7 @@ app.post('/api/charter/book', async (req, res) => {
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// SÄULE 4: LEGAL OPERATIONS
 app.post('/api/legal/generate-contract', (req, res) => {
     const { verkaeufer, kaeufer, yachtName, kaufpreis } = req.body;
     const doc = new PDFDocument({ margin: 50 });
@@ -70,6 +84,7 @@ app.post('/api/legal/generate-contract', (req, res) => {
     doc.end();
 });
 
+// SÄULE 5: CREW REGISTRY
 app.post('/api/crew/report-issue', async (req, res) => {
     try {
         const neuerMangel = new Mangel(req.body);
@@ -78,30 +93,59 @@ app.post('/api/crew/report-issue', async (req, res) => {
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// =========================================================================
+// 4. KI-ENGINE (Dauerhaft kostenloses Live Llama-3-Modell via Groq)
+// =========================================================================
 app.post('/api/generate-ai-text', async (req, res) => {
+    const { hersteller, modell, beschreibung } = req.body;
     try {
-        const response = await openai.chat.completions.create({ model: "gpt-4o-mini", messages: [{ role: "system", content: "Schreibe ein britisches Yacht-Exposé." }, { role: "user", content: req.body.beschreibung }] });
-        res.json({ text: response.choices.message.content });
-    } catch (e) { res.json({ text: `✨ PRESTIGIOUS OFF-MARKET VESSEL ✨\n\nRedefining coastal luxury. Available for immediate viewings in Monaco.` }); }
+        const completion = await groq.chat.completions.create({
+            model: "llama3-8b-8192", // Brutal schnelles, dauerhaft kostenloses Meta-Modell
+            messages: [
+                { role: "system", content: "You are a world-class luxury yacht broker marketing writer. Write a compelling, emotional editorial listing narrative in English for high-net-worth individuals." },
+                { role: "user", content: `Shipyard: ${hersteller}, Model: ${modell}. Technical logs/raw notes: ${beschreibung}` }
+            ]
+        });
+        res.json({ text: completion.choices[0].message.content });
+    } catch (error) {
+        // Elegantes Fallback-System, falls der Groq Key gsk_... noch fehlt
+        res.json({ text: `✨ EXCLUSIVE OFF-MARKET OPPORTUNITY ✨\n\nPresenting the magnificent ${hersteller} ${modell}. Redefining modern naval architecture and coastal luxury, this pristine vessel features an expansive open deck configuration and bespoke interior finishes. Available for immediate viewings and prompt delivery in Port Hercule, Monaco.` });
+    }
 });
 
+// PDF SPECIFICATION SHEET GENERATOR
 app.post('/api/generate-pdf', (req, res) => {
     const { hersteller, modell, preis, baujahr, liegeplatz, beschreibung } = req.body;
     const doc = new PDFDocument({ margin: 50 });
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename=Specification_${hersteller}.pdf`);
     doc.pipe(res);
-    doc.rect(0, 0, 612, 50).fill('#0f172a');
-    doc.fillColor('#0284c7').font('Helvetica-Bold').fontSize(18).text('⚓ YACHTSYNC SUITE SPECIFICATION SHEET', 50, 18);
-    doc.fillColor('#0f172a').fontSize(24).text(`${hersteller} ${modell}`, 50, 90);
+    doc.rect(0, 0, 612, 50).fill('#0a1128');
+    doc.fillColor('#ffffff').font('Helvetica-Bold').fontSize(16).text('⚓ YACHTSYNC SUITE SPECIFICATION SHEET', 50, 18);
+    doc.fillColor('#0a1128').fontSize(24).text(`${hersteller} ${modell}`, 50, 90);
     doc.fontSize(12).text(`Preis: ${preis} EUR\nBaujahr: ${baujahr}\nLiegeplatz: ${liegeplatz}\n\nDetails:\n${beschreibung}`, 50, 140);
     doc.end();
 });
 
+// MULTI-POSTER PLAYWRIGHT BOT ROUTE
 app.post('/api/post-yacht', async (req, res) => {
     const ergebnis = await starteYachtPosting(req.body);
     res.json(ergebnis);
 });
 
+// STRIPE BILLING INTERFACE
+app.post('/create-checkout-session', async (req, res) => {
+    try {
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: [{ price_data: { currency: 'eur', product_data: { name: 'YachtSync OS Workstation License' }, unit_amount: 49900, recurring: { interval: 'month' } }, quantity: 1 }],
+            mode: 'subscription',
+            success_url: 'https://' + req.get('host') + '/?payment=success',
+            cancel_url: 'https://' + req.get('host') + '/?payment=cancel',
+        });
+        res.json({ id: session.id, url: session.url });
+    } catch (error) { res.status(500).json({ error: error.message }); }
+});
+
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 Server läuft stabil auf Port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 [YachtSync OS] Monopoly Engine online mit kostenloser Live-KI auf Port ${PORT}`));

@@ -3,220 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YachtSync OS — Custom Workspace</title>
+    <title>YachtSync OS — Enterprise Workspace</title>
     <style>
-        :root {
-            --bg-canvas: #fafafa;
-            --navy-dark: #0a1128;
-            --border-fine: #1e293b;
-            --slate-gray: #475569;
-            --pure-white: #ffffff;
-            --action-blue: #1c3d5a;
+        :root { 
+            --bg-canvas: #fafafa; 
+            --navy-dark: #0a1128; 
+            --border-fine: #1e293b; 
+            --slate-gray: #475569; 
+            --pure-white: #ffffff; 
+            --action-blue: #1c3d5a; 
         }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg-canvas); color: var(--navy-dark); margin: 0; display: flex; height: 100vh; overflow: hidden; -webkit-font-smoothing: antialiased; }
+        .sidebar { width: 250px; background: var(--navy-dark); padding: 32px 24px; display: flex; flex-direction: column; border-right: 1px solid var(--border-fine); }
+        .sidebar-brand { font-family: "Didot", "Bodoni MT", "Cinzel", "Times New Roman", serif; font-size: 20px; font-weight: 500; color: var(--pure-white); padding-bottom: 24px; letter-spacing: 1px; border-bottom: 1px solid #1e293b; margin-bottom: 24px; }
+        .nav-link { display: block; padding: 12px 0; color: #94a3b8; text-decoration: none; font-size: 13px; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; cursor: pointer; }
+        .nav-link:hover, .nav-link.active { color: var(--pure-white); }
+        .sidebar-footer { margin-top: auto; border-top: 1px solid #1e293b; padding-top: 16px; font-size: 11px; color: #64748b; }
+        .legal-link { color: #94a3b8; text-decoration: none; cursor: pointer; display: inline-block; margin-right: 12px; }
+        .legal-link:hover { color: var(--pure-white); }
+        .app-container { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        
+        /* Minimalist Editorial Header */
+        .top-navbar { height: 70px; background: var(--pure-white); border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; }
+        .top-navbar h1 { font-family: "Didot", "Bodoni MT", "Cinzel", "Times New Roman", serif; font-size: 22px; font-weight: 400; margin: 0; }
+        .navbar-controls { display: flex; align-items: center; gap: 24px; }
+        .system-badge { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); border-bottom: 1px solid #cbd5e1; padding-bottom: 2px; }
+        
+        /* Discrete Corporate Login & Activation Button */
+        .btn-corporate-auth { background: transparent; border: 1px solid var(--navy-dark); color: var(--navy-dark); padding: 8px 18px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.15s ease; }
+        .btn-corporate-auth:hover { background: var(--navy-dark); color: var(--pure-white); }
+        .btn-corporate-auth.active { background: #e2f0d9; border-color: #a9d08e; color: #385723; cursor: default; }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-canvas);
-            color: var(--navy-dark);
-            margin: 0;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-            -webkit-font-smoothing: antialiased;
-        }
+        .workspace { flex: 1; padding: 40px; overflow-y: auto; }
+        .app-view { display: none; }
+        .app-view.active { display: block; }
+        .grid-layout { display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; max-width: 1200px; }
+        .panel { background: var(--pure-white); border: 1px solid #e2e8f0; padding: 32px; margin-bottom: 24px; }
+        .panel-title { font-family: "Didot", "Bodoni MT", "Cinzel", "Times New Roman", serif; font-size: 16px; font-weight: 600; color: var(--navy-dark); margin-top: 0; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; }
+        .form-group { margin-bottom: 20px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        label { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; color: var(--slate-gray); }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #cbd5e1; background: var(--pure-white); color: var(--navy-dark); font-size: 14px; box-sizing: border-box; border-radius: 0; }
+        
+        /* Notice badge for mock values */
+        .mock-notice { font-size: 11px; font-weight: 600; text-transform: uppercase; color: #b45309; background: #fffbeb; border: 1px solid #fde68a; padding: 6px 12px; margin-bottom: 16px; display: inline-block; letter-spacing: 0.5px; }
 
-        /* Handmade Editorial Sidebar */
-        .sidebar {
-            width: 250px;
-            background: var(--navy-dark);
-            padding: 32px 24px;
-            display: flex;
-            flex-direction: column;
-            border-right: 1px solid var(--border-fine);
-        }
-
-        .sidebar-brand {
-            font-family: "Didot", "Bodoni MT", "Cinzel", "Times New Roman", serif;
-            font-size: 20px;
-            font-weight: 500;
-            color: var(--pure-white);
-            padding-bottom: 24px;
-            letter-spacing: 1px;
-            border-bottom: 1px solid #1e293b;
-            margin-bottom: 24px;
-        }
-
-        .nav-link {
-            display: block;
-            padding: 12px 0;
-            color: #94a3b8;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: color 0.15s ease;
-        }
-
-        .nav-link:hover, .nav-link.active {
-            color: var(--pure-white);
-        }
-
-        /* Custom Structure Architecture */
-        .app-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .top-navbar {
-            height: 70px;
-            background: var(--pure-white);
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 40px;
-        }
-
-        .top-navbar h1 {
-            font-family: "Didot", "Bodoni MT", "Cinzel", "Times New Roman", serif;
-            font-size: 22px;
-            font-weight: 400;
-            margin: 0;
-            letter-spacing: 0.5px;
-        }
-
-        .system-badge {
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: var(--navy-dark);
-            border-bottom: 1px solid var(--navy-dark);
-            padding-bottom: 2px;
-        }
-
-        .workspace {
-            flex: 1;
-            padding: 40px;
-            overflow-y: auto;
-        }
-
-        .app-view {
-            display: none;
-        }
-
-        .app-view.active {
-            display: block;
-        }
-
-        /* Elegant Grid & Panel System */
-        .grid-layout {
-            display: grid;
-            grid-template-columns: 1.1fr 1fr;
-            gap: 40px;
-            max-width: 1200px;
-        }
-
-        .panel {
-            background: var(--pure-white);
-            border: 1px solid #e2e8f0;
-            padding: 32px;
-        }
-
-        .panel-title {
-            font-family: "Didot", "Bodoni MT", "Cinzel", "Times New Roman", serif;
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--navy-dark);
-            margin-top: 0;
-            margin-bottom: 24px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid #f1f5f9;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        label {
-            display: block;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
-            color: var(--slate-gray);
-        }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #cbd5e1;
-            background: var(--pure-white);
-            color: var(--navy-dark);
-            font-size: 14px;
-            box-sizing: border-box;
-            border-radius: 0; /* Rechteckige, handgemachte Struktur statt runder KI-Ecken */
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--navy-dark);
-        }
-
-        /* High-End Editorial Action Controls */
-        .btn-action {
-            background: var(--navy-dark);
-            color: var(--pure-white);
-            border: none;
-            padding: 14px 20px;
-            font-size: 13px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            width: 100%;
-            transition: background 0.15s ease;
-            margin-top: 12px;
-        }
-
-        .btn-action:hover {
-            background: #1e293b;
-        }
-
-        .btn-secondary {
-            background: transparent;
-            border: 1px solid var(--navy-dark);
-            color: var(--navy-dark);
-            margin-bottom: 20px;
-        }
-
-        .btn-secondary:hover {
-            background: var(--navy-dark);
-            color: var(--pure-white);
-        }
-
-        .output-box {
-            margin-top: 32px;
-            padding: 20px;
-            font-size: 13px;
-            line-height: 1.6;
-            display: none;
-            background: var(--pure-white);
-            border: 1px solid #cbd5e1;
-            color: var(--navy-dark);
-        }
+        .btn-action { background: var(--navy-dark); color: var(--pure-white); border: none; padding: 14px 20px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; width: 100%; margin-top: 12px; }
+        .btn-action:hover { background: #1e293b; }
+        .btn-secondary { background: transparent; border: 1px solid var(--navy-dark); color: var(--navy-dark); margin-bottom: 20px; }
+        .btn-secondary:hover { background: var(--navy-dark); color: var(--pure-white); }
+        .checkbox-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .checkbox-item { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+        .checkbox-item input { width: auto; cursor: pointer; }
+        .output-box { margin-top: 32px; padding: 20px; font-size: 13px; line-height: 1.6; display: none; background: var(--pure-white); border: 1px solid #cbd5e1; color: var(--navy-dark); }
+        .legal-content-box { max-width: 800px; background: var(--pure-white); border: 1px solid #e2e8f0; padding: 40px; line-height: 1.6; font-size: 14px; color: #334155; }
+        .legal-content-box h2 { font-family: "Didot", "Bodoni MT", "Cinzel", "Times New Roman", serif; color: var(--navy-dark); font-size: 20px; margin-top: 24px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }
     </style>
 </head>
 <body>
@@ -229,134 +70,210 @@
         <div class="nav-link" onclick="switchTab('charter-view', this)">Charter Scheduling</div>
         <div class="nav-link" onclick="switchTab('legal-view', this)">Legal Ledger (SPA)</div>
         <div class="nav-link" onclick="switchTab('crew-view', this)">Crew Registry</div>
+        <div class="sidebar-footer">
+            <span class="legal-link" onclick="switchTab('impressum-view', this)">Impressum</span>
+            <span class="legal-link" onclick="switchTab('datenschutz-view', this)">Datenschutz</span>
+            <div style="margin-top: 8px; font-size: 10px; color: #475569;">&copy; 2026 YachtSync OS</div>
+        </div>
     </div>
 
-    <!-- MAIN APP WRAPPER -->
     <div class="app-container">
-        
-        <!-- HEADER MANUFAKTUR-LOOK -->
+        <!-- TOP NAVBAR WITH DISCRETE LOGIN CONTROL -->
         <div class="top-navbar">
             <h1 id="page-title">Fleet Marketing Operations</h1>
-            <div class="system-badge">Workstation: Connected</div>
+            <div class="navbar-controls">
+                <div id="systemStatus" class="system-badge">Mode: Sandbox Analytics</div>
+                <button id="authBtn" class="btn-corporate-auth" onclick="jetztAbonnieren()">Broker Login / Unlock</button>
+            </div>
         </div>
 
         <div class="workspace">
-
-            <!-- MODULE 1: MARKETING -->
+            <!-- MODULE 1: MARKETING (Mit echten Beispielwerten) -->
             <div id="fleet-view" class="app-view active">
                 <div class="grid-layout">
                     <div class="panel">
+                        <div class="mock-notice">System Preview: Sandbox Mock Data Layer</div>
                         <div class="panel-title">Asset Specifications</div>
-                        <div class="form-group"><label>Shipyard / Builder</label><input type="text" id="hersteller" value="Lürssen"></div>
+                        <div class="form-group"><label>Shipyard / Builder</label><input type="text" id="hersteller" value="Lürssen Yachts"></div>
                         <div class="form-group"><label>Model Assignment</label><input type="text" id="modell" value="Custom Displacement 80M"></div>
                         <div class="form-row">
                             <div class="form-group"><label>Valuation Price (EUR)</label><input type="number" id="preis" value="85000000"></div>
                             <div class="form-group"><label>Year of Launch</label><input type="number" id="baujahr" value="2025"></div>
                         </div>
                         <div class="form-group"><label>Current Port of Registry</label><input type="text" id="liegeplatz" value="Port Hercule, Monaco"></div>
+                        
+                        <div class="panel-title" style="margin-top: 30px; border: none; padding: 0;">Broker Portal Credentials</div>
+                        <div class="form-row">
+                            <div class="form-group"><label>Portal Username / Email</label><input type="email" id="portalEmail" value="operations@ocean-yachts.mc"></div>
+                            <div class="form-group"><label>Portal Password</label><input type="password" id="portalPassword" value="••••••••••••"></div>
+                        </div>
                     </div>
+                    
                     <div class="panel">
-                        <div class="panel-title">Marketing Dossier & Engine</div>
-                        <div class="form-group"><label>Dossier Narrative (Raw Metadata)</label><textarea id="beschreibung" rows="4">Pristine condition. Commissioned for experienced owner. Touch-and-go helipad infrastructure. Infinity pool deck configuration.</textarea></div>
-                        <button class="btn-action btn-secondary" onclick="generiereKIText()">Veredel Narrative with Broker Text Engine</button>
-                        <button class="btn-action" onclick="speichereYachtInCloud()">Commit Records to Cloud Vault & Synchronize</button>
-                        <button class="btn-action btn-secondary" onclick="generierePDF()" style="margin-top: 20px;">Generate Print Specification Document</button>
+                        <div class="panel-title">Target Distribution Channels</div>
+                        <div class="checkbox-group">
+                            <label style="margin-bottom: 12px;">Select Gateways for Synchronization</label>
+                            <div class="checkbox-item"><input type="checkbox" class="plattform-check" value="YachtWorld" checked> YachtWorld API Gateway</div>
+                            <div class="checkbox-item"><input type="checkbox" class="plattform-check" value="TheYachtMarket" checked> TheYachtMarket Core</div>
+                            <div class="checkbox-item"><input type="checkbox" class="plattform-check" value="BoatShop24"> BoatShop24 Ledger</div>
+                        </div>
+
+                        <div class="panel-title" style="border: none; padding: 0; margin-bottom: 15px;">Dossier Narrative</div>
+                        <div class="form-group"><textarea id="beschreibung" rows="4">Delivered by Lürssen. Steel hull and aluminum superstructure. Certified for charter operations. Accommodates 12 guests across 6 staterooms. Features touch-and-go helipad infrastructure and custom infinity pool config on main deck.</textarea></div>
+                        <button class="btn-action btn-secondary" onclick="wachePrüfen(generiereKIText)">Veredel Narrative with Broker Text Engine</button>
+                        <button class="btn-action" onclick="wachePrüfen(speichereYachtInCloud)">Commit Records & Execute Live Sync</button>
+                        <button class="btn-action btn-secondary" onclick="wachePrüfen(generierePDF)" style="margin-top: 20px;">Generate Print Specification Document</button>
                     </div>
                 </div>
+                <div id="fleet-output" class="output-box"></div>
             </div>
 
-            <!-- MODULE 2: CRM -->
+            <!-- MODULE 2: CRM (Vorbefüllt) -->
             <div id="crm-view" class="app-view">
                 <div class="grid-layout">
                     <div class="panel">
+                        <div class="mock-notice">System Preview: Sandbox Mock Data Layer</div>
                         <div class="panel-title">Acquisition Target Management</div>
-                        <div class="form-group"><label>Principal Investor Name</label><input type="text" id="crmKunde" placeholder="Maddox Capital Trust"></div>
+                        <div class="form-group"><label>Principal Investor Name</label><input type="text" id="crmKunde" value="Maddox Capital Trust LLC"></div>
                         <div class="form-group"><label>Target Allocation Budget (EUR)</label><input type="number" id="crmBudget" value="95000000"></div>
                         <div class="form-group"><label>Minimum LOA Matrix (Meters)</label><input type="number" id="crmLaenge" value="75"></div>
-                        <button class="btn-action" onclick="addCRMLead()">Process Intent Profile & Cross-Match</button>
+                        <button class="btn-action" onclick="wachePrüfen(addCRMLead)">Process Intent Profile & Cross-Match</button>
                     </div>
                     <div class="panel">
                         <div class="panel-title">Inventory Matching Engine Logs</div>
-                        <div id="crm-output" style="font-size: 13px; color: var(--slate-gray); line-height: 1.6; font-style: italic;">System idling. Registration of new target profiles will activate global inventory evaluation queries.</div>
+                        <div id="crm-output" style="font-size: 13px; color: var(--slate-gray); line-height: 1.6; font-style: italic;">
+                            <strong>Record Evaluated via Active Session Archive:</strong> Maddox Capital Trust LLC<br><br>
+                            <strong>Automated Cross-Match Result:</strong><br>
+                            Target evaluated successfully within current database storage parameters:<br>
+                            ➔ <span style="color: #16a34a; font-weight: 600;">Lürssen Yachts — Custom Displacement 80M</span> (€85.000.000)<br>
+                            <em>Status: Allocation threshold criteria fulfilled. Broker dossier matching complete.</em>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- MODULE 3: CHARTER -->
+            <!-- MODULE 3: CHARTER (Vorbefüllt) -->
             <div id="charter-view" class="app-view">
                 <div class="panel" style="max-width: 600px;">
+                    <div class="mock-notice">System Preview: Sandbox Mock Data Layer</div>
                     <div class="panel-title">Charter Fixture Matrix & Conflict Protection</div>
                     <div class="form-group"><label>Selected Hull Asset ID</label><input type="text" id="chartYacht" value="Lürssen Custom 80M"></div>
-                    <div class="form-group"><label>Principal Charterer Record</label><input type="text" id="chartGast" placeholder="Al-Fayed Maritime Group"></div>
+                    <div class="form-group"><label>Principal Charterer Record</label><input type="text" id="chartGast" value="Al-Fayed Maritime Group Ltd."></div>
                     <div class="form-row">
                         <div class="form-group"><label>Fixtures Commencement Date</label><input type="date" id="chartStart" value="2026-08-01"></div>
                         <div class="form-group"><label>Fixtures Termination Date</label><input type="date" id="chartEnd" value="2026-08-15"></div>
                     </div>
-                    <button class="btn-action" onclick="bucheCharter()">Secure Calendar Term Allocation</button>
+                    <button class="btn-action" onclick="wachePrüfen(bucheCharter)">Secure Calendar Term Allocation</button>
                 </div>
             </div>
 
-            <!-- MODULE 4: LEGAL -->
+            <!-- MODULE 4: LEGAL (Vorbefüllt) -->
             <div id="legal-view" class="app-view">
                 <div class="panel" style="max-width: 600px;">
+                    <div class="mock-notice">System Preview: Sandbox Mock Data Layer</div>
                     <div class="panel-title">Sales and Purchase Agreement (SPA) Drafting Core</div>
                     <div class="form-group"><label>Vendor Legal Entity (Seller)</label><input type="text" id="legVerkaeufer" value="Monaco Yacht Holdings Ltd."></div>
-                    <div class="form-group"><label>Acquiring Legal Entity (Buyer)</label><input type="text" id="legKaeufer" placeholder="Oceanic Ventures Inc."></div>
+                    <div class="form-group"><label>Acquiring Legal Entity (Buyer)</label><input type="text" id="legKaeufer" value="Oceanic Ventures Inc. (Cayman Islands)"></div>
                     <div class="form-group"><label>Vessel Registered Title Name</label><input type="text" id="legYacht" value="M/Y Ocean Pearl"></div>
                     <div class="form-group"><label>Certified Valuation Purchase Price (EUR)</label><input type="number" id="legPreis" value="85000000"></div>
-                    <button class="btn-action" onclick="generiereRechtstext()">Compile Executable SPA Instrument (PDF)</button>
+                    <button class="btn-action" onclick="wachePrüfen(generiereRechtstext)">Compile Executable SPA Instrument (PDF)</button>
                 </div>
             </div>
 
-            <!-- MODULE 5: CREW MAINTENANCE -->
+            <!-- MODULE 5: CREW MAINTENANCE (Vorbefüllt) -->
             <div id="crew-view" class="app-view">
                 <div class="grid-layout">
                     <div class="panel">
-                        <div class="panel-title">Technical Log & Discrepancy Entry (Captain's Portal)</div>
+                        <div class="mock-notice">System Preview: Sandbox Mock Data Layer</div>
+                        <div class="panel-title">Technical Log & Discrepancy Entry</div>
                         <div class="form-group"><label>Asset Fleet Registry ID</label><input type="text" id="crewYacht" value="Lürssen Custom 80M"></div>
-                        <div class="form-group"><label>Malfunctioning Technical Subsystem</label><input type="text" id="crewSystem" placeholder="Portside HVAC Compressor - Circuit 2"></div>
-                        <div class="form-group">
-                            <label>Classification Status</label>
-                            <select id="crewPrio">
-                                <option>Critical Defect (Requires Yard Drydock Operations)</option>
-                                <option>Routine Structural Operations Hold</option>
-                            </select>
-                        </div>
-                        <div class="form-group"><label>Technical Parameter Specifications</label><textarea id="crewText" rows="3" placeholder="Refrigerant gas pressure drop observed in main circuit loop on lower machinery deck..."></textarea></div>
-                        <button class="btn-action" onclick="sendeCrewMangel()">Dispatch Deficiency Log to Drydock Central</button>
+                        <div class="form-group"><label>Malfunctioning Technical Subsystem</label><input type="text" id="crewSystem" value="Portside HVAC Compressor — Circuit 2"></div>
+                        <div class="form-group"><label>Classification Status</label><select id="crewPrio"><option>Critical Defect (Requires Yard Drydock Operations)</option></select></div>
+                        <div class="form-group"><label>Technical Parameter Specifications</label><textarea id="crewText" rows="3">Refrigerant gas pressure drop observed in main circuit loop on lower machinery deck. Compressor unit 2 unresponsive to central SCADA interface overriding nodes.</textarea></div>
+                        <button class="btn-action" onclick="wachePrüfen(sendeCrewMangel)">Dispatch Deficiency Log to Drydock Central</button>
                     </div>
                     <div class="panel">
                         <div class="panel-title">Active Yard Telemetry Logs</div>
-                        <div id="crew-output" style="font-size: 13px; color: var(--slate-gray); line-height: 1.6; font-style: italic;">No diagnostic failure threads returned by active onboard telemetry networks.</div>
+                        <div id="crew-output" style="font-size: 13px; color: var(--slate-gray); line-height: 1.6;">
+                            <strong style="color: #dc3545;">🚨 ACTIVE DEFICIENCY CORE LOG LINKED</strong><br>
+                            <strong>Subsystem Node:</strong> Portside HVAC Compressor<br>
+                            <strong>Registry Link Status:</strong> Committed to cloud drydock database infrastructure storage archives.<br>
+                            <em>Engine alert dispatched to shore team mechanics via telemetric tracking.</em>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <!-- IMPRESSUM -->
+            <div id="impressum-view" class="app-view"><div class="legal-content-box"><h2>Angaben gemäß § 5 TMG</h2><p>YachtSync OS Technologies<br>Deutschland</p><h2>Vertreten durch:</h2><p>[Dein Name] (In Kooperation mit den Erziehungsberechtigten)</p><h2>Kontakt</h2><p>E-Mail: sales@yachtsync.com</p></div></div>
+            <!-- DATENSCHUTZ -->
+            <div id="datenschutz-view" class="app-view"><div class="legal-content-box"><h2>1. Datenschutz auf einen Blick</h2><p>Die Betreiber dieser Seiten nehmen den Schutz Ihrer persönlichen Daten sehr ernst.</p><h2>2. Datenerfassung</h2><p>Unsere Anwendung speichert die eingegebenen Daten hochsicher in einer isolierten Cloud-Infrastruktur (MongoDB Atlas).</p></div></div>
         </div>
     </div>
 
 <script>
+// Zustand der globalen Sitzungslizenz
+let enterpriseLizenzAktiv = false;
+
+// Erkennt die erfolgreiche Stripe-Rückleitung
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('payment') === 'success') {
+    enterpriseLizenzAktiv = true;
+    const authBtn = document.getElementById('authBtn');
+    authBtn.innerText = "Workstation Live";
+    authBtn.classList.add('active');
+    authBtn.onclick = null;
+    document.getElementById('systemStatus').innerText = "Mode: Certified Commercial Console";
+    document.getElementById('systemStatus').style.background = "#e2f0d9";
+    document.getElementById('systemStatus').style.color = "#385723";
+    document.getElementById('systemStatus').style.borderColor = "#a9d08e";
+}
+
+// Diskrete Wächter-Schranke: Schickt anonyme Klicks unaufdringlich zu Stripe
+function wachePrüfen(auszuführendeAktion) {
+    if (enterpriseLizenzAktiv) {
+        auszuführendeAktion();
+    } else {
+        alert("🔒 SYSTEM WORKSTATION UPDATE REQUIRED\n\nSie befinden sich aktuell in der Sandbox-Vorschau von YachtSync OS.\n\nUm eigene Datensätze in die Live-Cloud zu übertragen, die kostenlose Lamma-3 KI-Veredelung freizuschalten oder ausführbare PDF-Kaufverträge zu kompilieren, aktivieren Sie bitte Ihre kommerzielle Workstation-Lizenz.");
+        jetztAbonnieren();
+    }
+}
+
+async function jetztAbonnieren() {
+    try {
+        const response = await fetch('/create-checkout-session', { method: 'POST' });
+        const session = await response.json();
+        window.location.href = session.url;
+    } catch (e) { alert('SaaS Node Engine connectivity timeout.'); }
+}
+
 function switchTab(viewId, element) {
     document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
-    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    document.querySelectorAll('.nav-link, .legal-link').forEach(l => l.classList.remove('active'));
     document.getElementById(viewId).classList.add('active');
     element.classList.add('active');
     document.getElementById('page-title').innerText = element.innerText;
 }
 
+// Backend-Routings (Bleiben geschützt)
 async function speichereYachtInCloud() {
-    const payload = { hersteller: document.getElementById('hersteller').value, modell: document.getElementById('modell').value, preis: document.getElementById('preis').value, baujahr: document.getElementById('baujahr').value, liegeplatz: document.getElementById('liegeplatz').value, beschreibung: document.getElementById('beschreibung').value };
+    const outBox = document.getElementById('fleet-output'); outBox.style.display = 'block'; outBox.innerHTML = 'Executing core routing...';
+    let ausgewaehltePlattformen = []; document.querySelectorAll('.plattform-check:checked').forEach(cb => { ausgewaehltePlattformen.push(cb.value); });
+    const payload = { hersteller: document.getElementById('hersteller').value, modell: document.getElementById('modell').value, preis: document.getElementById('preis').value, baujahr: document.getElementById('baujahr').value, liegeplatz: document.getElementById('liegeplatz').value, beschreibung: document.getElementById('beschreibung').value, brokerEmail: document.getElementById('portalEmail').value, brokerPasswort: document.getElementById('portalPassword').value, plattformen: ausgewaehltePlattformen };
     try {
-        const res = await fetch('/api/fleet/add', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
-        const d = await res.json(); alert(d.nachricht);
-    } catch (e) { alert('Cloud Storage Sync failed.'); }
+        await fetch('/api/fleet/add', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
+        const resBot = await fetch('/api/post-yacht', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
+        const botDaten = await resBot.json();
+        outBox.innerHTML = `<strong>SUCCESS:</strong> Records saved.<br><strong>STATUS:</strong> ${botDaten.nachricht}`;
+    } catch (e) { outBox.innerHTML = '<strong>ERROR:</strong> Fault.'; }
 }
 
 async function generiereKIText() {
-    const out = document.getElementById('beschreibung'); const b = out.value; out.value = "Processing ledger records... Please hold.";
+    const out = document.getElementById('beschreibung'); const b = out.value; out.value = "Processing ledger records...";
     try {
         const res = await fetch('/api/generate-ai-text', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ hersteller: document.getElementById('hersteller').value, modell: document.getElementById('modell').value, beschreibung: b }) });
         const d = await res.json(); out.value = d.text;
-    } catch (e) { out.value = b; alert('Processing core anomaly.'); }
+    } catch (e) { out.value = b; alert('AI anomaly.'); }
 }
 
 async function generierePDF() {
@@ -365,7 +282,7 @@ async function generierePDF() {
         const res = await fetch('/api/generate-pdf', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
         const blob = await res.blob(); const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a'); a.href = url; a.download = `Specification_${payload.hersteller}.pdf`; document.body.appendChild(a); a.click(); a.remove();
-    } catch (e) { alert('Dossier generation fault.'); }
+    } catch (e) { alert('PDF fault.'); }
 }
 
 async function addCRMLead() {
@@ -373,12 +290,9 @@ async function addCRMLead() {
     try {
         const res = await fetch('/api/crm/add-buyer', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
         const d = await res.json(); const out = document.getElementById('crm-output');
-        if (d.passendesBoot) {
-            out.innerHTML = `<strong>Record Filed to Vault:</strong> ${d.neuerKaeufer.name}<br><br><strong>Inventory Match Verified:</strong><br>Target evaluated within current database storage parameters:<br>➔ <strong>${d.passendesBoot.hersteller} ${d.passendesBoot.modell}</strong> (€${Number(d.passendesBoot.preis).toLocaleString('de-DE')})`;
-        } else {
-            out.innerHTML = `<strong>Record Filed to Vault:</strong> ${d.neuerKaeufer.name}<br><br>Analysis Complete: No active hull specifications in current inventory correspond to budget constraints.`;
-        }
-    } catch (e) { alert('CRM Processing anomaly.'); }
+        if (d.passendesBoot) { out.innerHTML = `<strong>Record Filed:</strong> ${d.neuerKaeufer.name}<br><br><strong>Match Verified:</strong>➔ <strong>${d.passendesBoot.hersteller} ${d.passendesBoot.modell}</strong>`; }
+        else { out.innerHTML = `<strong>Record Filed:</strong> ${d.neuerKaeufer.name}<br><br>No active matches.`; }
+    } catch (e) { alert('CRM error.'); }
 }
 
 async function bucheCharter() {
@@ -386,7 +300,7 @@ async function bucheCharter() {
     try {
         const res = await fetch('/api/charter/book', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
         const d = await res.json(); alert(d.nachricht);
-    } catch (e) { alert('Matrix locking block.'); }
+    } catch (e) { alert('Calendar block.'); }
 }
 
 async function generiereRechtstext() {
@@ -394,8 +308,8 @@ async function generiereRechtstext() {
     try {
         const res = await fetch('/api/legal/generate-contract', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
         const blob = await res.blob(); const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a'); a.href = url; a.download = `SPA_Contract_${payload.yachtName}.pdf`; document.body.appendChild(a); a.click(); a.remove();
-    } catch (e) { alert('Legal core assembly error.'); }
+        const a = document.createElement('a'); a.href = url; a.download = `SPA_Contract.pdf`; document.body.appendChild(a); a.click(); a.remove();
+    } catch (e) { alert('Legal core error.'); }
 }
 
 async function sendeCrewMangel() {
@@ -403,9 +317,9 @@ async function sendeCrewMangel() {
     try {
         const res = await fetch('/api/crew/report-issue', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
         const d = await res.json();
-        document.getElementById('crew-output').innerHTML = `<strong>Deficiency Core Log Activated</strong><br>Node: ${payload.komponente}<br>Status: <span style="font-weight:bold;">Committed to database registry</span><br>Technical Specifications: "${payload.beschreibung}"`;
+        document.getElementById('crew-output').innerHTML = `<strong>Deficiency Core Log Activated</strong><br>Node: ${payload.komponente}`;
         alert(d.nachricht);
-    } catch (e) { alert('Drydock infrastructure fault.'); }
+    } catch (e) { alert('Drydock fault.'); }
 }
 </script>
 </body>
