@@ -39,16 +39,28 @@
         .app-view { display: none; }
         .app-view.active { display: block; }
         
-        /* MOBILE.DE LOOK MÄCHTIGE FILTER MECHANIK */
-        .sourcing-wrapper { display: flex; gap: 32px; max-width: 1600px; position: relative; }
-        .search-filter-sidebar { width: 320px; min-width: 320px; background: var(--pure-white); border: 1px solid #e2e8f0; padding: 24px; box-sizing: border-box; transition: transform 0.3s ease, margin-left 0.3s ease, opacity 0.3s ease; }
-        .search-filter-sidebar.collapsed { margin-left: -352px; transform: translateX(-20px); opacity: 0; pointer-events: none; }
+        /* MOBILE.DE LOOK - REPARIERTE FILTER MECHANIK (Kein Ausbrechen mehr!) */
+        .sourcing-wrapper { display: flex; gap: 32px; max-width: 1600px; position: relative; align-items: flex-start; }
+        .search-filter-sidebar { width: 340px; min-width: 340px; background: var(--pure-white); border: 1px solid #e2e8f0; padding: 24px; box-sizing: border-box; transition: transform 0.3s ease, margin-left 0.3s ease, opacity 0.3s ease; }
+        .search-filter-sidebar.collapsed { margin-left: -372px; transform: translateX(-20px); opacity: 0; pointer-events: none; }
         
         .toggle-filter-btn { background: var(--navy-dark); color: white; border: none; padding: 10px 14px; font-size: 12px; text-transform: uppercase; cursor: pointer; margin-bottom: 20px; display: inline-block; }
         .filter-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-top: 24px; margin-bottom: 12px; color: var(--navy-dark); border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; letter-spacing: 0.5px; }
         
         .search-results-feed { flex: 1; display: flex; flex-direction: column; gap: 20px; }
         
+        /* Form Elements - Box Sizing korrigiert */
+        .form-group { margin-bottom: 14px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; box-sizing: border-box; }
+        label { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; margin-bottom: 6px; color: var(--slate-gray); }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; background: var(--pure-white); font-size: 13px; box-sizing: border-box; transition: border-color 0.15s ease; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--navy-dark); }
+
+        /* OPTIMIERTER PREMIUM-BUTTON */
+        .btn-search-submit { background: var(--mobile-orange); color: var(--pure-white); border: none; padding: 16px 20px; font-size: 13px; font-weight: 700; text-transform: uppercase; cursor: pointer; width: 100%; margin-top: 24px; letter-spacing: 0.5px; transition: background 0.2s ease, opacity 0.15s ease; }
+        .btn-search-submit:hover { background: #d65200; }
+        .btn-search-submit:active { opacity: 0.9; }
+
         /* Mobile.de UI Cards Look */
         .boat-result-card { display: flex; background: var(--pure-white); border: 1px solid #e2e8f0; position: relative; min-height: 220px; box-sizing: border-box; transition: border-color 0.15s ease; }
         .boat-result-card:hover { border-color: var(--slate-gray); }
@@ -57,7 +69,7 @@
         .boat-title-line { font-size: 19px; font-weight: 700; margin: 0; color: var(--navy-dark); }
         .boat-meta-line { font-size: 13px; color: var(--slate-gray); margin-top: 4px; line-height: 1.4; }
         .boat-price-tag { font-size: 22px; font-weight: 800; color: var(--mobile-orange); margin: 0; }
-        .platform-origin-badge { position: absolute; top: 16px; right: 16px; font-size: 10px; font-weight: 700; text-transform: uppercase; background: #f1f5f9; border: 1px solid #cbd5e1; padding: 4px 8px; color: var(--navy-dark); }
+        .platform-origin-badge { position: absolute; top: 16px; right: 16px; font-size: 10px; font-weight: 700; text-transform: uppercase; background: #f1f5f9; border: 1px solid #cbd5e1; padding: 4px 8px; letter-spacing: 0.5px; color: var(--navy-dark); }
         
         .btn-view-details { border: 1px solid var(--navy-dark); background: transparent; padding: 8px 16px; font-size: 12px; text-transform: uppercase; cursor: pointer; display: inline-block; text-decoration: none; color: var(--navy-dark); font-weight: 600; text-align: center; width: fit-content; margin-top: 12px; transition: all 0.2s ease; }
         .btn-view-details:hover { background: var(--navy-dark); color: white; }
@@ -70,8 +82,7 @@
 
         .auth-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 17, 40, 0.4); z-index: 5000; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
         .auth-modal { background: var(--pure-white); border: 1px solid var(--navy-dark); width: 400px; padding: 40px; box-sizing: border-box; }
-        .form-group { margin-bottom: 14px; }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .btn-action { background: var(--navy-dark); color: var(--pure-white); border: none; padding: 14px 20px; font-size: 13px; font-weight: 600; text-transform: uppercase; cursor: pointer; width: 100%; margin-top: 12px; transition: opacity 0.15s ease; }
     </style>
 </head>
 <body>
@@ -85,7 +96,7 @@
                 <button class="btn-action" onclick="executeRegister()">Continue</button>
             </div>
             <div id="authStep2" style="display: none;">
-                <p style="font-size:13px; color:var(--slate-gray);">🔒 Identity Guard Verification Active. Enter token.</p>
+                <p style="font-size:13px; color:var(--slate-gray);">🔒 Identity Guard Verification Active. Enter security token.</p>
                 <input type="text" id="auth2FACode" placeholder="123456" style="text-align:center; font-size:18px; margin-bottom:16px;">
                 <button class="btn-action" onclick="execute2FAVerify()">Unlock Workstation</button>
             </div>
@@ -119,12 +130,12 @@
 
         <div class="workspace">
             
-            <!-- MODULE: GLOBAL SOURCING INTERFACE (MOBILE.DE Look mit 15 Suchfiltern) -->
+            <!-- MODULE: GLOBAL SOURCING INTERFACE -->
             <div id="sourcing-view" class="app-view active">
                 <button class="toggle-filter-btn" onclick="toggleFilterDrawer()">↕ Filterleiste ein-/ausblenden</button>
                 
                 <div class="sourcing-wrapper">
-                    <!-- DETAIULIERTE SCHIEB-FILTER CENTRAL (mobile.de Style) -->
+                    <!-- DETAIULIERTE SCHIEB-FILTER CENTRAL -->
                     <div class="search-filter-sidebar" id="filterSidebar">
                         <div style="font-size:12px; font-weight:700; text-transform:uppercase; margin-bottom:12px; color:var(--navy-dark);">Fahrzeug- & Schiffsfilter</div>
                         
@@ -139,13 +150,13 @@
                         <div class="form-row"><input type="number" id="srcPriceMin" placeholder="von (€)"><input type="number" id="srcPriceMax" placeholder="bis (€)"></div>
                         
                         <div class="filter-section-title">Abmessungen</div>
-                        <div class="form-row"><input type="number" id="srcLengthMin" placeholder="Länge von (m)"><input type="number" id="srcLengthMax" placeholder="bis (m)"></div>
+                        <div class="form-row"><input type="number" id="srcLengthMin" placeholder="von (m)"><input type="number" id="srcLengthMax" placeholder="bis (m)"></div>
                         <div class="form-row" style="margin-top:8px;"><input type="number" id="srcBeamMin" placeholder="Breite von (m)"><input type="number" id="srcBeamMax" placeholder="bis (m)"></div>
                         <div class="form-row" style="margin-top:8px;"><input type="number" id="srcDraftMin" placeholder="Tiefgang von (m)"><input type="number" id="srcDraftMax" placeholder="bis (m)"></div>
                         
                         <div class="filter-section-title">Gewicht & Baujahr</div>
-                        <div class="form-row"><input type="number" id="srcWeightMin" placeholder="Gewicht von (kg)"><input type="number" id="srcWeightMax" placeholder="bis (kg)"></div>
-                        <div class="form-row" style="margin-top:8px;"><input type="number" id="srcYearMin" placeholder="Jahr von"><input type="number" id="srcYearMax" placeholder="bis"></div>
+                        <div class="form-row"><input type="number" id="srcWeightMin" placeholder="von (kg)"><input type="number" id="srcWeightMax" placeholder="bis (kg)"></div>
+                        <div class="form-row" style="margin-top:8px;"><input type="number" id="srcYearMin" placeholder="von"><input type="number" id="srcYearMax" placeholder="bis"></div>
 
                         <div class="filter-section-title">Technische Parameter</div>
                         <div class="form-group">
@@ -167,16 +178,15 @@
                         <div class="form-group"><label>Max. Verbrauch (L/h)</label><input type="number" id="srcCons" placeholder="z.B. 200 L/h"></div>
                         <div class="form-group"><label>Max. Unterhalt / Jahr (€)</label><input type="number" id="srcMaint" placeholder="z.B. 30000 €"></div>
 
-                        <button class="btn-action" onclick="wachePrüfen(() => executeGlobalSearch(1))" style="background:var(--mobile-orange); color:white; margin-top:16px;">Globale Netz-Abfrage starten</button>
+                        <button class="btn-search-submit" onclick="wachePrüfen(() => executeGlobalSearch(1))">Globale Netz-Abfrage starten</button>
                     </div>
 
-                    <!-- ERGEBNIS-STREAM AUS ALLEN 12 PLATTPORMEN -->
+                    <!-- ERGEBNIS-STREAM -->
                     <div style="flex:1;">
                         <div class="search-results-feed" id="resultsFeed">
-                            <div style="text-align:center; padding:40px; font-style:italic; color:var(--slate-gray);">Klicken Sie auf den Abfrage-Button, um weltweite Bestände im Internet in Echtzeit zu analysieren.</div>
+                            <!-- Wird beim Laden automatisch mit Boote gefüllt -->
                         </div>
                         
-                        <!-- Unlimitierte Paginierung (1 bis unendlich) -->
                         <div class="pagination-row" id="paginationRow" style="display:none;">
                             <div class="page-node active" onclick="changePage(1, event)">1</div>
                             <div class="page-node" onclick="changePage(2, event)">2</div>
@@ -200,6 +210,11 @@
 let enterpriseLizenzAktiv = false;
 let aktuelleSeite = 1;
 
+// AUTOMATISCHER START: Füllt die Seite sofort beim Aufrufen mit Booten
+window.addEventListener('DOMContentLoaded', () => {
+    executeGlobalSearch(1);
+});
+
 function toggleFilterDrawer() {
     document.getElementById('filterSidebar').classList.toggle('collapsed');
 }
@@ -211,13 +226,14 @@ function openCreatorPrompt() {
         document.getElementById('authBtn').innerText = "Creator Workstation";
         document.getElementById('systemStatus').innerText = "Access Level: Master Creator [Root]";
         document.getElementById('systemStatus').style.background = "#e0f2fe";
-        alert("🎯 IDENTITY LOCALLY Freigeschaltet.");
+        alert("🎯 IDENTITY LOCALLY FREIGESCHALTET.");
+        executeGlobalSearch(1);
     }
 }
 
 function wachePrüfen(aktion) {
     if (enterpriseLizenzAktiv) { aktion(); } 
-    else { alert("🔒 Workstation blockiert. Bitte lizensieren."); }
+    else { alert("🔒 Workstation lizenziert erforderlich. Bitte Creator Key eingeben."); openCreatorPrompt(); }
 }
 
 async function changePage(p, event) {
@@ -226,13 +242,11 @@ async function changePage(p, event) {
     executeGlobalSearch(p);
 }
 
-// DAS HOCHENTWICKELTE FRONTEND RECHENWERK FÜR DAS INTERFACE
 async function executeGlobalSearch(p) {
     aktuelleSeite = p;
     const feed = document.getElementById('resultsFeed');
     feed.innerHTML = `<div style="text-align:center; padding:40px; font-style:italic;">Durchsuche das weltweite Netz auf Seite ${p}... Bitte warten...</div>`;
     
-    // Packt alle 15 Filter-Variablen in das JSON-Paket für den Server
     const payload = {
         brand: document.getElementById('srcBrand').value,
         model: document.getElementById('srcModel').value,
@@ -269,8 +283,8 @@ async function executeGlobalSearch(p) {
         feed.innerHTML = "";
         document.getElementById('paginationRow').style.display = 'flex';
 
-        if(daten.listings.length === 0) {
-            feed.innerHTML = `<div style="text-align:center; padding:40px; color:red; font-weight:bold;">Keine Treffer im Netz unter diesen scharfen Filter-Grenzwerte gefunden.</div>`;
+        if(!daten.listings || daten.listings.length === 0) {
+            feed.innerHTML = `<div style="text-align:center; padding:40px; color:red; font-weight:bold;">Keine Treffer im Netz unter diesen Filter-Grenzwerten gefunden.</div>`;
             return;
         }
 
@@ -283,7 +297,7 @@ async function executeGlobalSearch(p) {
                         <div>
                             <h3 class="boat-title-line">${boot.hersteller} ${boot.modell}</h3>
                             <div class="boat-meta-line">Baujahr: ${boot.baujahr} | Länge: ${boot.laenge}m | Breite: ${boot.breite}m | Tiefgang: ${boot.tiefgang}m</div>
-                            <div class="boat-meta-line" style="color:var(--slate-gray); margin-top:2px;">Betriebsstunden: ${boot.stunden}h | Material: ${boot.material} | Antrieb: ${boot.antrieb}</div>
+                            <div class="boat-meta-line" style="color:var(--slate-gray); margin-top:2px;">Stunden: ${boot.stunden}h | Material: ${boot.material} | Antrieb: ${boot.antrieb}</div>
                             <div class="boat-meta-line" style="color:#b45309; font-weight:600; margin-top:2px;">Verbrauch: ${boot.verbrauch} L/h | Erhaltungskosten: ca. ${boot.wartung.toLocaleString('de-DE')} €/Jahr</div>
                             <p style="font-size:13px; color:var(--slate-gray); margin-top:6px; margin-bottom:0;">${boot.text}<br><strong>Liegeplatz:</strong> ${boot.ort}</p>
                             <a href="${boot.link}" target="_blank" class="btn-view-details">➔ Direkt zum Original-Inserat</a>
