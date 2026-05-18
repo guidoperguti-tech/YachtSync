@@ -2,106 +2,365 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>YachtSync OS - Premium Suite</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YachtSync OS — Enterprise Fleet Management Suite</title>
     <style>
-        :root { --bg-dark: #070a13; --card-bg: #0f1423; --accent: #00f2fe; --accent-gradient: linear-gradient(135deg, #00f2fe, #4facfe); --border: #1e294b; --text: #f8fafc; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: var(--bg-dark); color: var(--text); margin: 0; display: flex; height: 100vh; overflow: hidden; }
-        
-        /* Sidebar Navigation */
-        .sidebar { width: 260px; background: var(--card-bg); border-right: 1px solid var(--border); padding: 30px 20px; display: flex; flex-direction: column; gap: 20px; }
-        .logo { font-size: 22px; font-weight: bold; background: var(--accent-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
-        .nav-item { padding: 12px 15px; border-radius: 8px; color: #94a3b8; cursor: pointer; transition: all 0.2s; font-weight: 500; font-size: 15px; }
-        .nav-item:hover, .nav-item.active { background: rgba(0, 242, 254, 0.1); color: var(--accent); }
-        
-        /* Main Content */
-        .main-content { flex: 1; padding: 40px; overflow-y: auto; }
-        .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .price-badge { background: rgba(0, 242, 254, 0.15); color: var(--accent); padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: bold; border: 1px solid var(--accent); }
-        
-        /* Grid Layout */
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
-        .card { background: var(--card-bg); border: 1px solid var(--border); padding: 30px; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); margin-bottom: 25px; position: relative; }
-        h2 { font-size: 14px; text-transform: uppercase; color: var(--accent); letter-spacing: 1px; margin-top: 0; margin-bottom: 20px; }
-        
-        /* Forms */
-        label { display: block; margin-bottom: 8px; font-size: 13px; color: #94a3b8; font-weight: 500; }
-        input, textarea, select { width: 100%; padding: 12px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; color: white; font-size: 14px; box-sizing: border-box; margin-bottom: 15px; }
-        
-        /* Buttons */
-        .btn { width: 100%; background: var(--accent-gradient); color: #070a13; border: none; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3); }
-        .btn:hover { transform: translateY(-2px); }
-        .btn-secondary { width: 100%; background: transparent; border: 1px solid var(--border); color: white; margin-top: 0; margin-bottom: 20px; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: transform 0.2s; }
-        .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
-        
-        /* Paywall overlay */
-        .overlay { display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7, 10, 19, 0.96); border-radius: 16px; z-index: 100; text-align: center; padding-top: 180px; box-sizing: border-box; }
-        .pay-btn { background: var(--accent-gradient); color: #070a13; font-size: 18px; padding: 16px 36px; font-weight: bold; border-radius: 8px; cursor: pointer; border: none; }
+        :root {
+            --bg-main: #f8fafc;
+            --sidebar-bg: #0f172a;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --primary: #0284c7;
+            --primary-hover: #0369a1;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --success: #16a34a;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Side Navigation Bar - Corporate Identity */
+        .sidebar {
+            width: 240px;
+            background: var(--sidebar-bg);
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .sidebar-brand {
+            font-size: 18px;
+            font-weight: 700;
+            color: #ffffff;
+            padding: 0 12px 24px 12px;
+            letter-spacing: -0.5px;
+            border-bottom: 1px solid #1e293b;
+            margin-bottom: 16px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            color: #94a3b8;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.15s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: #1e293b;
+            color: #ffffff;
+        }
+
+        /* Application Layout Architecture */
+        .app-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .top-navbar {
+            height: 64px;
+            background: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+        }
+
+        .top-navbar h1 {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .system-badge {
+            font-size: 12px;
+            font-weight: 600;
+            background: #f1f5f9;
+            color: var(--text-muted);
+            padding: 4px 12px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Main Workspace Workspace */
+        .workspace {
+            flex: 1;
+            padding: 32px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        /* Enterprise Paywall Overlay */
+        .enterprise-lock {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(248, 250, 252, 0.95);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 140px;
+            box-sizing: border-box;
+        }
+
+        .lock-box {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 40px;
+            max-width: 480px;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .lock-box h2 {
+            margin-top: 0;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .lock-box p {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 28px;
+        }
+
+        .btn-upgrade {
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        .btn-upgrade:hover {
+            background: var(--primary-hover);
+        }
+
+        /* Professional Form & Grid Components */
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 32px;
+            max-width: 1200px;
+        }
+
+        .panel {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 24px;
+        }
+
+        .panel-title {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-top: 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #334155;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            background: #ffffff;
+            color: var(--text-dark);
+            font-size: 14px;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+        }
+
+        /* Action Controls */
+        .btn-action {
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.15s ease;
+        }
+
+        .btn-action:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #334155;
+            margin-bottom: 16px;
+        }
+
+        .btn-secondary:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
+        }
+
+        #console-output {
+            margin-top: 24px;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            display: none;
+            border: 1px solid transparent;
+        }
     </style>
 </head>
 <body>
 
-    <!-- SIDEBAR -->
+    <!-- SIDEBAR NAVIGATION -->
     <div class="sidebar">
-        <div class="logo">⚓ YachtSync OS</div>
-        <div class="nav-item active">Boots-Erfassung</div>
-        <div class="nav-item">KI-Exposé Text</div>
-        <div class="nav-item">Charter-Flotte</div>
-        <div class="nav-item">Kunden-CRM</div>
+        <div class="sidebar-brand">YachtSync Suite</div>
+        <a href="#" class="nav-link active">Fleet Registration</a>
+        <a href="#" class="nav-link">AI Copywriting</a>
+        <a href="#" class="nav-link">Charter Scheduling</a>
+        <a href="#" class="nav-link">Broker CRM</a>
     </div>
 
-    <!-- MAIN CONTENT -->
-    <div class="main-content">
-        <div class="header-bar">
-            <div>
-                <h1 style="margin: 0; font-size: 28px;">Yacht-Management Zentrale</h1>
-                <p style="margin: 5px 0 0 0; color: #64748b; font-size: 14px;">Erfassen, automatisieren und PDF-Exposés erstellen</p>
-            </div>
-            <div class="price-badge">Enterprise Plan Aktiv</div>
+    <!-- MAIN APP CONTAINER -->
+    <div class="app-container">
+        
+        <!-- TOP NAVIGATION BAR -->
+        <div class="top-navbar">
+            <h1>Commercial Yacht Listing Entry</h1>
+            <div class="system-badge">Environment: Production</div>
         </div>
 
-        <div class="card">
-            <!-- Bezahlschranke -->
-            <div id="payWall" class="overlay">
-                <h2 style="color: var(--accent); margin-bottom: 5px; font-size: 24px;">🔒 Enterprise Suite freischalten</h2>
-                <p style="color: #94a3b8; max-width: 440px; margin: 10px auto 25px auto; font-size: 14px;">Schalten Sie das unbegrenzte Multi-Posting, die KI-Exposé-Veredelung und den PDF-Katalog-Generator frei.</p>
-                <button class="pay-btn" onclick="jetztAbonnieren()">Jetzt Zugang aktivieren (499€/Monat)</button>
+        <!-- WORKSPACE AREA -->
+        <div class="workspace">
+            
+            <!-- GATEWAY PAYWALL -->
+            <div id="payWall" class="enterprise-lock">
+                <div class="lock-box">
+                    <h2>License Key Required</h2>
+                    <p>Access to automated multi-posting, multi-language AI text processing, and official PDF generation tools requires an enterprise workstation license.</p>
+                    <button class="btn-upgrade" onclick="jetztAbonnieren()">Activate Workstation License (€499/mo)</button>
+                </div>
             </div>
 
-            <div class="grid-2">
-                <!-- LINKE SPALTE -->
-                <div>
-                    <h2>1. Yacht Spezifikationen</h2>
-                    <label>Hersteller / Werft</label>
-                    <input type="text" id="hersteller" value="Lürssen">
-                    <label>Modell</label>
-                    <input type="text" id="modell" value="Custom Luxury 80M">
-                    <div class="grid-2" style="gap: 10px;">
-                        <div><label>Preis (EUR)</label><input type="number" id="preis" value="85000000"></div>
-                        <div><label>Baujahr</label><input type="number" id="baujahr" value="2025"></div>
+            <!-- WORKSPACE LAYOUT GRID -->
+            <div class="grid-layout">
+                
+                <!-- FIELD SPECIFICATIONS PANEL -->
+                <div class="panel">
+                    <div class="panel-title">1. Structural Specifications</div>
+                    
+                    <div class="form-group">
+                        <label>Manufacturer / Shipyard</label>
+                        <input type="text" id="hersteller" value="Lürssen">
                     </div>
-                    <label>Liegeplatz</label><input type="text" id="liegeplatz" value="Monaco Grand Harbor">
+
+                    <div class="form-group">
+                        <label>Model Designation</label>
+                        <input type="text" id="modell" value="Custom Displacement 80M">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Asking Price (EUR)</label>
+                            <input type="number" id="preis" value="85000000">
+                        </div>
+                        <div class="form-group">
+                            <label>Year of Build</label>
+                            <input type="number" id="baujahr" value="2025">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Current Berth / Registration Port</label>
+                        <input type="text" id="liegeplatz" value="Port Hercule, Monaco">
+                    </div>
                 </div>
 
-                <!-- RECHTE SPALTE -->
-                <div>
-                    <h2>2. KI-Exposé & Kanäle</h2>
-                    <label>Verkaufstext (Rohdaten)</label>
-                    <textarea id="beschreibung" rows="4">Top Zustand. Helipad. Master-Suite. Pool auf dem Deck.</textarea>
+                <!-- DISTRIBUTION & PROCESSING PANEL -->
+                <div class="panel">
+                    <div class="panel-title">2. Processing & Channels</div>
                     
-                    <button class="btn btn-secondary" onclick="generiereKIText()">🪄 KI-Verkaufstext veredeln</button>
+                    <div class="form-group">
+                        <label>Marketing Description (Raw Inputs)</label>
+                        <textarea id="beschreibung" rows="4">Pristine condition. One owner from new. Touch-and-go helipad. Infinite pool deck layout.</textarea>
+                    </div>
 
-                    <label>Ziel-Marktplätze</label>
-                    <select id="plattform"><option>Alle (YachtWorld & TheYachtMarket)</option></select>
+                    <button class="btn-action btn-secondary" onclick="generiereKIText()">🪄 Optimize with AI Copywriter</button>
+
+                    <div class="form-group">
+                        <label>Target Distribution Channels</label>
+                        <select id="plattform">
+                            <option>Global Distribution (YachtWorld & TheYachtMarket)</option>
+                        </select>
+                    </div>
                     
-                    <button class="btn" onclick="starteMultiPost()">🚀 Global synchronisieren</button>
-                    <button class="btn btn-secondary" onclick="generierePDF()" style="margin-top: 15px; margin-bottom: 0;">📄 PDF-Exposé generieren</button>
+                    <button class="btn-action" onclick="starteMultiPost()">🚀 Execute Global Synchronization</button>
+                    <button class="btn-action btn-secondary" onclick="generierePDF()" style="margin-top: 16px; margin-bottom: 0;">📄 Generate Specification PDF</button>
                 </div>
             </div>
-            <div id="status-box" style="margin-top: 25px; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold; display: none; background: rgba(0, 242, 254, 0.1); color: var(--accent); border: 1px solid var(--accent);"></div>
+
+            <div id="console-output"></div>
         </div>
     </div>
 
 <script>
+// Authentication Check via URL Parameters
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get('payment') === 'success') {
     document.getElementById('payWall').style.display = 'none';
@@ -112,13 +371,13 @@ async function jetztAbonnieren() {
         const response = await fetch('/create-checkout-session', { method: 'POST' });
         const session = await response.json();
         window.location.href = session.url;
-    } catch (e) { alert('Stripe Verbindung fehlgeschlagen.'); }
+    } catch (e) { alert('SaaS Node Engine connectivity timeout.'); }
 }
 
 async function generiereKIText() {
     const beschreibungField = document.getElementById('beschreibung');
     const alterText = beschreibungField.value;
-    beschreibungField.value = "🤖 KI schreibt exklusiven Text... Bitte warten...";
+    beschreibungField.value = "Executing OpenAI engine routines... Please hold.";
     
     try {
         const response = await fetch('/api/generate-ai-text', {
@@ -134,7 +393,7 @@ async function generiereKIText() {
         beschreibungField.value = daten.text;
     } catch (error) {
         beschreibungField.value = alterText;
-        alert('Verbindung zur KI-Schnittstelle fehlgeschlagen.');
+        alert('API Response Error.');
     }
 }
 
@@ -159,21 +418,23 @@ async function generierePDF() {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `Expose_${payload.hersteller}.pdf`;
+        a.download = `Specification_${payload.hersteller}.pdf`;
         document.body.appendChild(a);
         a.click();
         a.remove();
     } catch (error) {
-        alert('PDF-Generierung fehlgeschlagen.');
+        alert('PDF Generation failed.');
     }
 }
 
 function starteMultiPost() {
-    const box = document.getElementById('status-box');
+    const box = document.getElementById('console-output');
     box.style.display = 'block';
-    box.innerText = '🤖 Synchronisierung läuft im Hintergrund auf den Servern...';
+    box.style.background = '#f0fdf4';
+    box.style.color = '#15803d';
+    box.style.borderColor = '#bbf7d0';
+    box.innerText = 'STATUS: Playwright synchronization scripts deployed to background workers.';
 }
 </script>
 </body>
 </html>
-
