@@ -165,6 +165,63 @@ app.post('/create-checkout-session', async (req, res) => {
         res.json({ id: session.id, url: session.url });
     } catch (error) { res.status(500).json({ error: error.message }); }
 });
+// =========================================================================
+// NEU: SÄULE 7 API - COMMERCIAL B2B INVOICE CORE (PDF Rechnungs-Generator)
+// =========================================================================
+app.post('/api/finance/invoice', (req, res) => {
+    const { kunde, beschreibung, netto, vat } = req.body;
+    
+    const doc = new PDFDocument({ margin: 50 });
+    
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename=Invoice_${kunde}.pdf`);
+    doc.pipe(res);
+
+    // Luxus Minimalistisches Rechnungs-Design (Invoicing Standard)
+    doc.fillColor('#0a1128').font('Helvetica-Bold').fontSize(22).text('COMMERCIAL INVOICE', 50, 50);
+    
+    // Rechnungs-Metadaten rechts oben
+    doc.font('Helvetica').fontSize(10).fillColor('#475569');
+    doc.text(`Invoice No: INV-${Date.now().toString().slice(-6)}`, 400, 50, { align: 'right' });
+    doc.text(`Date: ${new Date().toLocaleDateString('de-DE')}`, 400, 65, { align: 'right' });
+    
+    // Empfängerdaten
+    doc.moveDown(2);
+    doc.fillColor('#0a1128').font('Helvetica-Bold').fontSize(12).text('DEBITOR / CUSTOMER:');
+    doc.font('Helvetica').fillColor('#475569').text(kunde);
+    
+    // Trennlinie
+    doc.moveTo(50, 150).lineTo(550, 150).stroke('#e2e8f0');
+    
+    // Rechnungsposten Tabelle
+    doc.fillColor('#0a1128').font('Helvetica-Bold').fontSize(11).text('DESCRIPTION', 50, 180);
+    doc.text('AMOUNT', 480, 180, { align: 'right' });
+    
+    doc.moveTo(50, 200).lineTo(550, 200).stroke('#e2e8f0');
+    
+    doc.font('Helvetica').fillColor('#475569').text(beschreibung, 50, 215, { width: 350 });
+    doc.text(`${Number(netto).toLocaleString('de-DE')} EUR`, 450, 215, { width: 100, align: 'right' });
+    
+    // Berechnungen (Netto, Steuern, Brutto)
+    const vatBetrag = (Number(netto) * Number(vat)) / 100;
+    const bruttoBetrag = Number(netto) + vatBetrag;
+    
+    doc.moveTo(50, 300).lineTo(550, 300).stroke('#e2e8f0');
+    
+    doc.font('Helvetica').text('Net Total:', 350, 320, { align: 'right' });
+    doc.text(`${Number(netto).toLocaleString('de-DE')} EUR`, 450, 320, { align: 'right' });
+    
+    doc.text(`VAT (${vat}%):`, 350, 340, { align: 'right' });
+    doc.text(`${vatBetrag.toLocaleString('de-DE')} EUR`, 450, 340, { align: 'right' });
+    
+    doc.font('Helvetica-Bold').fillColor('#0a1128').fontSize(14).text('TOTAL DUE:', 350, 370, { align: 'right' });
+    doc.text(`${bruttoBetrag.toLocaleString('de-DE')} EUR`, 450, 370, { align: 'right' });
+    
+    // Bankverbindung (Platzhalter für den professionellen Look)
+    doc.fontSize(9).fillColor('#64748b').text('Bank Account: Monaco Private Banking Corp. | IBAN: MC76 3000 1000 2000 3000 42 | BIC: MPBCMC2A', 50, 700, { align: 'center' });
+
+    doc.end();
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 [YachtSync OS] Monopoly Engine online auf Port ${PORT}`));
