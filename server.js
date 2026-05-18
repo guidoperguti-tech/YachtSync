@@ -6,7 +6,7 @@ const { Groq } = require('groq-sdk');
 const { starteYachtPosting } = require('./bot.js');
 
 // =========================================================================
-// 1. DATENBANK VERBINDUNG (Füge hier deinen echten MongoDB-Link ein!)
+// 1. CLOUD DATENBANK ANBINDUNG
 // =========================================================================
 const MONGO_URI = "mongodb+srv://yachtsyncadmin:<QitaPenas2009$$$>@yachtsync.vdxrew1.mongodb.net/?appName=YachtSync";
 
@@ -14,55 +14,131 @@ mongoose.connect(MONGO_URI)
     .then(() => console.log('💾 [Cloud Database] Live-Verbindung hergestellt!'))
     .catch(err => console.error('🚨 [Database Error] Verbindung fehlgeschlagen:', err));
 
-// Datenbank Tabellen-Strukturen (Schemas)
+// Datenbank-Tabellenstrukturen
 const Yacht = mongoose.model('Yacht', new mongoose.Schema({ hersteller: String, modell: String, preis: Number, baujahr: Number, liegeplatz: String, beschreibung: String }));
 const Buyer = mongoose.model('Buyer', new mongoose.Schema({ name: String, budget: Number, minLaenge: Number, region: String }));
 const Charter = mongoose.model('Charter', new mongoose.Schema({ yachtId: String, start: String, end: String, kunde: String }));
 const Mangel = mongoose.model('Mangel', new mongoose.Schema({ yachtId: String, komponente: String, text: String, prioritaet: String }));
-
-// NEU: Tabelle für registrierte Broker-Accounts
 const BrokerAccount = mongoose.model('BrokerAccount', new mongoose.Schema({ email: String, passwortKlartext: String, registriertAm: { type: Date, default: Date.now } }));
 
 // =========================================================================
-// 2. EXTERNE INTERFACES (Stripe & KOSTENLOSE GROQ KI-ENGINE)
+// 2. EXTERNE INTERFACES & SCHLÜSSEL
 // =========================================================================
 const stripe = require('stripe')('sk_test_51PXXXXXXXXXXXXXX'); 
-const groq = new Groq({ apiKey: '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' }); // Hier deinen Groq-Key einsetzen!
+const groq = new Groq({ apiKey: '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' }); 
 
 const app = express();
 app.use(express.json());
 
-// Liefert das handgemachte Custom-Dashboard aus
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // =========================================================================
-// NEU: ANMELDE- & REGISTRIERUNGS-SCHNITTSTELLE (Auth API)
+// GEHEIMER CREATOR-AUTHENTIFIZIERUNGS-FILTER (Dein Backdoor-Key)
 // =========================================================================
+app.post('/api/auth/verify-creator', (req, res) => {
+    const { accessKey } = req.body;
+    
+    // Dein ganz persönlicher, geheimer Master-Key
+    if (accessKey === "YACHTSYNC-CREATOR-2026-GLOBAL") {
+        console.log("🔑 [Security Alert] Master-Creator hat sich erfolgreich authentifiziert.");
+        return res.json({ 
+            status: "Erfolg", 
+            nachricht: "Master-Lizenz verifiziert.", 
+            role: "Creator",
+            token: "SUPER-ADMIN-VALIDATED-TRUE"
+        });
+    } else {
+        return res.status(401).json({ status: "Fehler", nachricht: "System-Zugriff verweigert. Ungültiger Master-Schlüssel." });
+    }
+});
+
+// Broker Registrierungs-Schnittstelle
 app.post('/api/auth/register', async (req, res) => {
     try {
         const { email, password } = req.body;
-        
-        // Prüfen, ob der Account schon existiert
         const existiertBereits = await BrokerAccount.findOne({ email: email.toLowerCase() });
-        if (existiertBereits) {
-            return res.json({ status: "Fehler", nachricht: "Diese E-Mail-Adresse ist bereits registriert." });
-        }
-
-        // Account in der MongoDB-Cloud sichern
+        if (existiertBereits) return res.json({ status: "Fehler", nachricht: "Diese E-Mail-Adresse ist bereits registriert." });
         const neuerBroker = new BrokerAccount({ email: email.toLowerCase(), passwortKlartext: password });
         await neuerBroker.save();
+        res.json({ status: "Erfolg", nachricht: "Account erfolgreich angelegt!" });
+    } catch (e) { res.status(500).json({ status: "Fehler", nachricht: e.message }); }
+});
 
-        console.log(`👤 [Auth Cloud] Neuer Broker registriert: ${email}`);
-        res.json({ status: "Erfolg", nachricht: "Account erfolgreich in der Cloud-Registry angelegt!" });
+// =========================================================================
+// 3. DATENBANK-RECHENWERK FÜR DIE GLOBAL SOURCING ENGINE (Ankauf-Zentrale)
+// =========================================================================
+app.post('/api/sourcing/query', async (req, res) => {
+    try {
+        // Der Server empfängt alle hochpräzisen Parameter aus dem Dashboard
+        const {
+            brand, model, condition, hullMaterial, fuelType, transmission,
+            priceMin, priceMax, lengthMin, lengthMax, beamMin, beamMax,
+            draftMin, draftMax, weightMin, weightMax, yearMin, yearMax,
+            hoursMax, powerMin, consumptionMax, maintenanceMax
+        } = req.body;
+
+        console.log(`🔍 [Sourcing Engine] Berechne Datenstrom für Filter: Werft=${brand}, PreisMax=${priceMax}`);
+
+        // GLOBALES YACHT-ARCHIV (Simuliert das Echtzeit-Scraping weltweiter Marktplätze)
+        const weltweitesYachtArchiv = [
+            { id: 1, plattform: "YachtWorld", hersteller: "Azimut Yachts", modell: "Grande 26M", zustand: "Gebraucht", baujahr: 2023, preis: 4950000, laenge: 26.1, breite: 6.3, tiefgang: 1.9, gewicht: 72000, stunden: 320, material: "GFK / Carbon", treibstoff: "Diesel", antrieb: "Wellenantrieb", leistung: 3300, verbrauch: 240, wartung: 45000, ort: "Monaco", text: "Makellose Carbon-Superyacht aus Erstbesitz. Vollständig ausgestattete Flybridge mit Hardtop." },
+            { id: 2, plattform: "Boot24", hersteller: "Azimut Yachts", modell: "Flybridge 60", zustand: "Gebraucht", baujahr: 2021, preis: 1650000, laenge: 18.2, breite: 5.1, tiefgang: 1.6, gewicht: 36000, stunden: 450, material: "GFK", treibstoff: "Diesel", antrieb: "IPS-Antrieb", leistung: 1800, verbrauch: 110, wartung: 18000, ort: "Mallorca", text: "Inklusive hydraulischer Badeplattform, Seakeeper-Stabilisatoren und Joystick-Andocksystem." },
+            { id: 3, plattform: "TheYachtMarket", hersteller: "Sanlorenzo", modell: "SX88 Explorer", zustand: "Gebraucht", baujahr: 2022, preis: 5800000, laenge: 26.7, breite: 7.2, tiefgang: 2.1, gewicht: 85000, stunden: 180, material: "Aluminium", treibstoff: "Diesel", antrieb: "IPS-Antrieb", leistung: 2400, verbrauch: 210, wartung: 55000, ort: "Cannes", text: "Echte Explorer-Yacht mit riesigem Beachclub und minimalistischem Interieur von Piero Lissoni." },
+            { id: 4, plattform: "YachtWorld", hersteller: "Benetti", modell: "Oasis 40M", zustand: "Neu", baujahr: 2025, preis: 22000000, laenge: 40.8, breite: 8.5, tiefgang: 2.3, gewicht: 310000, stunden: 20, material: "GFK / Stahl", treibstoff: "Diesel", antrieb: "Wellenantrieb", leistung: 2800, verbrauch: 380, wartung: 120000, ort: "Miami", text: "Brandneue Superyacht mit patentiertem Oasis-Deck, ausklappbaren Balkonen und großem Pool am Heck." },
+            { id: 5, plattform: "Boat24", hersteller: "Princess Yachts", modell: "Y72 Motor Yacht", zustand: "Gebraucht", baujahr: 2022, preis: 3290000, laenge: 22.3, breite: 5.5, tiefgang: 1.7, gewicht: 53000, stunden: 290, material: "GFK", treibstoff: "Diesel", antrieb: "Wellenantrieb", leistung: 3300, verbrauch: 180, wartung: 28000, ort: "Heiligenhafen", text: "Deutsche Erstauslieferung, MwSt. bezahlt. Premium-Navigationspaket von Garmin, schwenkbare Heckgarage." }
+        ];
+
+        // DAS RECHENWERK: Filter-Algorithmus berechnet Übereinstimmungen
+        const gefilterteErgebnisse = weltweitesYachtArchiv.filter(yacht => {
+            // Textfilter (Werft & Modell)
+            if (brand && !yacht.hersteller.toLowerCase().includes(brand.toLowerCase())) return false;
+            if (model && !yacht.modell.toLowerCase().includes(model.toLowerCase())) return false;
+            
+            // Kategoriereine Filter
+            if (condition && condition !== "Alle Zustände" && yacht.zustand !== condition) return false;
+            if (hullMaterial && hullMaterial !== "Alle Materialien" && yacht.material !== hullMaterial) return false;
+            if (fuelType && fuelType !== "Alle Typen" && yacht.treibstoff !== fuelType) return false;
+            if (transmission && transmission !== "Alle Systeme" && yacht.antrieb !== transmission) return false;
+
+            // Mathematische Bereichsprüfungen (Min/Max Logiken)
+            if (priceMin && yacht.preis < Number(priceMin)) return false;
+            if (priceMax && yacht.preis > Number(priceMax)) return false;
+            
+            if (lengthMin && yacht.laenge < Number(lengthMin)) return false;
+            if (lengthMax && yacht.laenge > Number(lengthMax)) return false;
+            
+            if (beamMin && yacht.breite < Number(beamMin)) return false;
+            if (beamMax && yacht.breite > Number(beamMax)) return false;
+            
+            if (draftMin && yacht.tiefgang < Number(draftMin)) return false;
+            if (draftMax && yacht.tiefgang > Number(draftMax)) return false;
+            
+            if (weightMin && yacht.gewicht < Number(weightMin)) return false;
+            if (weightMax && yacht.gewicht > Number(weightMax)) return false;
+            
+            if (yearMin && yacht.baujahr < Number(yearMin)) return false;
+            if (yearMax && yacht.baujahr > Number(yearMax)) return false;
+
+            // Verschleiß- und Effizienz-Grenzwerte
+            if (hoursMax && yacht.stunden > Number(hoursMax)) return false;
+            if (powerMin && yacht.leistung < Number(powerMin)) return false;
+            if (consumptionMax && yacht.verbrauch > Number(consumptionMax)) return false;
+            if (maintenanceMax && yacht.wartung > Number(maintenanceMax)) return false;
+
+            return true; // Das Boot erfüllt alle Kriterien und wird in den Datenstrom aufgenommen
+        });
+
+        res.json(gefilterteErgebnisse);
+
     } catch (e) {
-        res.status(500).json({ status: "Fehler", nachricht: e.message });
+        res.status(500).json({ error: "Kritischer Fehler im Rechenwerk: " + e.message });
     }
 });
 
 // =========================================================================
-// 3. CORE APIS (CRM, CHARTER, LEGAL, MAINTENANCE)
+// 4. RESTLICHE ENTERPRISE SCHNITTSTELLEN
 // =========================================================================
 
 app.post('/api/fleet/add', async (req, res) => {
@@ -113,9 +189,6 @@ app.post('/api/crew/report-issue', async (req, res) => {
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// =========================================================================
-// 4. KI-ENGINE (Dauerhaft kostenloses Live Llama-3-Modell via Groq)
-// =========================================================================
 app.post('/api/generate-ai-text', async (req, res) => {
     const { hersteller, modell, beschreibung } = req.body;
     try {
@@ -128,11 +201,10 @@ app.post('/api/generate-ai-text', async (req, res) => {
         });
         res.json({ text: completion.choices.message.content });
     } catch (error) {
-        res.json({ text: `✨ EXCLUSIVE OFF-MARKET OPPORTUNITY ✨\n\nPresenting the magnificent ${hersteller} ${modell}. Redefining modern naval architecture and coastal luxury, this pristine vessel features an expansive open deck configuration and bespoke interior finishes. Available for immediate viewings and prompt delivery in Port Hercule, Monaco.` });
+        res.json({ text: `✨ EXCLUSIVE OFF-MARKET OPPORTUNITY ✨\n\nPresenting the magnificent ${hersteller} ${modell}. Engineered to absolute perfection, this pristine vessel stands ready for immediate viewings in Monaco.` });
     }
 });
 
-// PDF SPECIFICATION SHEET GENERATOR
 app.post('/api/generate-pdf', (req, res) => {
     const { hersteller, modell, preis, baujahr, liegeplatz, beschreibung } = req.body;
     const doc = new PDFDocument({ margin: 50 });
@@ -146,13 +218,11 @@ app.post('/api/generate-pdf', (req, res) => {
     doc.end();
 });
 
-// MULTI-POSTER PLAYWRIGHT BOT ROUTE
 app.post('/api/post-yacht', async (req, res) => {
     const ergebnis = await starteYachtPosting(req.body);
     res.json(ergebnis);
 });
 
-// STRIPE BILLING INTERFACE
 app.post('/create-checkout-session', async (req, res) => {
     try {
         const session = await stripe.checkout.sessions.create({
@@ -165,63 +235,6 @@ app.post('/create-checkout-session', async (req, res) => {
         res.json({ id: session.id, url: session.url });
     } catch (error) { res.status(500).json({ error: error.message }); }
 });
-// =========================================================================
-// NEU: SÄULE 7 API - COMMERCIAL B2B INVOICE CORE (PDF Rechnungs-Generator)
-// =========================================================================
-app.post('/api/finance/invoice', (req, res) => {
-    const { kunde, beschreibung, netto, vat } = req.body;
-    
-    const doc = new PDFDocument({ margin: 50 });
-    
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename=Invoice_${kunde}.pdf`);
-    doc.pipe(res);
-
-    // Luxus Minimalistisches Rechnungs-Design (Invoicing Standard)
-    doc.fillColor('#0a1128').font('Helvetica-Bold').fontSize(22).text('COMMERCIAL INVOICE', 50, 50);
-    
-    // Rechnungs-Metadaten rechts oben
-    doc.font('Helvetica').fontSize(10).fillColor('#475569');
-    doc.text(`Invoice No: INV-${Date.now().toString().slice(-6)}`, 400, 50, { align: 'right' });
-    doc.text(`Date: ${new Date().toLocaleDateString('de-DE')}`, 400, 65, { align: 'right' });
-    
-    // Empfängerdaten
-    doc.moveDown(2);
-    doc.fillColor('#0a1128').font('Helvetica-Bold').fontSize(12).text('DEBITOR / CUSTOMER:');
-    doc.font('Helvetica').fillColor('#475569').text(kunde);
-    
-    // Trennlinie
-    doc.moveTo(50, 150).lineTo(550, 150).stroke('#e2e8f0');
-    
-    // Rechnungsposten Tabelle
-    doc.fillColor('#0a1128').font('Helvetica-Bold').fontSize(11).text('DESCRIPTION', 50, 180);
-    doc.text('AMOUNT', 480, 180, { align: 'right' });
-    
-    doc.moveTo(50, 200).lineTo(550, 200).stroke('#e2e8f0');
-    
-    doc.font('Helvetica').fillColor('#475569').text(beschreibung, 50, 215, { width: 350 });
-    doc.text(`${Number(netto).toLocaleString('de-DE')} EUR`, 450, 215, { width: 100, align: 'right' });
-    
-    // Berechnungen (Netto, Steuern, Brutto)
-    const vatBetrag = (Number(netto) * Number(vat)) / 100;
-    const bruttoBetrag = Number(netto) + vatBetrag;
-    
-    doc.moveTo(50, 300).lineTo(550, 300).stroke('#e2e8f0');
-    
-    doc.font('Helvetica').text('Net Total:', 350, 320, { align: 'right' });
-    doc.text(`${Number(netto).toLocaleString('de-DE')} EUR`, 450, 320, { align: 'right' });
-    
-    doc.text(`VAT (${vat}%):`, 350, 340, { align: 'right' });
-    doc.text(`${vatBetrag.toLocaleString('de-DE')} EUR`, 450, 340, { align: 'right' });
-    
-    doc.font('Helvetica-Bold').fillColor('#0a1128').fontSize(14).text('TOTAL DUE:', 350, 370, { align: 'right' });
-    doc.text(`${bruttoBetrag.toLocaleString('de-DE')} EUR`, 450, 370, { align: 'right' });
-    
-    // Bankverbindung (Platzhalter für den professionellen Look)
-    doc.fontSize(9).fillColor('#64748b').text('Bank Account: Monaco Private Banking Corp. | IBAN: MC76 3000 1000 2000 3000 42 | BIC: MPBCMC2A', 50, 700, { align: 'center' });
-
-    doc.end();
-});
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 [YachtSync OS] Monopoly Engine online auf Port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 [YachtSync OS Enterprise Core] Online auf Port ${PORT}`));
