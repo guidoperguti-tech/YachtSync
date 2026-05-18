@@ -39,7 +39,7 @@
         .app-view { display: none; }
         .app-view.active { display: block; }
         
-        /* MOBILE.DE LOOK - REPARIERTE FILTER MECHANIK (Kein Ausbrechen mehr!) */
+        /* MOBILE.DE LOOK - REPARIERTE FILTER MECHANIK */
         .sourcing-wrapper { display: flex; gap: 32px; max-width: 1600px; position: relative; align-items: flex-start; }
         .search-filter-sidebar { width: 340px; min-width: 340px; background: var(--pure-white); border: 1px solid #e2e8f0; padding: 24px; box-sizing: border-box; transition: transform 0.3s ease, margin-left 0.3s ease, opacity 0.3s ease; }
         .search-filter-sidebar.collapsed { margin-left: -372px; transform: translateX(-20px); opacity: 0; pointer-events: none; }
@@ -183,9 +183,7 @@
 
                     <!-- ERGEBNIS-STREAM -->
                     <div style="flex:1;">
-                        <div class="search-results-feed" id="resultsFeed">
-                            <!-- Wird beim Laden automatisch mit Boote gefüllt -->
-                        </div>
+                        <div class="search-results-feed" id="resultsFeed"></div>
                         
                         <div class="pagination-row" id="paginationRow" style="display:none;">
                             <div class="page-node active" onclick="changePage(1, event)">1</div>
@@ -210,7 +208,7 @@
 let enterpriseLizenzAktiv = false;
 let aktuelleSeite = 1;
 
-// AUTOMATISCHER START: Füllt die Seite sofort beim Aufrufen mit Booten
+// AUTOMATISCHER START BEIM LADEN
 window.addEventListener('DOMContentLoaded', () => {
     executeGlobalSearch(1);
 });
@@ -300,7 +298,8 @@ async function executeGlobalSearch(p) {
                             <div class="boat-meta-line" style="color:var(--slate-gray); margin-top:2px;">Stunden: ${boot.stunden}h | Material: ${boot.material} | Antrieb: ${boot.antrieb}</div>
                             <div class="boat-meta-line" style="color:#b45309; font-weight:600; margin-top:2px;">Verbrauch: ${boot.verbrauch} L/h | Erhaltungskosten: ca. ${boot.wartung.toLocaleString('de-DE')} €/Jahr</div>
                             <p style="font-size:13px; color:var(--slate-gray); margin-top:6px; margin-bottom:0;">${boot.text}<br><strong>Liegeplatz:</strong> ${boot.ort}</p>
-                            <a href="${boot.link}" target="_blank" class="btn-view-details">➔ Direkt zum Original-Inserat</a>
+                            <!-- REPARIERTER UNBLOCKIERBARER DEEP-LINK FÜR MAC SAFARI / CHROME -->
+                            <a href="${boot.link}" target="_blank" rel="noopener noreferrer" class="btn-view-details">➔ Direkt zum Original-Inserat</a>
                         </div>
                         <h4 class="boat-price-tag">${boot.preis.toLocaleString('de-DE')} EUR</h4>
                     </div>

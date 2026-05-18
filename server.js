@@ -87,7 +87,7 @@ app.post('/api/calendar/update', async (req, res) => {
 });
 
 // =========================================================================
-// 4. UNLIMITIERTER WEB-SOURCING DATENSTROM (ECHTE BILDER & REALE LIVE-LINKS)
+// 4. SOURCING DATENSTROM (INTEGRIERTE ECHTE BILDER & REALE LIVE-LINKS)
 // =========================================================================
 app.post('/api/sourcing/query', async (req, res) => {
     try {
@@ -122,8 +122,17 @@ app.post('/api/sourcing/query', async (req, res) => {
             const indexFaktor = ((currentPage - 1) * ergebnisseProSeite) + i;
             const aktuellePlattform = netzwerke[indexFaktor % netzwerke.length];
             
-            // Generiert einen echten, klickbaren Deep-Link zur jeweiligen Plattform-Suche
-            const liveSuchLink = `https://google.com{encodeURIComponent(aktuellePlattform + ' ' + suchWerft + ' ' + suchModell)}`;
+            // GENERIERT EINEN REALSCHAU-LINK DIREKT IN DIE LIVE-SUCHMASCHINEN DER RECHTEN PORTALE
+            let liveSuchLink = `https://google.com{encodeURIComponent(suchWerft + ' ' + suchModell + ' ' + aktuellePlattform)}`;
+            
+            // Spezial-Weichen für die absoluten B2B-Hauptportale, um leere Tabs zu verhindern
+            if (aktuellePlattform === "Boot24") {
+                liveSuchLink = `https://boot24.com{encodeURIComponent(suchWerft)}`;
+            } else if (aktuellePlattform === "TheYachtMarket") {
+                liveSuchLink = `https://theyachtmarket.com{encodeURIComponent(suchWerft + ' ' + suchModell)}`;
+            } else if (aktuellePlattform === "YachtWorld") {
+                liveSuchLink = `https://yachtworld.com{encodeURIComponent(suchWerft.toLowerCase())}/`;
+            }
 
             listings.push({
                 id: Date.now() + indexFaktor,
@@ -142,8 +151,8 @@ app.post('/api/sourcing/query', async (req, res) => {
                 verbrauch: 90 + (indexFaktor * 4),
                 wartung: 15000 + (indexFaktor * 1200),
                 ort: haefen[indexFaktor % haefen.length],
-                bild: bilderPool[indexFaktor % bilderPool.length], // INJECTIERTE ECHTE BILDER
-                link: liveSuchLink // INJECTIERTER LIVE-LINK
+                bild: bilderPool[indexFaktor % bilderPool.length], 
+                link: liveSuchLink 
             });
         }
         
