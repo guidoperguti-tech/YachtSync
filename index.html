@@ -1,54 +1,131 @@
-<!DOCTYPE html>
+<!<!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>YachtSync Pro Dashboard</title>
+    <title>YachtSync OS - Premium Suite</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #0b132b; color: #ffffff; padding: 40px; }
-        .card { max-width: 600px; background: #1c2541; padding: 35px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); margin: 0 auto; border: 1px solid #3a506b; position: relative; }
-        h1 { font-size: 26px; color: #5bc0be; margin-bottom: 5px; text-align: center; font-weight: 700; }
-        .subtitle { text-align: center; color: #a5a5a5; font-size: 14px; margin-bottom: 30px; }
-        .section-title { font-size: 14px; text-transform: uppercase; color: #5bc0be; letter-spacing: 1px; margin-top: 25px; border-bottom: 1px solid #3a506b; padding-bottom: 5px; }
-        label { display: block; margin-top: 15px; margin-bottom: 5px; font-size: 13px; color: #cbd5e1; }
-        input, textarea { width: 100%; padding: 12px; background: #0b132b; border: 1px solid #3a506b; border-radius: 8px; color: white; font-size: 14px; box-sizing: border-box; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        button { width: 100%; background: linear-gradient(135deg, #5bc0be, #3a506b); color: white; border: none; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; margin-top: 30px; cursor: pointer; }
-        #status-box { margin-top: 25px; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold; display: none; font-size: 14px; }
+        :root { --bg-dark: #070a13; --card-bg: #0f1423; --accent: #00f2fe; --accent-gradient: linear-gradient(135deg, #00f2fe, #4facfe); --border: #1e294b; --text: #f8fafc; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: var(--bg-dark); color: var(--text); margin: 0; display: flex; height: 100vh; overflow: hidden; }
         
-        /* Sperrbildschirm-Stile */
-        .overlay { display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 19, 43, 0.93); border-radius: 16px; z-index: 10; text-align: center; padding-top: 150px; box-sizing: border-box; }
-        .pay-btn { background: #ff9f1c; color: #0b132b; font-size: 18px; padding: 15px 30px; width: auto; display: inline-block; margin-top: 20px; box-shadow: 0 4px 15px rgba(255,159,28,0.4); }
+        /* Sidebar Navigation */
+        .sidebar { width: 260px; background: var(--card-bg); border-right: 1px solid var(--border); padding: 30px 20px; display: flex; flex-direction: column; gap: 20px; }
+        .logo { font-size: 22px; font-weight: bold; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .nav-item { padding: 12px 15px; border-radius: 8px; color: #94a3b8; cursor: pointer; transition: all 0.2s; font-weight: 500; font-size: 15px; }
+        .nav-item:hover, .nav-item.active { background: rgba(0, 242, 254, 0.1); color: var(--accent); }
+        
+        /* Main Content */
+        .main-content { flex: 1; padding: 40px; overflow-y: auto; }
+        .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .price-badge { background: rgba(0, 242, 254, 0.15); color: var(--accent); padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: bold; border: 1px solid var(--accent); }
+        
+        /* Grid Layout */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        .card { background: var(--card-bg); border: 1px solid var(--border); padding: 30px; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); margin-bottom: 25px; position: relative; }
+        h2 { font-size: 16px; text-transform: uppercase; color: var(--accent); letter-spacing: 1px; margin-top: 0; margin-bottom: 20px; }
+        
+        /* Forms */
+        label { display: block; margin-bottom: 8px; font-size: 13px; color: #94a3b8; font-weight: 500; }
+        input, textarea, select { width: 100%; padding: 12px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; color: white; font-size: 14px; box-sizing: border-box; margin-bottom: 15px; transition: border 0.2s; }
+        input:focus, textarea:focus, select:focus { border-color: var(--accent); outline: none; }
+        
+        /* Buttons */
+        .btn { width: 100%; background: var(--accent-gradient); color: #070a13; border: none; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3); }
+        .btn:hover { transform: translateY(-2px); }
+        .btn-secondary { background: transparent; border: 1px solid var(--border); color: white; box-shadow: none; margin-top: 10px; }
+        .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+        
+        /* Paywall overlay */
+        .overlay { display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7, 10, 19, 0.96); border-radius: 16px; z-index: 100; text-align: center; padding-top: 180px; box-sizing: border-box; }
+        .pay-btn { background: var(--accent-gradient); color: #070a13; font-size: 18px; padding: 16px 36px; font-weight: bold; border-radius: 8px; cursor: pointer; border: none; box-shadow: 0 4px 20px rgba(0,242,254,0.4); }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <!-- Bezahlschranke (Overlay) -->
-    <div id="payWall" class="overlay">
-        <h2 style="color: #ff9f1c; margin-bottom: 5px;">🔒 Premium-Zugang erforderlich</h2>
-        <p style="color: #cbd5e1; max-width: 400px; margin: 0 auto; font-size: 14px;">Schalte unbegrenztes Multi-Posting frei, um Inserate vollautomatisiert weltweit zu streuen.</p>
-        <button class="pay-btn" onclick="jetztAbonnieren()">Jetzt für 199€/Monat aktivieren</button>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="logo">⚓ YachtSync OS</div>
+        <div class="nav-item active">Boots-Erfassung</div>
+        <div class="nav-item">KI-Exposé Text</div>
+        <div class="nav-item">Charter-Flotte</div>
+        <div class="nav-item">Kunden-CRM</div>
+        <div class="nav-item" style="margin-top: auto; color: #ef4444;">Abmelden</div>
     </div>
 
-    <h1>⚓ YachtSync Pro</h1>
-    <div class="subtitle">Das automatisierte Multi-Posting-System für Premium-Broker</div>
-    
-    <!-- Die Formular-Felder bleiben identisch wie vorher -->
-    <div class="section-title">1. Marktplatz Zugangsdaten</div>
-    <div class="grid"><div><label>Broker E-Mail</label><input type="email" id="brokerEmail" placeholder="name@yachtagentur.com"></div><div><label>Passwort</label><input type="password" id="brokerPasswort" placeholder="••••••••"></div></div>
-    <div class="section-title">2. Yacht Spezifikationen</div>
-    <div class="grid"><div><label>Hersteller / Werft</label><input type="text" id="hersteller" value="Benetti"></div><div><label>Modell</label><input type="text" id="modell" value="Oasis 40M"></div></div>
-    <div class="grid"><div><label>Preis (EUR)</label><input type="number" id="preis" value="18500000"></div><div><label>Baujahr</label><input type="number" id="baujahr" value="2023"></div></div>
-    <label>Verkaufstext & Details</label><textarea id="beschreibung" rows="4">Exklusive Superyacht in neuwertigem Zustand.</textarea>
-    <button onclick="starteMultiPost()">Auf allen Plattformen spiegeln</button>
-    <div id="status-box"></div>
-</div>
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        
+        <!-- HEADER -->
+        <div class="header-bar">
+            <div>
+                <h1 style="margin: 0; font-size: 28px;">Yacht-Management Zentrale</h1>
+                <p style="margin: 5px 0 0 0; color: #64748b; font-size: 14px;">Erfassen, automatisieren und PDF-Exposés erstellen</p>
+            </div>
+            <div class="price-badge">Enterprise Plan Aktiv</div>
+        </div>
+
+        <div class="card" style="position: relative;">
+            <!-- Bezahlschranke (Overlay) -->
+            <div id="payWall" class="overlay">
+                <h2 style="color: var(--accent); margin-bottom: 5px; font-size: 24px;">🔒 Enterprise Suite freischalten</h2>
+                <p style="color: #94a3b8; max-width: 440px; margin: 10px auto 25px auto; font-size: 14px;">Erhalten Sie Zugriff auf das vollautomatische Multi-Posting, die KI-Exposé-Übersetzung und den PDF-Katalog-Generator.</p>
+                <button class="pay-btn" onclick="jetztAbonnieren()">Jetzt Zugang aktivieren (499€/Monat)</button>
+            </div>
+
+            <div class="grid-2">
+                <!-- LINKE SPALTE: DETAILS -->
+                <div>
+                    <h2>1. Yacht Spezifikationen</h2>
+                    <label>Hersteller / Werft</label>
+                    <input type="text" id="hersteller" value="Lürssen">
+                    
+                    <label>Modell</label>
+                    <input type="text" id="modell" value="Superyacht Custom">
+                    
+                    <div class="grid-2" style="gap: 10px;">
+                        <div>
+                            <label>Preis (EUR)</label>
+                            <input type="number" id="preis" value="65000000">
+                        </div>
+                        <div>
+                            <label>Baujahr</label>
+                            <input type="number" id="baujahr" value="2024">
+                        </div>
+                    </div>
+
+                    <label>Liegeplatz (Hafen / Land)</label>
+                    <input type="text" id="liegeplatz" value="Port Hercule, Monaco">
+                </div>
+
+                <!-- RECHTE SPALTE: KI & AUTOMATION -->
+                <div>
+                    <h2>2. KI-Exposé & Kanäle</h2>
+                    
+                    <label>Verkaufstext (Rohdaten)</label>
+                    <textarea id="beschreibung" rows="4">Top Zustand. Ein Besitzer. Hubschrauberlandeplatz. 6 Kabinen.</textarea>
+                    
+                    <button class="btn btn-secondary" onclick="generiereKIText()" style="margin-top: 0; margin-bottom: 20px;">🪄 KI-Verkaufstext veredeln</button>
+
+                    <label>Ziel-Marktplätze</label>
+                    <select id="plattform">
+                        <option>Alle verfügbaren (YachtWorld & TheYachtMarket)</option>
+                        <option>Nur YachtWorld</option>
+                        <option>Nur TheYachtMarket</option>
+                    </select>
+                    
+                    <button class="btn" onclick="starteMultiPost()" style="margin-top: 15px;">🚀 Global synchronisieren</button>
+                    <button class="btn btn-secondary" onclick="generierePDF()">📄 PDF-Exposé generieren</button>
+                </div>
+            </div>
+            
+            <div id="status-box" style="margin-top: 25px; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold; display: none; background: rgba(0, 242, 254, 0.1); color: var(--accent); border: 1px solid var(--accent);"></div>
+        </div>
+
+    </div>
 
 <script>
-// Prüfen, ob der Nutzer gerade erfolgreich bezahlt hat
+// Stripe-Erkennung aus der URL
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get('payment') === 'success') {
-    // Wenn die Zahlung erfolgreich war, entfernen wir die Bezahlschranke
     document.getElementById('payWall').style.display = 'none';
 }
 
@@ -56,21 +133,23 @@ async function jetztAbonnieren() {
     try {
         const response = await fetch('/create-checkout-session', { method: 'POST' });
         const session = await response.json();
-        // Weiterleitung zu der sicheren Stripe Bezahlseite
         window.location.href = session.url;
-    } catch (error) {
-        alert('Stripe-Verbindung fehlgeschlagen. Bitte prüfe deinen Server-Schlüssel.');
-    }
+    } catch (e) { alert('Stripe Verbindung fehlgeschlagen.'); }
 }
 
-async function starteMultiPost() {
-    // Bleibt identisch wie in deiner vorherigen Version...
+function generiereKIText() {
+    alert("🤖 Die KI veredelt den Text... (Feature wird in Schritt 2 verknüpft!)");
+}
+
+function generierePDF() {
+    alert("📄 PDF wird generiert... (Feature wird in Schritt 2 verknüpft!)");
+}
+
+function starteMultiPost() {
     const box = document.getElementById('status-box');
     box.style.display = 'block';
-    box.innerText = '🤖 Bot läuft...';
-    // (Hier steht dein restlicher funktionierender Fetch-Befehl von vorhin)
+    box.innerText = '🤖 Synchronisierung läuft im Hintergrund...';
 }
 </script>
 </body>
 </html>
-

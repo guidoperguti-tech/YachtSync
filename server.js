@@ -28,7 +28,7 @@ app.post('/create-checkout-session', async (req, res) => {
                         name: 'YachtSync Pro Monatsabo',
                         description: 'Unbegrenztes Multi-Posting auf Yacht-Marktplätzen weltweit.',
                     },
-                    unit_amount: 19900, // 199,00 EUR (Wert wird in Cents angegeben)
+                    unit_amount: 49900, // 499,00 EUR (Wert wird in Cents angegeben)
                     recurring: { interval: 'month' }, // Automatisches, wiederkehrendes Monatsabo
                 },
                 quantity: 1,
