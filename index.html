@@ -290,7 +290,7 @@ async function executeGlobalSearch(p) {
             feed.innerHTML += `
                 <div class="boat-result-card">
                     <div class="platform-origin-badge">${boot.plattform}</div>
-                    <div class="boat-image-frame" style="background-image: url('${boot.bild}')"></div>
+<img src="${boot.bild}" alt="Yacht Listing" class="boat-image-frame" style="width:280px; min-width:280px; height:auto; object-fit:cover;">
                     <div class="boat-details-pane">
                         <div>
                             <h3 class="boat-title-line">${boot.hersteller} ${boot.modell}</h3>
