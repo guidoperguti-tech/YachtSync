@@ -25,283 +25,312 @@
         .nav-link { display: block; padding: 10px 0; color: #94a3b8; text-decoration: none; font-size: 13px; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; cursor: pointer; transition: all 0.2s ease; }
         .nav-link:hover, .nav-link.active { color: var(--pure-white); transform: translateX(4px); }
         .sidebar-footer { margin-top: auto; border-top: 1px solid #1e293b; padding-top: 16px; font-size: 11px; color: #64748b; }
-        .legal-link { color: #94a3b8; text-decoration: none; cursor: pointer; display: inline-block; margin-right: 12px; }
-        .legal-link:hover { color: var(--pure-white); }
         
-        /* Main Workspace Components */
+        /* Main Application Frame */
         .app-container { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
         .top-navbar { height: 70px; background: var(--pure-white); border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; box-sizing: border-box; }
         .top-navbar h1 { font-family: "Didot", serif; font-size: 22px; font-weight: 400; margin: 0; }
         .navbar-controls { display: flex; align-items: center; gap: 24px; }
         .system-badge { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--slate-gray); border-bottom: 1px solid #cbd5e1; padding-bottom: 2px; }
         .btn-corporate-auth { background: transparent; border: 1px solid var(--navy-dark); color: var(--navy-dark); padding: 8px 18px; font-size: 11px; font-weight: 600; text-transform: uppercase; cursor: pointer; transition: all 0.2s ease; }
-        .btn-corporate-auth:hover { background: var(--navy-dark); color: var(--pure-white); }
 
         .workspace { flex: 1; padding: 40px; overflow-y: auto; box-sizing: border-box; }
         .app-view { display: none; }
         .app-view.active { display: block; }
         
-        /* Grid Layouts with Transitions */
+        /* Dashboard Dashboard Matrix */
         .dashboard-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px; max-width: 1400px; margin-bottom: 32px; }
         .full-width-panel { max-width: 1400px; }
-        .panel { background: var(--pure-white); border: 1px solid #e2e8f0; padding: 32px; box-sizing: border-box; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .panel { background: var(--pure-white); border: 1px solid #e2e8f0; padding: 32px; box-sizing: border-box; transition: all 0.3s ease; }
         .panel:hover { border-color: var(--slate-gray); transform: translateY(-2px); }
-        .panel-title { font-family: "Didot", serif; font-size: 16px; font-weight: 600; margin-top: 0; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; text-transform: uppercase; letter-spacing: 0.5px; }
+        .panel-title { font-family: "Didot", serif; font-size: 16px; font-weight: 600; margin-top: 0; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; text-transform: uppercase; }
         
-        /* Interactive Calendar Elements */
+        /* Termine Checklist items */
         .calendar-strip { display: flex; flex-direction: column; gap: 12px; }
-        .calendar-item { display: flex; align-items: center; padding: 14px 18px; background: #fafafa; border-left: 3px solid var(--navy-dark); font-size: 14px; transition: background 0.15s ease; cursor: pointer; }
+        .calendar-item { display: flex; align-items: center; padding: 14px 18px; background: #fafafa; border-left: 3px solid var(--navy-dark); font-size: 14px; transition: all 0.15s ease; }
         .calendar-item:hover { background: #f1f5f9; }
+        .calendar-item.completed { border-left-color: #cbd5e1; background: #f1f5f9; opacity: 0.6; }
+        .calendar-item.completed .calendar-text { text-decoration: line-through; color: var(--slate-gray); }
         .calendar-date { width: 90px; font-weight: 700; color: var(--slate-gray); font-size: 12px; text-transform: uppercase; }
         .calendar-text { flex: 1; color: var(--navy-dark); font-weight: 500; }
-        
-        /* Premium Interactive Deals Component */
-        .ai-deal-item { display: flex; gap: 16px; padding: 16px; border: 1px solid #f1f5f9; background: #ffffff; margin-bottom: 12px; transition: border-color 0.2s ease, transform 0.2s ease; text-decoration: none; color: inherit; cursor: pointer; }
-        .ai-deal-item:hover { border-color: var(--mobile-orange); transform: scale(1.01); }
-        .ai-deal-img { width: 90px; height: 65px; background: #e2e8f0; background-size: cover; background-position: center; }
-        .ai-deal-details { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
-        .ai-deal-title { font-size: 14px; font-weight: 700; margin: 0; color: var(--navy-dark); }
-        .ai-deal-meta { font-size: 12px; color: var(--slate-gray); }
-        .ai-deal-price { font-size: 14px; font-weight: 800; color: var(--mobile-orange); text-align: right; }
+        .calendar-checkbox { margin-right: 12px; cursor: pointer; }
 
-        /* External Link Interactive News Cards */
+        /* Deals Components */
+        .ai-deal-item { display: flex; gap: 16px; padding: 16px; border: 1px solid #f1f5f9; background: #ffffff; margin-bottom: 12px; transition: all 0.2s ease; cursor: pointer; }
+        .ai-deal-item:hover { border-color: var(--mobile-orange); transform: scale(1.01); }
+        .ai-deal-img { width: 90px; height: 65px; background-size: cover; background-position: center; }
+        .ai-deal-details { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .ai-deal-title { font-size: 14px; font-weight: 700; margin: 0; }
+        .ai-deal-price { font-size: 14px; font-weight: 800; color: var(--mobile-orange); }
+
+        /* News block design */
         .news-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
         .news-card { padding: 16px; background: #fafafa; font-size: 13px; line-height: 1.5; text-decoration: none; color: inherit; display: block; border: 1px solid transparent; transition: all 0.2s ease; }
-        .news-card:hover { background: #ffffff; border-color: var(--border-fine); transform: translateY(-1px); }
-        .news-date { font-size: 11px; color: var(--slate-gray); font-weight: 600; text-transform: uppercase; margin-bottom: 6px; }
-        .news-title { font-weight: 700; font-size: 14px; margin-bottom: 6px; color: var(--navy-dark); }
+        .news-card:hover { background: #ffffff; border-color: var(--border-fine); }
+        .news-title { font-weight: 700; font-size: 14px; color: var(--navy-dark); margin-bottom: 6px; }
 
-        /* Global Forms & Overlays */
-        .form-group { margin-bottom: 20px; }
+        /* Global Sourcing Filter Drawer Mechanics */
+        .sourcing-wrapper { display: flex; gap: 32px; max-width: 1450px; position: relative; }
+        .search-filter-sidebar { width: 300px; min-width: 300px; background: var(--pure-white); border: 1px solid #e2e8f0; padding: 24px; box-sizing: border-box; transition: transform 0.3s ease, margin-left 0.3s ease, opacity 0.3s ease; }
+        .search-filter-sidebar.collapsed { margin-left: -332px; transform: translateX(-20px); opacity: 0; pointer-events: none; }
+        .toggle-filter-btn { background: var(--navy-dark); color: white; border: none; padding: 10px 14px; font-size: 12px; text-transform: uppercase; cursor: pointer; margin-bottom: 20px; display: inline-block; }
+        
+        .boat-result-card { display: flex; background: var(--pure-white); border: 1px solid #e2e8f0; position: relative; min-height: 220px; box-sizing: border-box; margin-bottom: 20px; }
+        .boat-image-frame { width: 280px; min-width: 280px; background: #e2e8f0; background-size: cover; background-position: center; }
+        .boat-details-pane { flex: 1; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; }
+        .boat-title-line { font-size: 19px; font-weight: 700; margin: 0; color: var(--navy-dark); }
+        .boat-price-tag { font-size: 22px; font-weight: 800; color: var(--mobile-orange); margin: 0; }
+        
+        /* FULL-SCREEN OVERLAYS (Für Deep Dive & Kalender) */
+        .full-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 17, 40, 0.5); z-index: 6000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        .overlay-card { background: var(--pure-white); border: 1px solid var(--navy-dark); width: 100%; max-width: 800px; max-height: 85vh; padding: 40px; box-sizing: border-box; overflow-y: auto; }
+        
+        /* Mobile.de Specification Table Inside Overlay */
+        .spec-table { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0; border-top: 1px solid #e2e8f0; padding-top: 16px; }
+        .spec-item { font-size: 14px; color: var(--navy-dark); }
+        .spec-item strong { color: var(--slate-gray); text-transform: uppercase; font-size: 11px; display: block; }
+
+        .form-group { margin-bottom: 16px; }
         input, select, textarea { width: 100%; padding: 12px; border: 1px solid #cbd5e1; background: var(--pure-white); font-size: 14px; box-sizing: border-box; }
         .btn-action { background: var(--navy-dark); color: var(--pure-white); border: none; padding: 14px 20px; font-size: 13px; font-weight: 600; text-transform: uppercase; cursor: pointer; width: 100%; margin-top: 12px; }
-        
-        .auth-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 17, 40, 0.4); z-index: 5000; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
-        .auth-modal { background: var(--pure-white); border: 1px solid var(--navy-dark); width: 400px; padding: 40px; box-sizing: border-box; }
-        .close-modal { float: right; cursor: pointer; font-size: 18px; color: var(--slate-gray); margin-top: -20px; margin-right: -10px; }
     </style>
 </head>
 <body>
 
-    <!-- ANMELDE MODAL OVERLAY -->
-    <div id="authOverlay" class="auth-overlay">
-        <div class="auth-modal">
-            <span class="close-modal" onclick="toggleAuthModal()">&#10005;</span>
-            <h3 style="font-family: Didot, serif; margin-top:0;">Broker Workspace Authorization</h3>
-            <div id="authStep1">
-                <div class="form-group"><label>E-Mail</label><input type="email" id="authEmail" placeholder="name@agency.com"></div>
-                <div class="form-group"><label>Password</label><input type="password" id="authPassword" placeholder="••••••••••••"></div>
-                <button class="btn-action" onclick="executeRegister()">Continue</button>
+    <!-- OVERLAY 1: DEEP DIVE PREVIEW (MOBILE.DE-STYLE) -->
+    <div id="deepDiveOverlay" class="full-overlay">
+        <div class="overlay-card">
+            <span class="close-modal" onclick="closeDeepDive()">&#10005;</span>
+            <h2 id="ddTitle" style="font-family: Didot, serif; margin-top:0;">Yacht Spezifikationen</h2>
+            <div id="ddImage" style="width:100%; height:300px; background-size:cover; background-position:center; margin-bottom:20px;"></div>
+            
+            <div class="spec-table">
+                <div class="spec-item"><strong>Werft / Marke</strong><span id="ddBrand">-</span></div>
+                <div class="spec-item"><strong>Modellbezeichnung</strong><span id="ddModel">-</span></div>
+                <div class="spec-item"><strong>Baujahr / Alter</strong><span id="ddYear">-</span></div>
+                <div class="spec-item"><strong>Länge x Breite x Tiefgang</strong><span id="ddDimensions">-</span></div>
+                <div class="spec-item"><strong>Verbrauch (Volllast)</strong><span id="ddCons">-</span></div>
+                <div class="spec-item"><strong>Betriebsstunden</strong><span id="ddHours">-</span></div>
+                <div class="spec-item"><strong>Rumpfmaterial</strong><span id="ddMaterial">-</span></div>
+                <div class="spec-item"><strong>Antriebssystem</strong><span id="ddAntrieb">-</span></div>
             </div>
-            <div id="authStep2" style="display: none;">
-                <p style="font-size:13px; color:var(--slate-gray);">Identity Guard Verification Active. Enter security token.</p>
-                <input type="text" id="auth2FACode" placeholder="123456" style="text-align:center; font-size:18px; margin-bottom:16px; letter-spacing: 2px;">
-                <button class="btn-action" onclick="execute2FAVerify()">Unlock Workstation</button>
+            
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:24px; border-top:1px solid #e2e8f0; padding-top:20px;">
+                <h3 id="ddPrice" style="color:var(--mobile-orange); margin:0; font-size:24px;">-</h3>
+                <a id="ddLink" href="#" target="_blank" class="btn-action" style="text-decoration:none; margin:0;">Zum Angebot gehen</a>
             </div>
+        </div>
+    </div>
+
+    <!-- OVERLAY 2: ENTERPRISE KALENDER-BOARD -->
+    <div id="calendarBoardOverlay" class="full-overlay">
+        <div class="overlay-card" style="max-width: 600px;">
+            <span class="close-modal" onclick="closeCalendarBoard()">&#10005;</span>
+            <h2 style="font-family: Didot, serif; margin-top:0; margin-bottom:24px;">Monats- & Termin-Planer</h2>
+            
+            <div class="form-group"><label>Termin / Besprechung</label><input type="text" id="newCalText" placeholder="z.B. See-Erprobung Princess Y72"></div>
+            <div class="form-group"><label>Uhrzeit / Priorität</label><input type="text" id="newCalTime" placeholder="z.B. 14:00"></div>
+            <button class="btn-action" onclick="submitNewEvent()" style="background:var(--mobile-orange); margin-bottom:24px;">Termin permanent sichern</button>
+            
+            <div class="calendar-strip" id="boardCalendarStrip"></div>
         </div>
     </div>
 
     <!-- SIDEBAR CONTROL CENTER -->
     <div class="sidebar">
         <div class="sidebar-brand">YACHTSYNC OS</div>
-        
         <div class="nav-section-title">Zentrale</div>
         <div class="nav-link active" onclick="switchTab('dashboard-view', this)">Cockpit / Startseite</div>
-        
         <div class="nav-section-title">Handel & Flotte</div>
         <div class="nav-link" onclick="switchTab('fleet-view', this)">Fleet Marketing</div>
         <div class="nav-link" onclick="switchTab('sourcing-view', this)">Global Sourcing (Ankauf)</div>
-        <div class="nav-link" onclick="switchTab('crm-view', this)">Broker CRM</div>
-        
         <div class="sidebar-footer">
-            <span class="legal-link" onclick="switchTab('impressum-view', this)">Impressum</span>
-            <span class="legal-link" onclick="switchTab('datenschutz-view', this)">Datenschutz</span>
+            <span class="nav-link" onclick="switchTab('impressum-view', this)">Impressum</span>
+            <span class="nav-link" onclick="switchTab('datenschutz-view', this)">Datenschutz</span>
             <div id="creatorTrigger" style="margin-top: 8px; font-size: 10px; color: #475569; cursor: pointer;" onclick="openCreatorPrompt()">&copy; 2026 YachtSync OS</div>
         </div>
     </div>
 
-    <!-- MAIN INTERFACE CONTEXT -->
     <div class="app-container">
         <div class="top-navbar">
             <h1 id="page-title">Cockpit / Startseite</h1>
             <div class="navbar-controls">
                 <div id="systemStatus" class="system-badge">Workspace: Sandbox Active</div>
-                <button id="authBtn" class="btn-corporate-auth" onclick="toggleAuthModal()">Broker Login</button>
+                <button id="authBtn" class="btn-corporate-auth" onclick="openCreatorPrompt()">Broker Login</button>
             </div>
         </div>
 
         <div class="workspace">
-            
-            <!-- COCKPIT REFRESHED -->
+            <!-- DASHBOARD / STARTSEITE -->
             <div id="dashboard-view" class="app-view active">
+                <div style="display:flex; gap:16px; margin-bottom:24px;">
+                    <button class="toggle-filter-btn" onclick="openCalendarBoard()">Terminplaner öffnen</button>
+                </div>
+                
                 <div class="dashboard-grid">
-                    
-                    <!-- LINKE SEITE: HEUTIGE TERMINIERUNGEN (Live bearbeitbar!) -->
                     <div class="panel">
                         <div class="panel-title">Heutige Termine</div>
-                        <div class="calendar-strip" id="liveCalendarStrip">
-                            <div class="calendar-item" onclick="editCalendarEntry(this)">
-                                <div class="calendar-date">11:00 Uhr</div>
-                                <div class="calendar-text">Besichtigung: Heesen 50M 'Project Akira' — Port Hercule, Monaco</div>
-                            </div>
-                            <div class="calendar-item" onclick="editCalendarEntry(this)">
-                                <div class="calendar-date">15:30 Uhr</div>
-                                <div class="calendar-text">Notar-Termin: SPA-Vertragsabschluss (Kunde: Maddox Capital)</div>
-                            </div>
-                            <div class="calendar-item" onclick="editCalendarEntry(this)">
-                                <div class="calendar-date">09:00 Uhr</div>
-                                <div class="calendar-text">See-Erprobung (Sea Trial): Benetti Oasis 40M — Bucht von Cannes</div>
-                            </div>
-                            <div class="calendar-item" style="border-left-color: var(--gold-accent);" onclick="editCalendarEntry(this)">
-                                <div class="calendar-date">Ganztägig</div>
-                                <div class="calendar-text">Werft-Konferenz: Lürssen Custom-Neubau Besprechung</div>
-                            </div>
-                        </div>
+                        <div class="calendar-strip" id="liveCalendarStrip"></div>
                     </div>
-
-                    <!-- RECHTE SEITE: GUTE ANGEBOTE (Echt anklickbar für Deep Dive Analytics!) -->
                     <div class="panel">
                         <div class="panel-title">Gute Angebote</div>
-                        
-                        <div class="ai-deal-item" onclick="openDealDeepDive('Sanlorenzo SX88', '4.250.000 EUR', 'Liegeplatz: Mallorca | Länge: 26.7m | Zustand: Makellos, Carbon-Bauweise, Scheckheftgepflegt.')">
-                            <div class="ai-deal-img" style="background-image: url('https://unsplash.com')"></div>
-                            <div class="ai-deal-details">
-                                <div class="ai-deal-title">Sanlorenzo SX88 (2022)</div>
-                                <div class="ai-deal-meta">Liegeplatz: Mallorca | -12% unter Marktwert</div>
-                                <div class="ai-deal-price">4.250.000 EUR</div>
-                            </div>
-                        </div>
-
-                        <div class="ai-deal-item" onclick="openDealDeepDive('Azimut Grande 26M', '4.950.000 EUR', 'Liegeplatz: Cannes | Länge: 26.1m | Zustand: IPS-Antrieb, neuwertiges Teakdeck, Luxus-Eignerkabine.')">
-                            <div class="ai-deal-img" style="background-image: url('https://unsplash.com')"></div>
-                            <div class="ai-deal-details">
-                                <div class="ai-deal-title">Azimut Grande 26M (2023)</div>
-                                <div class="ai-deal-meta">Liegeplatz: Cannes | Hohes Arbitrage-Potenzial</div>
-                                <div class="ai-deal-price">4.950.000 EUR</div>
-                            </div>
-                        </div>
-
-                        <div class="ai-deal-item" onclick="openDealDeepDive('Princess Y72', '3.290.000 EUR', 'Liegeplatz: Monaco | Länge: 22.3m | Zustand: Deutsche Erstauslieferung, MwSt. bezahlt, Garmin-Navigationspaket.')">
-                            <div class="ai-deal-img" style="background-image: url('https://unsplash.com')"></div>
-                            <div class="ai-deal-details">
-                                <div class="ai-deal-title">Princess Y72 Motor Yacht (2022)</div>
-                                <div class="ai-deal-meta">Liegeplatz: Monaco | Exklusiver Off-Market-Fund</div>
-                                <div class="ai-deal-price">3.290.000 EUR</div>
-                            </div>
-                        </div>
+                        <div id="topDealsContainer"></div>
                     </div>
                 </div>
 
-                <!-- UNTERE REIHE: REAL EXTERNAL BUSINESS FEEDS (Direkt verlinkt!) -->
                 <div class="panel full-width-panel">
                     <div class="panel-title">Maritime Business Intelligence Feed</div>
                     <div class="news-grid">
-                        <a href="https://boatinternational.com" target="_blank" class="news-card">
-                            <div class="news-date">Boat International — Global</div>
-                            <div class="news-title">Superyacht Market Intelligence Report</div>
-                            <div style="color:var(--slate-gray);">Analysen und Datenströme zu weltweiten Megayacht-Transaktionen, Neubauprojekten und exklusiven Flotten-Verkäufen direkt aus London.</div>
-                        </a>
-                        <a href="https://superyachttimes.com" target="_blank" class="news-card">
-                            <div class="news-date">SuperYacht Times — Genua</div>
-                            <div class="news-title">Werft-Laufzeiten und Marktanalysen live</div>
-                            <div style="color:var(--slate-gray);">Aktuelle Berichte über Baufortschritte führender italienischer Werften, Eigner-Historien und globale Flottenbewegungen der Mittelmeer-Saison.</div>
-                        </a>
-                        <a href="https://maritime-executive.com" target="_blank" class="news-card">
-                            <div class="news-date">Maritime Executive — Wirtschaft</div>
-                            <div class="news-title">Maritime Finanz- und Wirtschaftsindikatoren</div>
-                            <div style="color:var(--slate-gray);">Globale Logistik- und Finanzierungsanalysen für Reedereien und Großmakler. Kennzahlen zu Zinsentwicklungen für exklusive Investitionsgüter.</div>
-                        </a>
+                        <a href="https://boatinternational.com" target="_blank" class="news-card"><div class="news-title">Boat International Report</div><div style="color:var(--slate-gray);">Globale Megayacht-Transaktionen und exklusive Markt-Analysen live aus London.</div></a>
+                        <a href="https://superyachttimes.com" target="_blank" class="news-card"><div class="news-title">SuperYacht Times Insights</div><div style="color:var(--slate-gray);">Mittelmeer-Saison startet mit Rekord-Nachfrage. Werftlaufzeiten verlängern sich.</div></a>
+                        <a href="https://maritime-executive.com" target="_blank" class="news-card"><div class="news-title">Maritime Executive Feed</div><div style="color:var(--slate-gray);">Finanzierungszinsen und Wirtschaftsindikatoren für Grossmakler im Überblick.</div></a>
                     </div>
                 </div>
             </div>
 
-            <!-- RESTLICHE MODULE ARCHITEKTUREN -->
-            <div id="fleet-view" class="app-view">
-                <div class="panel" style="max-width: 600px;"><div class="panel-title">Fleet Marketing Operations</div><p style="color:var(--slate-gray);">Verwalten Sie hier Ihre aktiven Schiffsdaten-Bestände.</p></div>
-            </div>
+            <!-- GLOBAL SOURCING SEARCH -->
             <div id="sourcing-view" class="app-view">
-                <div class="panel" style="max-width: 600px;"><div class="panel-title">Global Sourcing Search Engine</div><p style="color:var(--slate-gray);">Durchsuchen Sie alle globalen Netz-Marktplätze im mobile.de-Layout.</p></div>
+                <button class="toggle-filter-btn" onclick="toggleFilterDrawer()">Filterleiste umschalten</button>
+                <div class="sourcing-wrapper">
+                    <div class="search-filter-sidebar" id="filterSidebar">
+                        <div class="form-group"><label>Werft</label><input type="text" id="srcBrand" value="Azimut"></div>
+                        <div class="form-group"><label>Modell</label><input type="text" id="srcModel" placeholder="Grande"></div>
+                        <button class="btn-action" onclick="executeGlobalSearch(1)" style="background:var(--mobile-orange); color:white;">Suche starten</button>
+                    </div>
+                    <div style="flex:1;"><div class="search-results-feed" id="resultsFeed"></div></div>
+                </div>
             </div>
-            <div id="crm-view" class="app-view">
-                <div class="panel" style="max-width: 600px;"><div class="panel-title">CRM Database</div><p style="color:var(--slate-gray);">Automatisierte Investoren- und Leadverwaltung.</p></div>
-            </div>
-            <div id="impressum-view" class="app-view"><div class="legal-content-box"><h2>Impressum</h2><p>YachtSync OS Technologies<br>Inhaber: [Dein Name]<br>Deutschland</p></div></div>
-            <div id="datenschutz-view" class="app-view"><div class="legal-content-box"><h2>Datenschutzerklärung</h2><p>Verschlüsselte Daten nach DSGVO-Standard.</p></div></div>
 
+            <div id="fleet-view" class="app-view"><div class="panel"><h2>Fleet Marketing Operations</h2><p>Verwalten Sie hier Ihre aktiven Schiffsdaten-Bestände.</p></div></div>
+            <div id="impressum-view" class="app-view"><h2>Impressum</h2><p>YachtSync OS Technologies — Inhaber: Admin</p></div>
+            <div id="datenschutz-view" class="app-view"><h2>Datenschutzerklärung</h2><p>Verschlüsselte Daten nach DSGVO-Standard.</p></div>
         </div>
     </div>
 
 <script>
 let enterpriseLizenzAktiv = false;
+let terminDatenBank = [];
 
-// INTERAKTIVE FUNKTION: Termin live bearbeiten
-function editCalendarEntry(element) {
-    const textNode = element.querySelector('.calendar-text');
-    const alterText = textNode.innerText;
-    const neuerText = prompt("✏️ TERMIN BEARBEITEN\n\nÄndern Sie die Spezifikationen für diesen Zeitraum:", alterText);
-    if (neuerText !== null && neuerText.trim() !== "") {
-        textNode.innerText = neuerText;
-    }
+window.addEventListener('DOMContentLoaded', () => {
+    loadCalendarFromCloud();
+    renderTopDeals();
+});
+
+async function loadCalendarFromCloud() {
+    try {
+        const res = await fetch('/api/calendar/all');
+        terminDatenBank = await res.json();
+        renderCalendarUI();
+    } catch(e) { console.error("Fehler beim Cloud Sync", e); }
 }
 
-// INTERAKTIVE FUNKTION: Deep Dive Analyse für Gute Angebote
-function openDealDeepDive(title, price, specs) {
-    alert("🔮 LIVE MARKET DATA ANALYTICS\n\nModell: " + title + "\nKaufpreis: " + price + "\n\nSpezifikationen:\n" + specs + "\n\nKlicken Sie auf OK, um das vollständige Off-Market-Exposé in der Sourcing Engine anzuzeigen.");
-    switchTab('sourcing-view', document.querySelectorAll('.nav-link')[2]);
+function renderCalendarUI() {
+    const strip = document.getElementById('liveCalendarStrip');
+    const boardStrip = document.getElementById('boardCalendarStrip');
+    if(strip) strip.innerHTML = "";
+    if(boardStrip) boardStrip.innerHTML = "";
+
+    terminDatenBank.forEach(t => {
+        const nodeHTML = `
+            <div class="calendar-item ${t.erledigt ? 'completed' : ''}" onclick="toggleEventStatus('${t._id}', ${t.erledigt})">
+                <input type="checkbox" class="calendar-checkbox" ${t.erledigt ? 'checked' : ''}>
+                <div class="calendar-date">${t.uhrzeit} Uhr</div>
+                <div class="calendar-text">${t.text}</div>
+            </div>`;
+        if(strip) strip.innerHTML += nodeHTML;
+        if(boardStrip) boardStrip.innerHTML += nodeHTML;
+    });
 }
+
+async function toggleEventStatus(id, status) {
+    try {
+        await fetch('/api/calendar/update', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ id, erledigt: !status })
+        });
+        loadCalendarFromCloud();
+    } catch(e) { console.error(e); }
+}
+
+function openCalendarBoard() { document.getElementById('calendarBoardOverlay').style.display = 'flex'; }
+function closeCalendarBoard() { document.getElementById('calendarBoardOverlay').style.display = 'none'; }
+
+async function submitNewEvent() {
+    const text = document.getElementById('newCalText').value;
+    const uhrzeit = document.getElementById('newCalTime').value;
+    if(!text || !uhrzeit) return alert("Felder befüllen.");
+
+    try {
+        await fetch('/api/calendar/add', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ uhrzeit, text, erledigt: false })
+        });
+        document.getElementById('newCalText').value = "";
+        document.getElementById('newCalTime').value = "";
+        loadCalendarFromCloud();
+    } catch(e) { console.error(e); }
+}
+
+function renderTopDeals() {
+    const container = document.getElementById('topDealsContainer');
+    const deals = [
+        { brand: "Sanlorenzo", model: "SX88 Carbon", price: "4.250.000 EUR", year: 2022, dims: "26.7m x 7.2m x 2.1m", cons: "210 L/h", hours: "180 h", material: "Carbon / GFK", antrieb: "IPS-Antrieb", bild: "https://unsplash.com", link: "https://google.com" },
+        { brand: "Azimut", model: "Grande 26M", price: "4.950.000 EUR", year: 2023, dims: "26.1m x 6.3m x 1.9m", cons: "240 L/h", hours: "320 h", material: "GFK / Carbon", antrieb: "Wellenantrieb", bild: "https://unsplash.com", link: "https://google.com" }
+    ];
+    if(!container) return;
+    container.innerHTML = "";
+    deals.forEach(d => {
+        const targetString = JSON.stringify(d).replace(/"/g, '&quot;');
+        container.innerHTML += `
+            <div class="ai-deal-item" onclick="openDealDeepDive('${targetString}')">
+                <div class="ai-deal-img" style="background-image: url('${d.bild}')"></div>
+                <div class="ai-deal-details">
+                    <div class="ai-deal-title">${d.brand} ${d.model}</div>
+                    <div class="ai-deal-price">${d.price}</div>
+                </div>
+            </div>`;
+    });
+}
+
+function openDealDeepDive(dealDataRaw) {
+    const boot = JSON.parse(dealDataRaw);
+    document.getElementById('ddTitle').innerText = boot.brand + " " + boot.model;
+    document.getElementById('ddImage').style.backgroundImage = "url('" + boot.bild + "')";
+    document.getElementById('ddBrand').innerText = boot.brand;
+    document.getElementById('ddModel').innerText = boot.model;
+    document.getElementById('ddYear').innerText = boot.year;
+    document.getElementById('ddDimensions').innerText = boot.dims;
+    document.getElementById('ddCons').innerText = boot.cons;
+    document.getElementById('ddHours').innerText = boot.hours;
+    document.getElementById('ddMaterial').innerText = boot.material;
+    document.getElementById('ddAntrieb').innerText = boot.antrieb;
+    document.getElementById('ddPrice').innerText = boot.price;
+    document.getElementById('ddLink').href = boot.link;
+    document.getElementById('deepDiveOverlay').style.display = 'flex';
+}
+
+function closeDeepDive() { document.getElementById('deepDiveOverlay').style.display = 'none'; }
+function toggleFilterDrawer() { document.getElementById('filterSidebar').classList.toggle('collapsed'); }
 
 function openCreatorPrompt() {
-    let masterKey = prompt("🔒 CREATOR RECOGNITION MATRIX\n\nEnter Master-Schlüssel:");
+    let masterKey = prompt("🔒 CREATOR ACCESS CORE\n\nEnter Master-Schlüssel:");
     if (masterKey === "YACHTSYNC-CREATOR-2026-GLOBAL") {
         enterpriseLizenzAktiv = true;
         document.getElementById('authBtn').innerText = "Creator Account";
-        document.getElementById('authBtn').classList.add('active');
         document.getElementById('systemStatus').innerText = "Access Level: Master Creator [Root]";
         document.getElementById('systemStatus').style.background = "#e0f2fe";
-        document.getElementById('systemStatus').style.color = "#0369a1";
-        alert("🎯 MASTER ACCESS GRANTED\n\nSitzung erfolgreich freigeschaltet!");
-    } else {
-        alert("🚨 Ungültiger Schlüssel.");
+        alert("🎯 MASTER ACCESS GRANTED");
     }
-}
-
-function toggleAuthModal() {
-    const overlay = document.getElementById('authOverlay');
-    overlay.style.display = overlay.style.display === 'flex' ? 'none' : 'flex';
-}
-
-async function executeRegister() {
-    document.getElementById('authStep1').style.display = 'none';
-    document.getElementById('authStep2').style.display = 'block';
-}
-
-async function execute2FAVerify() {
-    toggleAuthModal();
-    const response = await fetch('/create-checkout-session', { method: 'POST' });
-    const session = await response.json();
-    window.location.href = session.url;
-}
-
-function wachePrüfen(aktion) {
-    if (enterpriseLizenzAktiv) { aktion(); } 
-    else { alert("🔒 Workstation lizenziert erforderlich."); toggleAuthModal(); }
 }
 
 function switchTab(viewId, element) {
     document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
-    document.querySelectorAll('.nav-link, .legal-link').forEach(l => l.classList.remove('active'));
-    
     document.getElementById(viewId).classList.add('active');
-    
-    if (element && element.classList.contains('nav-link')) {
-        element.classList.add('active');
-    }
-    
-    const pageTitle = document.getElementById('page-title');
-    if (pageTitle && element) {
-        pageTitle.innerText = element.innerText || "Workspace Operations";
-    }
 }
+
+function wachePrüfen(aktion) { if (enterpriseLizenzAktiv) { aktion(); } else { alert("🔒 Lizenz erforderlich."); } }
 </script>
 </body>
 </html>
