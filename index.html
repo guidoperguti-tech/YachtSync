@@ -17,22 +17,25 @@
         }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg-canvas); color: var(--navy-dark); margin: 0; display: flex; height: 100vh; overflow: hidden; -webkit-font-smoothing: antialiased; }
         
-        /* Sidebar layout */
-        .sidebar { width: 250px; background: var(--navy-dark); padding: 32px 24px; display: flex; flex-direction: column; border-right: 1px solid var(--border-fine); box-sizing: border-box; }
+        /* Sidebar Navigation Architecture */
+        .sidebar { width: 250px; min-width: 250px; background: var(--navy-dark); padding: 32px 24px; display: flex; flex-direction: column; border-right: 1px solid var(--border-fine); box-sizing: border-box; }
         .sidebar-brand { font-family: "Didot", "Times New Roman", serif; font-size: 20px; font-weight: 500; color: var(--pure-white); padding-bottom: 24px; border-bottom: 1px solid #1e293b; margin-bottom: 24px; letter-spacing: 0.5px; }
+        
         .nav-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 1px; margin-top: 20px; margin-bottom: 8px; }
-        .nav-link { display: block; padding: 10px 0; color: #94a3b8; text-decoration: none; font-size: 13px; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; cursor: pointer; transition: all 0.2s ease; }
-        .nav-link:hover, .nav-link.active { color: var(--pure-white); transform: translateX(2px); }
+        .nav-link { display: block; padding: 10px 0; color: #94a3b8; text-decoration: none; font-size: 13px; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .nav-link:hover, .nav-link.active { color: var(--pure-white); transform: translateX(4px); }
+        
         .sidebar-footer { margin-top: auto; border-top: 1px solid #1e293b; padding-top: 16px; font-size: 11px; color: #64748b; }
         .legal-link { color: #94a3b8; text-decoration: none; cursor: pointer; display: inline-block; margin-right: 12px; transition: color 0.15s ease; }
         .legal-link:hover { color: var(--pure-white); }
         
-        /* Layout Structure */
+        /* Layout Architecture */
         .app-container { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
         .top-navbar { height: 70px; background: var(--pure-white); border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; box-sizing: border-box; }
         .top-navbar h1 { font-family: "Didot", serif; font-size: 22px; font-weight: 400; margin: 0; }
         .navbar-controls { display: flex; align-items: center; gap: 24px; }
         .system-badge { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--slate-gray); border-bottom: 1px solid #cbd5e1; padding-bottom: 2px; }
+        
         .btn-corporate-auth { background: transparent; border: 1px solid var(--navy-dark); color: var(--navy-dark); padding: 8px 18px; font-size: 11px; font-weight: 600; text-transform: uppercase; cursor: pointer; transition: all 0.2s ease; }
         .btn-corporate-auth:hover { background: var(--navy-dark); color: var(--pure-white); }
         .btn-corporate-auth.active { background: #e2f0d9; border-color: #a9d08e; color: #385723; cursor: default; }
@@ -40,37 +43,38 @@
         .workspace { flex: 1; padding: 40px; overflow-y: auto; box-sizing: border-box; }
         .app-view { display: none; }
         .app-view.active { display: block; }
+        
+        /* Panels with Premium Hover Transitions */
         .grid-layout { display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; max-width: 1200px; }
-        .panel { background: var(--pure-white); border: 1px solid #e2e8f0; padding: 32px; margin-bottom: 24px; box-sizing: border-box; transition: all 0.2s ease; }
-        .panel:hover { border-color: #cbd5e1; }
+        .panel { background: var(--pure-white); border: 1px solid #e2e8f0; padding: 32px; margin-bottom: 24px; box-sizing: border-box; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .panel:hover { border-color: var(--slate-gray); transform: translateY(-2px); }
         .panel-title { font-family: "Didot", serif; font-size: 16px; font-weight: 600; margin-top: 0; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; }
         
-        /* Input Fields styling */
+        /* Input & Controls */
         .form-group { margin-bottom: 20px; }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         label { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; margin-bottom: 8px; color: var(--slate-gray); }
-        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #cbd5e1; background: var(--pure-white); font-size: 14px; box-sizing: border-box; transition: border-color 0.15s ease; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #cbd5e1; background: var(--pure-white); font-size: 14px; box-sizing: border-box; transition: border-color 0.2s ease; }
         input:focus, select:focus, textarea:focus { outline: none; border-color: var(--navy-dark); }
         
         .mock-notice { font-size: 11px; font-weight: 600; text-transform: uppercase; color: #b45309; background: #fffbeb; border: 1px solid #fde68a; padding: 6px 12px; margin-bottom: 16px; display: inline-block; }
-        .btn-action { background: var(--navy-dark); color: var(--pure-white); border: none; padding: 14px 20px; font-size: 13px; font-weight: 600; text-transform: uppercase; cursor: pointer; width: 100%; margin-top: 12px; transition: opacity 0.15s ease; }
-        .btn-action:hover { opacity: 0.9; }
+        .btn-action { background: var(--navy-dark); color: var(--pure-white); border: none; padding: 14px 20px; font-size: 13px; font-weight: 600; text-transform: uppercase; cursor: pointer; width: 100%; margin-top: 12px; transition: all 0.2s ease; }
+        .btn-action:hover { background: var(--action-blue); opacity: 0.9; }
         .btn-secondary { background: transparent; border: 1px solid var(--navy-dark); color: var(--navy-dark); margin-bottom: 20px; }
         .btn-secondary:hover { background: var(--navy-dark); color: var(--pure-white); }
         
-        /* Global Sourcing Architecture Wrapper */
-        .sourcing-wrapper { display: flex; gap: 32px; max-width: 1400px; position: relative; }
-        .search-filter-sidebar { width: 300px; background: var(--pure-white); border: 1px solid #e2e8f0; padding: 24px; box-sizing: border-box; transition: transform 0.3s ease, margin-left 0.3s ease, opacity 0.3s ease; }
+        /* Global Sourcing Workspace (mobile.de Style) */
+        .sourcing-wrapper { display: flex; gap: 32px; max-width: 1450px; position: relative; }
+        .search-filter-sidebar { width: 300px; min-width: 300px; background: var(--pure-white); border: 1px solid #e2e8f0; padding: 24px; box-sizing: border-box; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease; }
         .search-filter-sidebar.collapsed { margin-left: -332px; transform: translateX(-20px); opacity: 0; pointer-events: none; }
         
         .toggle-filter-btn { background: var(--navy-dark); color: white; border: none; padding: 10px 14px; font-size: 12px; text-transform: uppercase; cursor: pointer; margin-bottom: 20px; display: inline-block; transition: background 0.2s ease; }
         .toggle-filter-btn:hover { background: var(--slate-gray); }
         .search-results-feed { flex: 1; display: flex; flex-direction: column; gap: 20px; }
         
-        /* Cards System */
-        .boat-result-card { display: flex; background: var(--pure-white); border: 1px solid #e2e8f0; position: relative; min-height: 200px; box-sizing: border-box; transition: border-color 0.15s ease; }
-        .boat-result-card:hover { border-color: var(--slate-gray); }
-        .boat-image-frame { width: 260px; min-width: 260px; background: #e2e8f0; background-size: cover; background-position: center; }
+        .boat-result-card { display: flex; background: var(--pure-white); border: 1px solid #e2e8f0; position: relative; min-height: 220px; box-sizing: border-box; transition: all 0.25s ease; }
+        .boat-result-card:hover { border-color: var(--slate-gray); transform: translateY(-1px); }
+        .boat-image-frame { width: 280px; min-width: 280px; background: #e2e8f0; background-size: cover; background-position: center; }
         .boat-details-pane { flex: 1; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; }
         .boat-title-line { font-size: 19px; font-weight: 700; margin: 0; color: var(--navy-dark); }
         .boat-meta-line { font-size: 13px; color: var(--slate-gray); margin-top: 4px; }
@@ -232,7 +236,7 @@
                 </div>
             </div>
 
-            <!-- RECHTSSICHERES IMPRESSUM -->
+            <!-- IMPRESSUM -->
             <div id="impressum-view" class="app-view">
                 <div class="legal-content-box">
                     <h2>Angaben gemäß § 5 TMG</h2>
@@ -258,6 +262,7 @@ function toggleFilterDrawer() {
     document.getElementById('filterSidebar').classList.toggle('collapsed');
 }
 
+// FIX: DIE REPARIERTE UND SAUBER FORMATIONIERTE CREATOR ROUTINE AUS DEINEM SCREENSHOT
 function openCreatorPrompt() {
     let masterKey = prompt("🔒 CREATOR RECOGNITION MATRIX\n\nEnter Master-Schlüssel:");
     if (masterKey === "YACHTSYNC-CREATOR-2026-GLOBAL") {
@@ -334,7 +339,7 @@ async function executeGlobalSearch(p) {
                 </div>`;
         });
     } catch (e) {
-        feed.innerHTML = `<div style="text-align:center; padding:40px; color:red;">Verbindungs-Fehler.</div>`;
+        feed.innerHTML = `<div style="text-align:center; padding:40px; color:red;">Verbindungs-Fehler beim Einlesen der globalen Daten.</div>`;
     }
 }
 
