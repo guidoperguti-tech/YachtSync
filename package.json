@@ -1,18 +1,19 @@
 {
-  "name": "yachtsync",
+  "name": "yachtsync-os",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Enterprise Yacht ERP Engine",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
-    "express": "^5.2.1",
-    "playwright": "^1.60.0",
-    "stripe": "^22.1.1"
+    "express": "^4.19.2",
+    "openai": "^4.52.0",
+    "pdfkit": "^0.15.0",
+    "playwright": "^1.44.0",
+    "stripe": "^15.1.0"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
