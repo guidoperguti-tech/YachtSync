@@ -12,7 +12,6 @@
             --border-fine: #1e293b; 
             --slate-gray: #475569; 
             --pure-white: #ffffff; 
-            --action-blue: #1c3d5a; 
             --mobile-orange: #ee5c00;
         }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg-canvas); color: var(--navy-dark); margin: 0; display: flex; height: 100vh; overflow: hidden; -webkit-font-smoothing: antialiased; }
@@ -82,7 +81,6 @@
 </head>
 <body>
 
-    <!-- SIDEBAR -->
     <div class="sidebar">
         <div class="sidebar-brand">YACHTSYNC OS</div>
         <div class="nav-section-title">Handel & Flotte</div>
@@ -160,9 +158,6 @@
         </div>
     </div>
 
-<!-- =========================================================================
-    JAVASCRIPT LOGIKBEREICH (Exakt hier integriert und repariert!)
-========================================================================= -->
 <script>
 let enterpriseLizenzAktiv = false;
 let aktuelleSeite = 1;
@@ -222,12 +217,11 @@ async function executeGlobalSearch(p) {
         document.getElementById('paginationRow').style.display = 'flex';
 
         daten.listings.forEach(boot => {
-            // FIX: Bild-Tag und Unblockierbarer Mac-Sicherheits-Link fehlerfrei gemappt
             feed.innerHTML += `
                 <div class="boat-result-card">
                     <div class="platform-origin-badge">${boot.plattform}</div>
-                    <div style="width:280px; min-width:280px; height:220px; overflow:hidden; background:#e2e8f0;">
-                        <img src="${boot.bild}" alt="Yacht" style="width:100%; height:100%; object-fit:cover; display:block;">
+                    <div style="width:280px; min-width:280px; height:220px; overflow:hidden; background:#e2e8f0; display:flex; align-items:center; justify-content:center;">
+                        <img src="${boot.bild}" alt="Yacht" style="width:100%; height:100%; object-fit:cover; display:block;" onerror="this.style.display='none';">
                     </div>
                     <div class="boat-details-pane">
                         <div>
