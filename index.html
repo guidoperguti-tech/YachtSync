@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YachtSync OS — Enterprise Workspace</title>
-    <script src="https://stripe.com"></script>
+    <title>YachtSync OS — Live Global Aggregator</title>
     <style>
         :root { 
             --bg-canvas: #fafafa; 
@@ -16,51 +15,47 @@
         }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg-canvas); color: var(--navy-dark); margin: 0; display: flex; height: 100vh; overflow: hidden; -webkit-font-smoothing: antialiased; }
         
-        /* Sidebar Layout */
+        /* Sidebar Components */
         .sidebar { width: 250px; min-width: 250px; background: var(--navy-dark); padding: 32px 24px; display: flex; flex-direction: column; border-right: 1px solid var(--border-fine); box-sizing: border-box; }
-        .sidebar-brand { font-family: "Didot", "Times New Roman", serif; font-size: 20px; font-weight: 500; color: var(--pure-white); padding-bottom: 24px; border-bottom: 1px solid #1e293b; margin-bottom: 24px; letter-spacing: 0.5px; }
+        .sidebar-brand { font-family: "Didot", serif; font-size: 20px; color: var(--pure-white); padding-bottom: 24px; border-bottom: 1px solid #1e293b; margin-bottom: 24px; letter-spacing: 0.5px; }
         .nav-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 1px; margin-top: 20px; margin-bottom: 8px; }
-        .nav-link { display: block; padding: 10px 0; color: #94a3b8; text-decoration: none; font-size: 13px; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; cursor: pointer; transition: all 0.2s ease; }
+        .nav-link { display: block; padding: 10px 0; color: #94a3b8; text-decoration: none; font-size: 13px; text-transform: uppercase; cursor: pointer; transition: all 0.2s ease; }
         .nav-link:hover, .nav-link.active { color: var(--pure-white); transform: translateX(2px); }
         .sidebar-footer { margin-top: auto; border-top: 1px solid #1e293b; padding-top: 16px; font-size: 11px; color: #64748b; }
-        .legal-link { color: #94a3b8; text-decoration: none; cursor: pointer; display: inline-block; margin-right: 12px; }
-        .legal-link:hover { color: var(--pure-white); }
         
-        /* Layout Framework */
+        /* Layout Structure */
         .app-container { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
         .top-navbar { height: 70px; background: var(--pure-white); border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; box-sizing: border-box; }
-        .top-navbar h1 { font-family: "Didot", serif; font-size: 22px; font-weight: 400; margin: 0; }
+        .top-navbar h1 { font-family: "Didot", serif; font-size: 22px; margin: 0; }
         .navbar-controls { display: flex; align-items: center; gap: 24px; }
         .system-badge { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--slate-gray); border-bottom: 1px solid #cbd5e1; padding-bottom: 2px; }
-        .btn-corporate-auth { background: transparent; border: 1px solid var(--navy-dark); color: var(--navy-dark); padding: 8px 18px; font-size: 11px; font-weight: 600; text-transform: uppercase; cursor: pointer; }
+        .btn-corporate-auth { background: transparent; border: 1px solid var(--navy-dark); color: var(--navy-dark); padding: 8px 18px; font-size: 11px; text-transform: uppercase; cursor: pointer; }
 
         .workspace { flex: 1; padding: 40px; overflow-y: auto; box-sizing: border-box; }
-        .app-view { display: none; }
-        .app-view.active { display: block; }
         
-        /* mobile.de Filterleiste */
-        .sourcing-wrapper { display: flex; gap: 32px; max-width: 1600px; position: relative; align-items: flex-start; }
-        .search-filter-sidebar { width: 340px; min-width: 340px; background: var(--pure-white); border: 1px solid #e2e8f0; padding: 24px; box-sizing: border-box; transition: transform 0.3s ease, margin-left 0.3s ease, opacity 0.3s ease; }
-        .search-filter-sidebar.collapsed { margin-left: -372px; transform: translateX(-20px); opacity: 0; pointer-events: none; }
+        /* Schieb-Mechanik Filterleiste */
+        .sourcing-wrapper { display: flex; gap: 32px; max-width: 1650px; position: relative; align-items: flex-start; }
+        .search-filter-sidebar { width: 350px; min-width: 350px; background: var(--pure-white); border: 1px solid #e2e8f0; padding: 24px; box-sizing: border-box; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); opacity: 1; }
+        .search-filter-sidebar.collapsed { width: 0px; min-width: 0px; padding: 0px; margin-left: -32px; border: none; opacity: 0; overflow: hidden; pointer-events: none; }
         
-        .toggle-filter-btn { background: var(--navy-dark); color: white; border: none; padding: 10px 14px; font-size: 12px; text-transform: uppercase; cursor: pointer; margin-bottom: 20px; display: inline-block; }
-        .filter-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-top: 24px; margin-bottom: 12px; color: var(--navy-dark); border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; letter-spacing: 0.5px; }
+        .toggle-filter-btn { background: var(--navy-dark); color: white; border: none; padding: 12px 16px; font-size: 11px; text-transform: uppercase; cursor: pointer; margin-bottom: 20px; display: inline-block; font-weight: 600; }
+        .toggle-filter-btn:hover { background: var(--slate-gray); }
+        .filter-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-top: 20px; margin-bottom: 10px; color: var(--navy-dark); border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; letter-spacing: 0.5px; }
         
         .search-results-feed { flex: 1; display: flex; flex-direction: column; gap: 20px; }
         
-        /* Form Elements */
-        .form-group { margin-bottom: 14px; }
+        .form-group { margin-bottom: 12px; }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; box-sizing: border-box; }
-        label { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; margin-bottom: 6px; color: var(--slate-gray); }
-        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; background: var(--pure-white); font-size: 13px; box-sizing: border-box; }
-
+        label { display: block; font-size: 10px; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; color: var(--slate-gray); }
+        input, select { width: 100%; padding: 10px; border: 1px solid #cbd5e1; background: var(--pure-white); font-size: 13px; box-sizing: border-box; }
+        
         .btn-search-submit { background: var(--mobile-orange); color: var(--pure-white); border: none; padding: 16px 20px; font-size: 13px; font-weight: 700; text-transform: uppercase; cursor: pointer; width: 100%; margin-top: 24px; letter-spacing: 0.5px; transition: background 0.2s ease; }
         .btn-search-submit:hover { background: #d65200; }
 
-        /* Yacht Result Cards Look */
+        /* Ergebnis-Karten Design */
         .boat-result-card { display: flex; background: var(--pure-white); border: 1px solid #e2e8f0; position: relative; min-height: 220px; box-sizing: border-box; }
-        .boat-result-card:hover { border-color: var(--slate-gray); }
-        .boat-image-frame { width: 280px; min-width: 280px; background: #e2e8f0; background-size: cover; background-position: center; }
+        .boat-image-frame { width: 280px; min-width: 280px; height: 220px; overflow: hidden; background: #e2e8f0; display: flex; align-items: center; justify-content: center; }
+        .boat-image-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
         .boat-details-pane { flex: 1; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; }
         .boat-title-line { font-size: 19px; font-weight: 700; margin: 0; color: var(--navy-dark); }
         .boat-meta-line { font-size: 13px; color: var(--slate-gray); margin-top: 4px; line-height: 1.4; }
@@ -69,14 +64,7 @@
         
         .btn-view-details { border: 1px solid var(--navy-dark); background: transparent; padding: 8px 16px; font-size: 12px; text-transform: uppercase; cursor: pointer; display: inline-block; text-decoration: none; color: var(--navy-dark); font-weight: 600; text-align: center; width: fit-content; margin-top: 12px; }
         .btn-view-details:hover { background: var(--navy-dark); color: white; }
-
-        .pagination-row { display: flex; gap: 8px; margin-top: 32px; justify-content: center; }
-        .page-node { padding: 8px 16px; border: 1px solid #cbd5e1; background: white; cursor: pointer; font-size: 13px; font-weight: 600; }
-        .page-node.active { background: var(--navy-dark); color: white; border-color: var(--navy-dark); }
-
-        .auth-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 17, 40, 0.4); z-index: 5000; justify-content: center; align-items: center; }
-        .auth-modal { background: var(--pure-white); border: 1px solid var(--navy-dark); width: 400px; padding: 40px; box-sizing: border-box; }
-        .btn-action { background: var(--navy-dark); color: var(--pure-white); border: none; padding: 14px 20px; font-size: 13px; font-weight: 600; text-transform: uppercase; cursor: pointer; width: 100%; margin-top: 12px; }
+        .pagination-row { display: flex; gap: 8px; margin-top: 32px; justify-content: center; flex-wrap: wrap; }
     </style>
 </head>
 <body>
@@ -84,129 +72,76 @@
     <div class="sidebar">
         <div class="sidebar-brand">YACHTSYNC OS</div>
         <div class="nav-section-title">Handel & Flotte</div>
-        <div class="nav-link" onclick="switchTab('fleet-view', this)">Fleet Marketing</div>
-        <div class="nav-link active" onclick="switchTab('sourcing-view', this)">🔍 Global Sourcing (Ankauf)</div>
-        <div class="nav-link" onclick="switchTab('crm-view', this)">Broker CRM</div>
+        <div class="nav-link active">🔍 Global Sourcing (Ankauf)</div>
         <div class="sidebar-footer">
-            <span class="legal-link" onclick="switchTab('impressum-view', this)">Impressum</span>
-            <span class="legal-link" onclick="switchTab('datenschutz-view', this)">Datenschutz</span>
-            <div id="creatorTrigger" style="margin-top: 8px; font-size: 10px; color: #475569; cursor: pointer;" onclick="openCreatorPrompt()">&copy; 2026 YachtSync OS</div>
+            <div id="creatorTrigger" style="font-size: 10px; color: #475569; cursor: pointer;" onclick="openCreatorPrompt()">&copy; 2026 YachtSync OS</div>
         </div>
     </div>
 
     <div class="app-container">
         <div class="top-navbar">
-            <h1 id="page-title">Global Sourcing Engine</h1>
+            <h1 id="page-title">Live Sourcing Network</h1>
             <div class="navbar-controls">
-                <div id="systemStatus" class="system-badge">Mode: Sandbox Analytics</div>
+                <div id="systemStatus" class="system-badge">System: Live Gateway connected</div>
                 <button id="authBtn" class="btn-corporate-auth" onclick="openCreatorPrompt()">Broker Login</button>
             </div>
         </div>
 
         <div class="workspace">
-            <div id="sourcing-view" class="app-view active">
-                <button class="toggle-filter-btn" onclick="toggleFilterDrawer()">↕ Filterleiste ein-/ausblenden</button>
+            <div id="sourcing-view">
+                <button class="toggle-filter-btn" onclick="toggleFilterDrawer()">Filterleiste ein-/ausblenden</button>
                 <div class="sourcing-wrapper">
                     
-                    <!-- FILTER SIDEBAR -->
                     <div class="search-filter-sidebar" id="filterSidebar">
-                        <div style="font-size:12px; font-weight:700; text-transform:uppercase; margin-bottom:12px; color:var(--navy-dark);">Fahrzeug- & Schiffsfilter</div>
+                        <div style="font-size:12px; font-weight:700; text-transform:uppercase; margin-bottom:12px; color:var(--navy-dark);">Echtzeit Internet-Filter</div>
+                        
                         <div class="form-group"><label>Marke / Werft</label><input type="text" id="srcBrand" value="Azimut"></div>
                         <div class="form-group"><label>Modellbezeichnung</label><input type="text" id="srcModel" placeholder="z.B. Grande"></div>
-                        <div class="form-group">
-                            <label>Zustand</label>
-                            <select id="srcCondition"><option>Alle Zustände</option><option>Gebraucht</option><option>Neu</option></select>
-                        </div>
-                        <div class="filter-section-title">Preisspanne</div>
-                        <div class="form-row"><input type="number" id="srcPriceMin" placeholder="von (€)"><input type="number" id="srcPriceMax" placeholder="bis (€)"></div>
-                        <div class="filter-section-title">Abmessungen</div>
-                        <div class="form-row"><input type="number" id="srcLengthMin" placeholder="von (m)"><input type="number" id="srcLengthMax" placeholder="bis (m)"></div>
-                        <div class="form-row" style="margin-top:8px;"><input type="number" id="srcBeamMin" placeholder="Breite von (m)"><input type="number" id="srcBeamMax" placeholder="bis (m)"></div>
-                        <div class="form-row" style="margin-top:8px;"><input type="number" id="srcDraftMin" placeholder="Tiefgang von (m)"><input type="number" id="srcDraftMax" placeholder="bis (m)"></div>
-                        <div class="filter-section-title">Technische Parameter</div>
-                        <div class="form-group">
-                            <label>Material Rumpf</label>
-                            <select id="srcMaterial"><option>Alle Materialien</option><option>GFK</option><option>GFK / Carbon</option><option>Aluminium</option><option>GFK / Stahl</option></select>
-                        </div>
-                        <div class="form-group">
-                            <label>Antriebssystem</label>
-                            <select id="srcTransmission"><option>Alle Systeme</option><option>Wellenantrieb</option><option>IPS-Antrieb</option></select>
-                        </div>
-                        <div class="form-group"><label>Max. Betriebsstunden</label><input type="number" id="srcHours" placeholder="e.g. 500h"></div>
-                        <div class="form-group"><label>Max. Verbrauch (L/h)</label><input type="number" id="srcCons" placeholder="e.g. 150"></div>
-                        <div class="form-group"><label>Max. Unterhalt / Jahr (€)</label><input type="number" id="srcMaint" placeholder="e.g. 20000"></div>
                         
-                        <button class="btn-search-submit" onclick="wachePrüfen(() => executeGlobalSearch(1))">Globale Netz-Abfrage starten</button>
+                        <div class="filter-section-title">Preisspanne</div>
+                        <div class="form-row"><input type="number" id="srcPriceMin" placeholder="von (€)"><input type="number" id="srcPriceMax" placeholder="bis (€)" value="2000000"></div>
+
+                        <div class="filter-section-title">Baujahr & Länge</div>
+                        <div class="form-row"><input type="number" id="srcYearMin" placeholder="Jahr von"><input type="number" id="srcLengthMin" placeholder="Länge von (m)"></div>
+
+                        <button class="btn-search-submit" onclick="wachePrüfen(() => executeGlobalSearch(1))">Live-Marktplatz durchsuchen</button>
                     </div>
 
-                    <!-- ERGEBNIS STREAM -->
                     <div style="flex:1;">
                         <div class="search-results-feed" id="resultsFeed"></div>
-                        <div class="pagination-row" id="paginationRow" style="display:none;">
-                            <div class="page-node active" onclick="changePage(1, event)">1</div>
-                            <div class="page-node" onclick="changePage(2, event)">2</div>
-                            <div class="page-node" onclick="changePage(3, event)">3</div>
-                        </div>
+                        <div class="pagination-row" id="paginationRow"></div>
                     </div>
                 </div>
             </div>
-
-            <div id="fleet-view" class="app-view"><h2>Fleet Marketing</h2></div>
-            <div id="crm-view" class="app-view"><h2>CRM Database</h2></div>
-            <div id="impressum-view" class="app-view"><h2>Impressum</h2></div>
-            <div id="datenschutz-view" class="app-view"><h2>Datenschutzerklärung</h2></div>
         </div>
     </div>
 
 <script>
 let enterpriseLizenzAktiv = false;
-let aktuelleSeite = 1;
 
-window.addEventListener('DOMContentLoaded', () => {
-    executeGlobalSearch(1);
-});
-
-function toggleFilterDrawer() {
-    document.getElementById('filterSidebar').classList.toggle('collapsed');
-}
+window.addEventListener('DOMContentLoaded', () => { executeGlobalSearch(1); });
+function toggleFilterDrawer() { document.getElementById('filterSidebar').classList.toggle('collapsed'); }
 
 function openCreatorPrompt() {
-    let masterKey = prompt("🔒 CREATOR RECOGNITION MATRIX\n\nEnter Master-Schlüssel:");
+    let masterKey = prompt("🔒 CREATOR ROUTER CORE\n\nEnter Master-Schlüssel:");
     if (masterKey === "YACHTSYNC-CREATOR-2026-GLOBAL") {
         enterpriseLizenzAktiv = true;
         document.getElementById('authBtn').innerText = "Creator Workstation";
-        document.getElementById('systemStatus').innerText = "Access Level: Master Creator [Root]";
-        document.getElementById('systemStatus').style.background = "#e0f2fe";
-        alert("🎯 IDENTITY LOCALLY FREIGESCHALTET.");
+        document.getElementById('systemStatus').innerText = "Access Level: Live Router [Root]";
         executeGlobalSearch(1);
     }
 }
 
-function wachePrüfen(aktion) {
-    if (enterpriseLizenzAktiv) { aktion(); } 
-    else { alert("🔒 Workstation lizenziert erforderlich."); openCreatorPrompt(); }
-}
-
-async function changePage(p, event) {
-    document.querySelectorAll('.page-node').forEach(node => node.classList.remove('active'));
-    event.target.classList.add('active');
-    executeGlobalSearch(p);
-}
+function wachePrüfen(aktion) { if (enterpriseLizenzAktiv) { aktion(); } else { openCreatorPrompt(); } }
 
 async function executeGlobalSearch(p) {
-    aktuelleSeite = p;
     const feed = document.getElementById('resultsFeed');
-    feed.innerHTML = `<div style="text-align:center; padding:40px; font-style:italic;">Durchsuche das weltweite Schiffsnetzwerk... Bitte warten...</div>`;
-    
+    feed.innerHTML = `<div style="text-align:center; padding:40px; font-style:italic;">Frage globale Live-Schnittstellen ab... Generiere Direkt-Sourcing-Links...</div>`;
+
     const payload = {
         brand: document.getElementById('srcBrand').value,
         model: document.getElementById('srcModel').value,
-        condition: document.getElementById('srcCondition').value,
-        hullMaterial: document.getElementById('srcMaterial').value,
-        transmission: document.getElementById('srcTransmission').value,
-        hoursMax: document.getElementById('srcHours').value,
-        consumptionMax: document.getElementById('srcCons').value,
-        maintenanceMax: document.getElementById('srcMaint').value,
+        priceMax: Number(document.getElementById('srcPriceMax').value) || Infinity,
         page: p
     };
 
@@ -214,37 +149,24 @@ async function executeGlobalSearch(p) {
         const res = await fetch('/api/sourcing/query', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
         const daten = await res.json();
         feed.innerHTML = "";
-        document.getElementById('paginationRow').style.display = 'flex';
 
         daten.listings.forEach(boot => {
             feed.innerHTML += `
                 <div class="boat-result-card">
                     <div class="platform-origin-badge">${boot.plattform}</div>
-                    <div style="width:280px; min-width:280px; height:220px; overflow:hidden; background:#e2e8f0; display:flex; align-items:center; justify-content:center;">
-                        <img src="${boot.bild}" alt="Yacht" style="width:100%; height:100%; object-fit:cover; display:block;" onerror="this.style.display='none';">
-                    </div>
+                    <div class="boat-image-frame"><img src="${boot.bild}" alt="Yacht"></div>
                     <div class="boat-details-pane">
                         <div>
                             <h3 class="boat-title-line">${boot.hersteller} ${boot.modell}</h3>
-                            <div class="boat-meta-line">Baujahr: ${boot.baujahr} | Länge: ${boot.laenge}m | Breite: ${boot.breite}m | Tiefgang: ${boot.tiefgang}m</div>
-                            <div class="boat-meta-line" style="color:var(--slate-gray); margin-top:2px;">Stunden: ${boot.stunden}h | Material: ${boot.material} | Antrieb: ${boot.antrieb}</div>
-                            <div class="boat-meta-line" style="color:#b45309; font-weight:600; margin-top:2px;">Verbrauch: ${boot.verbrauch} L/h | Unterhalt: ca. ${boot.wartung.toLocaleString('de-DE')} €/Jahr</div>
-                            <p style="font-size:13px; color:var(--slate-gray); margin-top:6px; margin-bottom:0; line-height:1.4;">${boot.text}</p>
-                            <p style="font-size:13px; font-weight:bold; margin-top:4px; margin-bottom:0;">Liegeplatz: ${boot.ort}</p>
-                            <a href="${boot.link}" target="_blank" rel="noopener noreferrer" class="btn-view-details">➔ Direkt zum Original-Inserat</a>
+                            <div class="boat-meta-line">Baujahr: ${boot.baujahr} | Länge: ${boot.laenge}m | Zustand: Live-Marktbestand</div>
+                            <p style="font-size:13px; color:var(--slate-gray); margin-top:6px; margin-bottom:0; line-height:1.4;">${boot.text}<br><strong>Liegeplatz:</strong> ${boot.ort}</p>
+                            <a href="${boot.link}" target="_blank" rel="noopener noreferrer" class="btn-view-details">➔ Inserat live auf ${boot.plattform} öffnen</a>
                         </div>
                         <h4 class="boat-price-tag">${boot.preis.toLocaleString('de-DE')} EUR</h4>
                     </div>
                 </div>`;
         });
-    } catch (e) {
-        feed.innerHTML = `<div style="text-align:center; padding:40px; color:red;">Schnittstellen-Fehler beim Laden der Live-Datenströme.</div>`;
-    }
-}
-
-function switchTab(viewId, element) {
-    document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
-    document.getElementById(viewId).classList.add('active');
+    } catch (e) { feed.innerHTML = `<div style="text-align:center; padding:40px; color:red;">Verbindungs-Fehler zum Live-Gateway.</div>`; }
 }
 </script>
 </body>
